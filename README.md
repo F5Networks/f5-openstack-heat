@@ -1,2 +1,2 @@
-# openstack-f5-heat
-Heat templates for OpenStack F5 deployments
+# f5-openstack- heat
+Heat templates for F5 OpenStack deployments
