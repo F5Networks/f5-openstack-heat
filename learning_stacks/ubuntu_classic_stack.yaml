@@ -1,0 +1,228 @@
+description: >
+    This template is a starting point to learning about heat. Note: this
+    can be used directly with the Boulder OpenStack, although, the
+    passwords and usernames may change.
+
+heat_template_version: '2015-04-30'
+
+parameters:
+  external_network:
+    default: external_net
+    description: External network used for floating IPs
+    label: External network name or ID
+    type: string
+  multi_homed_image_id:
+    default: ubuntu_14-04_multi_homed
+    description: Image for multihomed instances
+    label: Multihomed Imaged ID
+    type: string
+  instance_flavor:
+    default: m1.small
+    description: Flavor of instanced to be deployed.
+    label: Instance Flavor
+    type: string
+  key_name:
+    default: testlab_public_key
+    description: The testlab public key used in Linerate.
+    label: Key Name
+    type: string
+  security_group_name:
+    default: allow_all
+    description: Name of security group for instance.
+    label: Security Group Name
+    type: string
+
+resources:
+  # Setup five networks: 2 test and 3 data
+  client_test_network:
+    type: OS::Neutron::Net
+  server_test_network:
+    type: OS::Neutron::Net
+  client_data_network:
+    type: OS::Neutron::Net
+  server_data_network:
+    type: OS::Neutron::Net
+  dut_data_network:
+    type: OS::Neutron::Net
+
+  # And five accompanying subnets
+  client_test_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.10.1.0/24
+      dns_nameservers: [10.190.5.1]
+      network_id: { get_resource: client_test_network }
+      gateway_ip: null
+  server_test_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.10.2.0/24
+      dns_nameservers: [10.190.5.1]
+      network_id: {get_resource: server_test_network }
+      gateway_ip: null
+  client_data_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.10.3.0/24
+      dns_nameservers: [10.190.5.1]
+      network_id: { get_resource: client_data_network }
+  server_data_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.10.4.0/24
+      dns_nameservers: [10.190.5.1]
+      network_id: { get_resource: server_data_network }
+  dut_data_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      cidr: 10.10.5.0/24
+      dns_nameservers: [10.190.5.1]
+      network_id: { get_resource: dut_data_network }
+
+  # Router for each data network
+  data_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: external_network }
+
+  # Interfaces on each router for the specified subnet
+  client_data_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: data_router }
+      subnet: { get_resource: client_data_subnet }
+  server_data_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: data_router }
+      subnet: { get_resource: server_data_subnet }
+  dut_data_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: data_router }
+      subnet: { get_resource: dut_data_subnet }
+
+  # Ports to be connected to instances
+  client_test_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: client_test_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  server_test_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: server_test_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  dut_client_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: client_test_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  dut_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: server_test_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  client_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: client_data_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  server_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: server_data_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+  dut_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: dut_data_network }
+      security_groups:
+      - default
+      - { get_param: security_group_name }
+
+  # FloatingIPs to be associated with the proper network and instance
+  client_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+  client_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: client_fip }
+      port_id: { get_resource: client_data_port }
+  server_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+  server_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: server_fip }
+      port_id: { get_resource: server_data_port }
+  dut_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+  dut_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: dut_fip }
+      port_id: { get_resource: dut_data_port }
+
+  # Instance resources
+  ubuntu_client:
+    type: OS::Nova::Server
+    properties:
+      flavor: { get_param: instance_flavor }
+      image: { get_param: multi_homed_image_id }
+      key_name: { get_param: key_name }
+      networks:
+      - port: { get_resource: client_data_port }
+      - port: { get_resource: client_test_port }
+  ubuntu_dut:
+    type: OS::Nova::Server
+    properties:
+      flavor: { get_param: instance_flavor }
+      image: { get_param: multi_homed_image_id }
+      key_name: { get_param: key_name }
+      networks:
+      - port: { get_resource: dut_data_port }
+      - port: { get_resource: dut_server_port }
+      - port: { get_resource: dut_client_port }
+  ubuntu_server:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: instance_flavor}
+      image: {get_param: multi_homed_image_id}
+      key_name: {get_param: key_name}
+      networks:
+      - port: { get_resource: server_data_port }
+      - port: { get_resource: server_test_port }
+
+outputs:
+  client_ips:
+    description: IP addresses of the client instance.
+    value:
+      get_attr: [ubuntu_client, addresses]
+  server_ips:
+    description: IP addresses of the server instance.
+    value:
+      get_attr: [ubuntu_server, addresses]
+  dut_ips:
+    description: IP addresses of the dut instance.
+    value:
+      get_attr: [ubuntu_dut, addresses]
