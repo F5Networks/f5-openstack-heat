@@ -6,182 +6,210 @@ parameters:
   build_network:
     type: string
     label: F5 Onboard Server Orchestration Network
-    description: Private network to attach the orchestration instance
+    description: Network to attach the orchestration instance. Must be able to reach the publicURL for OS API services.
     default: None
     constraints:
       - custom_constraint: neutron.network
+  orchestration_image_url:
+    type: string
+    label: F5 Onboard OS Image URL
+    description: Ubuntu image URL to use for the ochestration instance.
+    default: http://uec-images.ubuntu.com/releases/14.04/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img
+  use_config_drive:
+    type: boolean
+    label: Use Config Drive for Orchestration Server
+    description: Use config drive to provider meta and user data to the orchestration instance.
+    default: false
   package_proxy:
     type: string
     label: Package Install Proxy URL for APT
+    description: APT HTTP caching proxy to use for orhcestration package dependancies.
     default: None
   http_proxy_host:
     type: string
-    label: HTTP Proxy Host to user to acquire resources
+    label: HTTP Proxy Host to use for orchestration instance access
     default: None
   http_proxy_port:
     type: number
-    label: HTTP Proxy Port to use to acquire resources
+    label: HTTP Proxy Port to use for orchestration instance access
     default: 8080
     constraints:
       - range: { min: 1024, max: 65534 }
   http_proxy_script_url:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
+    description: F5 proxy script needed if HTTP proxy access is requried for VE license activation.
     default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+  use_proxy_for_local_resources:
+    type: boolean
+    label: User HTTP proxy for OpenStack API Access
+    description: Use the configured HTTP proxy when accessing OpenStack APIs.
+    default: false
   license_activation_host:
     type: string
     label: License Activation Host
+    description: Alternative F5 license activation host. Only needed if license request should not go to activate.f5.com.
     default: None
   license_activation_port:
     type: number
     label: License Activation Port
+    description: Alternative F5 license activation port. Only needed if license request should not go to port 443.
     default: 443
     constraints:
       - range: { min: 1, max: 65534 }
   f5_odk_package_url:
     type: string
     label: F5 OpenStack Deployment Kit URL
-    description: The URL to download the ODK debian package
+    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ orchestration.
     default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/odk.deb
   f5_onboard_package_url:
     type: string
     label: F5 Virtual Edition Onboard Tools URL
-    description: The URL to download the ODK debian package
+    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ orchestration.
     default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/f5_onboard.deb
   f5_common_templates_url:
     type: string
     label: F5 Common Template Directory URL
-    description: The URL to download common Heat templates
+    description: The URL to download common Heat templates for F5 security groups and cluster topologies.
     default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/common
   f5_ve_os_stack_name:
     type: string
     label: VE Cluster Name
-    description: Unique Name for This Cluster
+    description: Unique Name for this VE Device Service Group cluster.
     default: 'f5_ve_ha_1_0_1'
   f5_ve_os_auth_url:
     type: string
     label: VE OS Keystone Auth URL
-    description: Keystone URL to perform VE service creation
+    description: Keystone URL to perform VE instance creation.
     default: http://localhost:5000/v2.0
   f5_ve_os_tenant:
     type: string
     label: VE OS Create Tenant
-    description: Tenant to perform VE service creation
+    description: Tenant to perform VE instance creation.
     default: admin
   f5_ve_os_user:
     type: string
     label: VE OS Create User
-    description: User to perform image import services
+    description: User to perform VE instance creation.
     default: admin
   f5_ve_os_password:
     type: string
     label: VE OS Create User Password
-    description: Password used to perform image import services
+    description: Password used to perform VE instance creation.
     default: admin
     hidden: true
   f5_ve_os_image:
     type: string
     label: F5 VE Image
-    description: The image to be used on the ve instance.
+    description: The image to be used on the VE instance.
     constraints:
       - custom_constraint: glance.image 
   f5_ve_os_flavor:
     type: string
     label: F5 VE Flavor
-    description: Type of instance (flavor) to be used for the ve instance.
+    description: Type of instance (flavor) to be used for the VE instance.
     default: m1.medium
     constraints:
       - custom_constraint: nova.flavor 
   f5_ve_os_config_drive:
     type: boolean
-    label: Use Config Drive
-    description: Use config drive to provider meta and user data.
+    label: Use Config Drive for VE Instances
+    description: Use config drive to provider meta and user data to the VE instance.
     default: false 
   f5_ve_os_external_network:
     type: string
     label: F5 VE External Network
-    description: Neutron External Network for Floating IPs
+    description: Specify a specific Neutron external network for managment interface Floating IP creation.
     default: None
   f5_ve_os_mgmt_network:
     type: string
     label: F5 VE Management Network
-    description: F5 VE Management Network.
+    description: Neutron network for the VE management interface.
     default: None
     constraints:
       - custom_constraint: neutron.network
   f5_ve_os_mgmt_network_floating_ip:
     type: boolean
     label: Create F5 VE Management Neutron Floating IP
-    description: Create F5 VE Management Neutron Floating IP
+    description: Should a Neutron Floating IP be created for the VE management interface.
     default: false
   f5_ve_os_ha_network:
     type: string
     label: F5 VE HA Network
-    description: F5 VE HA Network.
+    description: Neutron network for the VE HA config sycn and mirroring interface.
     default: None
     constraints:
       - custom_constraint: neutron.network
   f5_ve_os_network_1:
     type: string
     label: F5 VE 1.2 Network
-    description: F5 VE 1.2 Network.
+    description: Neutron network for the VE 1.2 data interface.
     default: None
     constraints:
       - custom_constraint: neutron.network
   f5_ve_os_network_1_name:
     type: string
     label: F5 VE Network Name for the 1.2 Interface
-    description: TMM 1.2 network name.
+    description: TMM network name for the untagged VLAN associated with the 1.2 data interface.
     default: None
   f5_ve_os_network_1_floating_ip:
     type: boolean
     label: Create F5 VE TMOS 1.2 Network Floating SelfIP
-    description: Create F5 VE TMOS 1.2 Floating SelfIP
+    description: Should a Floating SelfIP be created for the TMOS 1.2 data interface.
     default: false
   f5_ve_default_gateway:
     type: string
     label: VE Default Gateway IP
     default: None
-    description: Upstream Gateway IP Address for VE instances
+    description: TMOS data interface upstream Gateway IP address.
   f5_ve_os_ssh_key:
     type: string
     label: F5 VE Root SSH Key Name
-    description: Name of key-pair to be installed for root access on the VE instances
+    description: Name of key-pair to be installed for root access on the VE instances.
     default: None
     constraints:
       - custom_constraint: nova.keypair
   f5_ve_admin_password:
     type: string
     label: F5 VE Admin User Password
-    description: TMOS admin password
+    description: TMOS admin password for the VE instances.
     default: admin
-    hidden: true  
+    hidden: true
+    constraints:
+      - allowed_pattern: "[a-zA-Z0-9_-]*"
+        description: Password in templates are limited to alpha, numeric, underscore, and dashes
   f5_ve_root_password:
     type: string
     label: F5 VE Root User Password
-    description: TMOS root password
+    description: TMOS root password for the VE instances.
     default: admin
     hidden: true
+    constraints:
+      - allowed_pattern: "[a-zA-Z0-9_-]*"
+        description: Password in templates are limited to alpha, numeric, underscore, and dashes
   f5_ve_license_1:
     type: string
     label: Primary VE License Base Key
-    description: F5 TMOS License Basekey
+    description: F5 TMOS license basekey for the primary VE instance.
     default: None
     hidden: true
   f5_ve_license_2:
     type: string
     label: Secondary VE License Base Key
-    description: F5 TMOS License Basekey
+    description: F5 TMOS license basekey for the secondary VE instance.
     default: None
     hidden: true
 
 parameter_groups:
 - parameters:
   - build_network
+  - orchestration_image_url
+  - use_config_drive
   - package_proxy
   - http_proxy_host
   - http_proxy_port
   - http_proxy_script_url
+  - use_proxy_for_local_resources
   - license_activation_host
   - license_activation_port
 - parameters:
@@ -229,7 +257,7 @@ resources:
       container_format: bare
       disk_format: qcow2
       is_public: False
-      location: http://10.1.0.11/ubuntu-14.04-server-cloudimg-amd64-disk1.img
+      location: { get_param: orchestration_image_url }
       min_disk: 40
       min_ram: 512
       name: F5OnboardImage
@@ -260,6 +288,7 @@ resources:
       security_groups:
         - { get_resource: ve_cluster_orchestration_security_group }
       flavor: m1.medium
+      config_drive: { get_param: use_config_drive }
       networks:
         - network: { get_param: build_network }
       user_data_format: RAW
@@ -271,6 +300,7 @@ resources:
             __http_proxy_host__: { get_param: http_proxy_host }
             __http_proxy_port__: { get_param: http_proxy_port }
             __http_proxy_script_url__ : { get_param: http_proxy_script_url }
+            __use_proxy_for_local_resources__ : { get_param: use_proxy_for_local_resources }
             __license_activation_host__ : { get_param: license_activation_host }
             __license_activation_port__ : { get_param: license_activation_port }
             __f5_ve_os_stack_name__: { get_param: f5_ve_os_stack_name }
@@ -300,7 +330,8 @@ resources:
           template: |
             #!/bin/bash -ex
 
-            # create a onboard user
+            # create a onboard user to interactively work with this 
+            # orchestration instance manual debugging
             adduser onboard --disabled-login --gecos 'Onboard' --quiet --ingroup sudo
             echo onboard:onboard|chpasswd
             sed -i 's|[#]*PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
@@ -320,52 +351,143 @@ resources:
                 echo "Acquire::https::proxy \"__package_proxy__\";" >> /etc/apt/apt.conf
             fi
             
-            # update package list
+            # define local resource access policy
+            use_proxy_for_local_resources=`echo "__use_proxy_for_local_resources__" | tr '[a-z]' '[A-Z]'`
+            
+            # update package list on orchestration instance
             apt-get update
             
-            # get packages required for neutron and heat interaction
-            apt-get -y install python-heatclient python-neutronclient
+            # get packages required for initial environment setup and global resource construction
+            apt-get -y install python-keystoneclient python-novaclient python-heatclient python-neutronclient
                         
-            # setup environment
-            HOME=/home/onboard
+            # export the environment which will be used in any embedded
+            # orchestration process
+            export HOME=/home/onboard
             export HOME=/home/onboard
             export OS_AUTH_URL=__f5_ve_os_auth_url__
             export OS_USERNAME=__f5_ve_os_user__
             export OS_PASSWORD=__f5_ve_os_password__
             export OS_TENANT_NAME=__f5_ve_os_tenant__
+            export COMMON_RESOURCE_HEAT_QUERY_ATTEMPTS=100
+            export COMMON_RESOUCES_HEAT_QUERY_SLEEP_INTERVAL=2
+            export CLUSTER_HEAT_QUERY_ATTEMPTS=100
+            export CLUSTER_HEAT_QUERY_SLEEP_INTERVAL=2
             
-            # unset proxy if defined for local communications
-            unset http_proxy
-            unset https_proxy
+            # remove http proxy for local communications if not required
+            if [[ $use_proxy_for_local_resources == 'FALSE' ]]
+            then
+                unset http_proxy
+                unset https_proxy
+            fi
             
-            # generate ve cluster template
+            # build reference to TENANT_ID for use in queries
+            export OS_TENANT_ID=`keystone tenant-get $OS_TENANT_NAME|grep id|awk -F '|' '{print $3}'|tr -d '"'|tr -d '[[:space:]]'`
+            
+            # work in the home directory
             cd $HOME
+            
+            ##########################################################################
+            #
+            # Common reusable resources
+            #
+            ##########################################################################
+            
+            # check the creation of common resources (can be reused between templates)
+            # build these as a separate stack rather then part of the first cluster
+            # stack to assure they are created before referencing them by name in your
+            # cluster templates (or their nested child templates)
+            BUILD_COMMONS=0
+            
+            commons_template_file=$HOME/f5_commons.yaml
+            echo -e "heat_template_version: 2014-10-16" >$commons_template_file
+            echo -e "resources:" >>$commons_template_file
+            
+            # common security groups nested templates
+            #
+            # bigip_mgmt_security_group - for the eth0 mgmt interface
+            # bigip_control_security_group - for the config sync and mirror interface
+            # bigip_data_security_group - wide open for additional interfaces
+            #
+            # The definitions of these groups can be changed in their common nested tempaltes
+            #
+            
+            # Note: use nova .. it is tenant specific. Neutron under the admin tenant will show all tenants
+            has_mgmt_group=`nova secgroup-list|grep bigip_mgmt_security_group|wc -l`
+            if [[ $has_mgmt_group == 0 ]]; then
+                BUILD_COMMONS=1
+                echo -e "  bigip_mgmt_security_group:">>$commons_template_file
+                echo -e "    type: __f5_common_templates_url__/bigip_mgmt_security_group.yaml">>$commons_template_file
+            fi
+
+            has_control_group=`nova secgroup-list|grep bigip_control_security_group|wc -l`
+            if [[ $has_control_group == 0 ]]; then
+                BUILD_COMMONS=1
+                echo -e "  bigip_control_security_group:">>$commons_template_file
+                echo -e "    type: __f5_common_templates_url__/bigip_control_security_group.yaml">>$commons_template_file
+            fi
+            
+            has_data_group=`nova secgroup-list|grep bigip_data_security_group|wc -l`
+            if [[ $has_data_group == 0 ]]; then
+                BUILD_COMMONS=1
+                echo -e "  bigip_data_security_group:">>$commons_template_file
+                echo -e "    type: __f5_common_templates_url__/bigip_data_security_group.yaml">>$commons_template_file
+            fi
+            
+            # If common resources required, build a heat template for them and build it
+            if [[ $BUILD_COMMONS == 1 ]]
+            then
+               echo -e "outputs:">>$commons_template_file
+               echo -e "  stack_id:">>$commons_template_file
+               echo -e "    description: this stack ID">>$commons_template_file
+               echo -e "    value: { get_param: \"OS::stack_id\" }">>$commons_template_file
+               now=`date +%s`
+               heat stack-create -f $commons_template_file -c 60 f5_common_resources_$now
+               
+               COMMON_RESOURCE_NOT_COMPLETE=0
+               while true; do
+                   # query the status of the VE image stack
+                   STACK_STATUS_LINES=`heat stack-show f5_common_resources_$now|grep stack_status`
+                   OIFS="$IFS"
+                   IFS="|"
+                   fields=($STACK_STATUS_LINES)
+                   IFS="$OIFS"
+                   STACK_STATUS=`echo ${fields[2]}| tr -d '[[:space:]]'`
+                   STACK_STATUS_REASON=`echo ${fields[5]}| tr -d '[[:space:]]'`
+                
+                   echo "Common stack status is $STACK_STATUS"
+                
+                   if [[ $STACK_STATUS == 'CREATE_COMPLETE' ]]; then
+                      echo 'Common stack are complete.'
+                      break
+                   fi
+                   if [[ $STACK_STATUS == 'CREATE_FAILED' ]]; then
+                      echo 'Common stack failed.'
+                      exit
+                   fi
+                   sleep $COMMON_RESOUCES_HEAT_QUERY_SLEEP_INTERVAL
+                   COMMON_RESOURCE_NOT_COMPLETE=$(($COMMON_RESOURCE_NOT_COMPLETE + 1))
+                   if [[ $NOT_COMPLETE -ge $COMMON_RESOURCE_HEAT_QUERY_ATTEMPTS ]]; then
+                       echo 'Common stack failed to reach COMPLETE before timing out'
+                       exit             
+                   fi
+                done
+                COMMON_STACK_ID=`heat output-show f5_common_resources_$now stack_id`
+                COMMON_STACK_ID=`echo $COMMON_STACK_ID | tr -d '"'`
+                heat stack-delete $COMMON_STACK_ID
+            fi
+            
+            ##########################################################################
+            #
+            # Active / Standby Cluster dynamic template generation
+            #
+            ##########################################################################
+                        
+            # generate VE cluster template
             template_file=$HOME/f5_ve_cluster.yaml
             echo -e "heat_template_version: 2014-10-16" >$template_file
             echo -e "resources:" >>$template_file
-            
-            # check the creation of common resources (can be reused between templates)
-            
-            # security groups
-            has_mgmt_group=`neutron security-group-show bigip_mgmt_security_group|grep description|wc -l`
-            if [[ $has_mgmt_group == 0 ]]; then
-                echo -e "  bigip_mgmt_security_group:">>$template_file
-                echo -e "    type: __f5_common_templates_url__/bigip_mgmt_security_group.yaml">>$template_file
-            fi
-            
-            has_control_group=`neutron security-group-show bigip_control_security_group|grep description|wc -l`
-            if [[ $has_control_group == 0 ]]; then
-                echo -e "  bigip_control_security_group:">>$template_file
-                echo -e "    type: __f5_common_templates_url__/bigip_control_security_group.yaml">>$template_file
-            fi
-            
-            has_data_group=`neutron security-group-show bigip_data_security_group|grep description|wc -l`
-            if [[ $has_data_group == 0 ]]; then
-                echo -e "  bigip_data_security_group:">>$template_file
-                echo -e "    type: __f5_common_templates_url__/bigip_data_security_group.yaml">>$template_file
-            fi
              
-            # generate ve template parameters
+            # generate VE template parameters
             p="    properties:\n"
             p="$p      ve_image: __f5_ve_os_image__ \n"
             p="$p      ve_flavor: __f5_ve_os_flavor__ \n"
@@ -382,7 +504,7 @@ resources:
             p="$p      ha_network: __f5_ve_os_ha_network__ \n"
             p="$p      default_gateway: __f5_ve_default_gateway__ \n"
             
-            # if no network name was given, query neutron for the name
+            # if no network name was given for our data network, query neutron for the name 
             NETWORK_1_NAME="__f5_ve_os_network_1_name__"
             if [[ $NETWORK_1_NAME == "None" ]]
             then
@@ -391,16 +513,29 @@ resources:
             p="$p      network_1: __f5_ve_os_network_1__ \n"
             p="$p      network_1_name: $NETWORK_1_NAME"
             
+            # add the first VE instance resource
             echo -e "  f5_ve_instance_1:">>$template_file
             echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            # add the first VE instance parameters
             echo -e "$p">>$template_file
+            
+            # add any parameters unique to the first VE
+            
+            # add the first VE license parameter
             echo -e "      license: __f5_ve_license_1__">>$template_file
+            
+            # add the second VE instance resource
             echo -e "  f5_ve_instance_2:">>$template_file
             echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            # add the second VE instance parameters
             echo -e "$p">>$template_file
+            
+            # add any parameters unique to the first VE
+            
+            # add the first VE license parameter
             echo -e "      license: __f5_ve_license_2__">>$template_file
             
-            # management Floating IPs
+            # add management neutron Floating IPs resources to the template if required
             need_mgmt_floating_ip=`echo "__f5_ve_os_mgmt_network_floating_ip__" | tr '[a-z]' '[A-Z]'`
             if [[ $need_mgmt_floating_ip == 'TRUE' ]]
             then
@@ -422,7 +557,7 @@ resources:
                 echo -e "        port_id: { get_attr: [f5_ve_instance_2, mgmt_port] }">>$template_file
             fi
             
-            # data network ports for floating SelfIPs
+            # add data network ports for TMOS floating SelfIPs if required
             need_network_1_floating_ip=`echo "__f5_ve_os_network_1_floating_ip__" | tr '[a-z]' '[A-Z]'`
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
@@ -434,16 +569,18 @@ resources:
                 echo -e "        device_owner: __f5_ve_os_stack_name__">>$template_file
             fi
             
+            # create verbose outputs to provide details of the cluster for upstream
+            # orchestration scripting
             echo -e "outputs:">>$template_file
             
-            # primary VE
+            # first VE Nova instance information
             echo -e "  f5_ve_instance_name_1:">>$template_file
             echo -e "    description: VE 1 Nova instance name">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, ve_instance_name] }">>$template_file        
             echo -e "  f5_ve_instance_id_1:">>$template_file
             echo -e "    description: VE 1 Nova instance ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, ve_instance_id] }">>$template_file
-
+            # first VE Neutron mgmt interface information
             echo -e "  f5_ve_mgmt_ip_1:">>$template_file
             echo -e "    description: VE 1 management IP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, mgmt_ip] }">>$template_file
@@ -453,7 +590,6 @@ resources:
             echo -e "  f5_ve_mgmt_port_1:">>$template_file
             echo -e "    description: VE 1 management MAC port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, mgmt_port] }">>$template_file
-            
             if [[ $need_mgmt_floating_ip == 'TRUE' ]]
             then
                 echo -e "  f5_ve_mgmt_floatingip_ip_1:">>$template_file
@@ -463,7 +599,7 @@ resources:
                 echo -e "    description: VE 1 management floatingip ID ">>$template_file
                 echo -e "    value: { get_resource: f5_ve_instance_1_mgmt_floatingip }">>$template_file
             fi
-            
+            # first VE Neutron HA interface information
             echo -e "  f5_ve_ha_ip_1:">>$template_file
             echo -e "    description: VE 1 management HA IP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, ha_ip] }">>$template_file
@@ -473,7 +609,7 @@ resources:
             echo -e "  f5_ve_ha_port_1:">>$template_file
             echo -e "    description: VE 1 management HA port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, ha_port] }">>$template_file
-
+            # first VE Neutron data interfaces information
             echo -e "  f5_ve_network_1_ip_1:">>$template_file
             echo -e "    description: VE 1 TMM 1.2 non floating SelfIP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, network_1_ip] }">>$template_file
@@ -484,14 +620,14 @@ resources:
             echo -e "    description: VE 1 TMM 1.2 port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, network_1_port] }">>$template_file
           
-            # secondary VE
+            # second VE Nova instance information
             echo -e "  f5_ve_instance_name_2:">>$template_file
             echo -e "    description: VE 2 Nova instance name">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, ve_instance_name] }">>$template_file        
             echo -e "  f5_ve_instance_id_2:">>$template_file
             echo -e "    description: VE 2 Nova instance ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, ve_instance_id] }">>$template_file
-
+            # second VE Neutron mgmt interface information
             echo -e "  f5_ve_mgmt_ip_2:">>$template_file
             echo -e "    description: VE 2 management IP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, mgmt_ip] }">>$template_file
@@ -501,7 +637,6 @@ resources:
             echo -e "  f5_ve_mgmt_port_2:">>$template_file
             echo -e "    description: VE 2 management MAC port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, mgmt_port] }">>$template_file
-            
             if [[ $need_mgmt_floating_ip == 'TRUE' ]]
             then
                 echo -e "  f5_ve_mgmt_floatingip_ip_2:">>$template_file
@@ -511,7 +646,7 @@ resources:
                 echo -e "    description: VE 2 management floatingip ID ">>$template_file
                 echo -e "    value: { get_resource: f5_ve_instance_2_mgmt_floatingip }">>$template_file
             fi
-            
+            # second VE Neutron HA interface information
             echo -e "  f5_ve_ha_ip_2:">>$template_file
             echo -e "    description: VE 2 management HA IP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, ha_ip] }">>$template_file
@@ -521,7 +656,7 @@ resources:
             echo -e "  f5_ve_ha_port_2:">>$template_file
             echo -e "    description: VE 2 management HA port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, ha_port] }">>$template_file
-
+            # first VE Neutron data interfaces information
             echo -e "  f5_ve_network_1_ip_2:">>$template_file
             echo -e "    description: VE 2 TMM 1.2 non floating SelfIP address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, network_1_ip] }">>$template_file
@@ -529,9 +664,10 @@ resources:
             echo -e "    description: VE 2 TMM 1.2 MAC address">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, network_1_mac] }">>$template_file
             echo -e "  f5_ve_network_1_port_2:">>$template_file
-            echo -e "    description: VE 2 TMM 1.2 port ID">>$template_file
+            echo -e "    description: VE 2 TMM 1.2 port ID">>$template_file8.5GB
             echo -e "    value: { get_attr: [f5_ve_instance_2, network_1_port] }">>$template_file
 
+            # VE Neutron data for floating SelfIP address
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
                 echo -e "  f5_ve_network_1_floating_selfip_ip:">>$template_file
@@ -548,18 +684,19 @@ resources:
                 echo -e "    value: { get_resource: f5_ve_network_1_floating_selfip_port }">>$template_file
             fi
             
+            # display template to console output
             echo "Generated template is:"
             cat $template_file
             echo "End of template"
             
+            # display stack id to console output
             echo "My stack id is:" __stack_id__
             
-            # build tenant stack
+            # build VE cluster instances stack
             heat stack-create -f $template_file -c 60 __f5_ve_os_stack_name__
             
-            MAX_ATTEMPTS=100
-            NOT_COMPLETE=0
-            SLEEP_INTERVAL=10
+            # wait for VE cluster instances stack to complete
+            CLUSTER_HEAT_NOT_COMPLETE=0
             while true; do
                 # query the status of the VE image stack
                 STACK_STATUS_LINES=`heat stack-show __f5_ve_os_stack_name__|grep stack_status`
@@ -573,39 +710,41 @@ resources:
                 echo "Stack status is $STACK_STATUS"
                 
                 if [[ $STACK_STATUS == 'CREATE_COMPLETE' ]]; then
-                    echo 'FW HA instances are complete. Clustering instances..'
+                    echo 'VE HA instances are complete. Clustering instances..'
                     break
                 fi
                 if [[ $STACK_STATUS == 'CREATE_FAILED' ]]; then
-                    echo 'FW HA instances failed.'
+                    echo 'VE HA instances failed.'
+                    wc_notify --data-binary '{"status": "FAILURE", "reason": "VE HA instance template failed." }'
                     exit
                 fi
-                sleep $SLEEP_INTERVAL
-                NOT_COMPLETE=$(($NOT_COMPLETE + 1))
-                if [[ $NOT_COMPLETE -ge $MAX_ATTEMPTS ]]; then
-                    echo 'FW HA stack failed to reach COMPLETE before timing out'
+                sleep $CLUSTER_HEAT_QUERY_SLEEP_INTERVAL
+                CLUSTER_HEAT_NOT_COMPLETE=$(($CLUSTER_HEAT_NOT_COMPLETE + 1))
+                if [[ $CLUSTER_HEAT_NOT_COMPLETE -ge $CLUSTER_HEAT_QUERY_ATTEMPTS ]]; then
+                    echo 'VE HA stack failed to reach COMPLETE before timing out'
+                    wc_notify --data-binary '{"status": "FAILURE", "reason": "VE HA instance failed to reach COMPLETE before timing out." }'
                     exit             
                 fi
             done
             
-            # add allowed address pairs for floating selfIPs
+            # add Neutron allowed address pairs for floating selfIPs
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
-               FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_ip`
-               FLOATING_IP=`echo $FLOATING_IP | tr -d '"'`
-               FLOATING_IP_SUBNET_ID=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_subnet_id`
-               FLOATING_IP_SUBNET_ID=`echo $FLOATING_IP_SUBNET_ID | tr -d '"'`
-               FLOATING_CIDR=`neutron subnet-show $FLOATING_IP_SUBNET_ID|grep cidr|awk -F '|' '{print $3}'`
-               FLOATING_CIDR=`echo $FLOATING_CIDR | tr -d '"'`
+               NETWORK_1_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_ip`
+               NETWORK_1_FLOATING_IP=`echo $NETWORK_1_FLOATING_IP | tr -d '"'`
+               NETWORK_1_FLOATING_IP_SUBNET_ID=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_subnet_id`
+               NETWORK_1_FLOATING_IP_SUBNET_ID=`echo $NETWORK_1_FLOATING_IP_SUBNET_ID | tr -d '"'`
+               NETWORK_1_FLOATING_CIDR=`neutron subnet-show $NETWORK_1_FLOATING_IP_SUBNET_ID|grep cidr|awk -F '|' '{print $3}'`
+               NETWORK_1_FLOATING_CIDR=`echo $NETWORK_1_FLOATING_CIDR | tr -d '"'`
                VE1_NETWORK_1_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_port_1`
                VE1_NETWORK_1_PORT=`echo $VE1_NETWORK_1_PORT | tr -d '"'`
-               neutron port-update $VE1_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$FLOATING_IP
+               neutron port-update $VE1_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_1_FLOATING_IP
                VE2_NETWORK_1_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_port_2`
                VE2_NETWORK_1_PORT=`echo $VE2_NETWORK_1_PORT | tr -d '"'`
-               neutron port-update $VE2_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$FLOATING_IP
+               neutron port-update $VE2_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_1_FLOATING_IP
             fi
             
-            # query heat for the IP addresses to cluster the VEs
+            # query heat VE instance stack for the assigned IP addresses to cluster the VEs
             VE1_MGMT_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_mgmt_ip_1`
             VE1_MGMT_IP=`echo $VE1_MGMT_IP | tr -d '"'`
             VE1_MGMT_FLOAT_IP=$VE1_MGMT_IP
@@ -627,7 +766,6 @@ resources:
             VE2_HA_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_ha_ip_2`
             VE2_HA_IP=`echo $VE2_HA_IP | tr -d '"'`
             
-            
             # use http proxy if defined
             if [[ "__http_proxy_host__" != "None" ]]
             then
@@ -635,20 +773,23 @@ resources:
                 export https_proxy=https://__http_proxy_host__:__http_proxy_port__
             fi
             
-            # download packages needed to make icontrol calls for clustering
+            # Download provisioning agent packages
             wget -q -c -nc -O /home/onboard/odk.deb __f5_odk_package_url__
             wget -q -c -nc -O /home/onboard/f5_onboard.deb __f5_onboard_package_url__
 
-            # update package list and install dependancies
+            # Install any dependancies for agent package work
             apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-novaclient python-cinderclient python-eventlet python-suds python-paramiko
             
             # install packages
             dpkg -i /home/onboard/odk.deb
             dpkg -i /home/onboard/f5_onboard.deb    
             
-            # unset proxy if defined for local communications
-            unset http_proxy
-            unset https_proxy
+            # remove http proxy for local communications if not required
+            if [[ $use_proxy_for_local_resources == 'FALSE' ]]
+            then
+                unset http_proxy
+                unset https_proxy
+            fi
             
             # cluster VEs
             # cluster tenant stacked BIG-IPS
@@ -663,15 +804,15 @@ resources:
             --bigip-icontrol-username admin \
             --bigip-icontrol-password __f5_ve_admin_password__
             
-            # if floating SelfIPs are defined, create them and sync to cluster
+            # if TMOS floating SelfIPs are defined, create them and sync to cluster
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
-               FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_ip`
-               FLOATING_IP=`echo $FLOATING_IP | tr -d '"'`
+               NETWORK_1_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_floating_selfip_ip`
+               NETWORK_1_FLOATING_IP=`echo $NETWORK_1_FLOATING_IP | tr -d '"'`
                python $F5_ONBOARD_BIGIP_PY_DIR/add_floating_self_ips.py \
                 --network-list $NETWORK_1_NAME \
-                --selfip-list $FLOATING_IP \
-                --cidr-list $FLOATING_CIDR \
+                --selfip-list $NETWORK_1_FLOATING_IP \
+                --cidr-list $NETWORK_1_FLOATING_CIDR \
                 --access-list all \
                 --bigip-icontrol-host $VE1_MGMT_FLOAT_IP \
                 --bigip-icontrol-username admin \
