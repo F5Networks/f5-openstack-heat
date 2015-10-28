@@ -1,19 +1,26 @@
 heat_template_version: 2014-10-16
 
-description: This template deploys a Linux image as a TMOS Active/Standby HA VE onboarding server.
+description: >
+    This template deploys a Linux image as a TMOS Active/Standby HA VE
+    onboarding server. Within the user_data of the ve_onboard_instance, another
+    heat stack is built and deployed. This second stack deploys the Active and
+    Standby VE servers.
 
 parameters:
-  build_network:
+  onboard_network:
     type: string
     label: F5 Onboard Server Orchestration Network
     description: Private network to attach the orchestration instance
     default: None
     constraints:
       - custom_constraint: neutron.network
+  onboard_image_location:
+    type: string
+    label: Onboard Image Location
+    description: URL of onboard linux image
   package_proxy:
     type: string
     label: Package Install Proxy for APT
-    default: http://10.1.0.11:3142
   http_proxy_host:
     type: string
     label: HTTP Proxy Host to user to acquire resources
@@ -61,8 +68,7 @@ parameters:
   f5_ve_os_auth_url:
     type: string
     label: VE OS Keystone Auth URL
-    description: Keystone URL to perform VE service creation
-    default: http://10.1.0.42:5000/v2.0
+    description: Keystone URL to perform VE service creation, e.g. http://<keystone_ip>:5000/v2.0
   f5_ve_os_tenant:
     type: string
     label: VE OS Create Tenant
@@ -177,7 +183,8 @@ parameters:
 
 parameter_groups:
 - parameters:
-  - build_network
+  - onboard_network
+  - onboard_image_location
   - package_proxy
   - http_proxy_host
   - http_proxy_port
@@ -223,19 +230,19 @@ resources:
   wait_handle:
     type: OS::Heat::WaitConditionHandle
 
-  buildserver_image:
+  onboard_image:
     type: OS::Glance::Image
     properties:
       container_format: bare
       disk_format: qcow2
       is_public: False
-      location: http://10.1.0.11/ubuntu-14.04-server-cloudimg-amd64-disk1.img
+      location: { get_param: onboard_image_location }
       min_disk: 40
       min_ram: 512
       name: F5OnboardImage
       protected: False
     
-  ve_cluster_orchestration_security_group:
+  ve_onboard_security_group:
     type: OS::Neutron::SecurityGroup
     properties:
       name: onboard_security_group
@@ -253,15 +260,15 @@ resources:
         - protocol: udp
           direction: egress            
     
-  ve_cluster_orchestration_instance:
+  ve_onboard_instance:
     type: OS::Nova::Server
     properties:
-      image: { get_resource: buildserver_image }
+      image: { get_resource: onboard_image }
       security_groups:
-        - { get_resource: ve_cluster_orchestration_security_group }
+        - { get_resource: ve_onboard_security_group }
       flavor: m1.medium
       networks:
-        - network: { get_param: build_network }
+        - network: { get_param: onboard_network }
       user_data_format: RAW
       user_data:
         str_replace:
