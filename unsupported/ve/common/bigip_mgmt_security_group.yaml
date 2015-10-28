@@ -1,0 +1,26 @@
+heat_template_version: 2014-10-16
+
+description: This template deploys standard TMOS data security group.
+
+resources:
+
+   bigip_mgmt_security_group:
+    type: OS::Neutron::SecurityGroup
+    deletion_policy: Retain
+    properties:
+      description: security group rules for bigip mgmt port
+      name: bigip_mgmt_security_group
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 443
+          port_range_max: 443
+
+
+
