@@ -4,6 +4,14 @@
 
 The f5-openstack-heat repository contains a develop and master branch. The develop branch is used for ongoing development of heat templates. These templates may be highly active, undergoing many iterations, as they are refined. Criteria for promoting a develop template to a master template will be established by testing guidelines. The master branch is considered *golden* as it offers some assurance of adequate and sufficient testing as defined by the creators of this repository.
 
+To contribute to this repository, fork the repository and then clone your fork. Add the original repository as an upstream remote.
+
+```
+git remote add upstream https://github.com/F5Networks/f5-openstack-heat.git
+```
+
+Develop locally, pushing to your fork when necessary, and updating from the upstream repository often. When ready, submit a pull request using the template below.
+
 ## Where Templates Go
 
 ### F5 Supported Templates
