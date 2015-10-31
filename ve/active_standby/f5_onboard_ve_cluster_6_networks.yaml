@@ -230,7 +230,7 @@ parameters:
     label: VE Default Gateway IP
     default: None
     description: TMOS data interface upstream Gateway IP address.
-  f5_ve_os_ssh_key:
+  f5_ve_os_f5_ve_os_ssh_key:
     type: string
     label: F5 VE Root SSH Key Name
     description: Name of key-pair to be installed for root access on the VE instances.
@@ -289,7 +289,7 @@ parameter_groups:
   - f5_ve_os_image
   - f5_ve_os_flavor
   - f5_ve_os_config_drive
-  - f5_ve_os_ssh_key
+  - f5_ve_os_f5_ve_os_ssh_key
   - f5_odk_package_url
   - f5_onboard_package_url
   - f5_common_templates_url
@@ -388,7 +388,7 @@ resources:
             __f5_ve_os_image__: { get_param: f5_ve_os_image }
             __f5_ve_os_flavor__: { get_param: f5_ve_os_flavor }
             __f5_ve_os_config_drive__: { get_param: f5_ve_os_config_drive }
-            __f5_ve_os_ssh_key__: { get_param: f5_ve_os_ssh_key }          
+            __f5_ve_os_f5_ve_os_ssh_key__: { get_param: f5_ve_os_f5_ve_os_ssh_key }          
             __f5_odk_package_url__: { get_param: f5_odk_package_url }
             __f5_onboard_package_url__: { get_param: f5_onboard_package_url }
             __f5_common_templates_url__: { get_param: f5_common_templates_url }
@@ -578,7 +578,7 @@ resources:
             p="$p      ve_image: __f5_ve_os_image__ \n"
             p="$p      ve_flavor: __f5_ve_os_flavor__ \n"
             p="$p      use_config_drive: __f5_ve_os_config_drive__ \n"
-            p="$p      ssh_key: __f5_ve_os_ssh_key__ \n"
+            p="$p      f5_ve_os_ssh_key: __f5_ve_os_f5_ve_os_ssh_key__ \n"
             p="$p      admin_password: __f5_ve_admin_password__ \n"
             p="$p      root_password: __f5_ve_root_password__ \n"
             p="$p      http_proxy_host: __http_proxy_host__ \n"
@@ -597,7 +597,7 @@ resources:
                 NETWORK_1_NAME=`neutron net-list |grep __f5_ve_os_network_1__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
             fi
             p="$p      network_1: __f5_ve_os_network_1__ \n"
-            p="$p      network_1_name: $NETWORK_1_NAME"
+            p="$p      network_1_name: $NETWORK_1_NAME \n"
 
             NETWORK_2_NAME="__f5_ve_os_network_2_name__"
             if [[ $NETWORK_2_NAME == "None" ]]
@@ -605,7 +605,7 @@ resources:
                 NETWORK_2_NAME=`neutron net-list |grep __f5_ve_os_network_2__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
             fi
             p="$p      network_2: __f5_ve_os_network_2__ \n"
-            p="$p      network_2_name: $NETWORK_1_NAME"
+            p="$p      network_2_name: $NETWORK_2_NAME \n"
 
             NETWORK_3_NAME="__f5_ve_os_network_3_name__"
             if [[ $NETWORK_3_NAME == "None" ]]
@@ -613,7 +613,7 @@ resources:
                 NETWORK_3_NAME=`neutron net-list |grep __f5_ve_os_network_3__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
             fi
             p="$p      network_3: __f5_ve_os_network_3__ \n"
-            p="$p      network_3_name: $NETWORK_3_NAME"
+            p="$p      network_3_name: $NETWORK_3_NAME \n"
             
             NETWORK_4_NAME="__f5_ve_os_network_4_name__"
             if [[ $NETWORK_4_NAME == "None" ]]

@@ -179,7 +179,7 @@ parameters:
     label: VE Default Gateway IP
     default: None
     description: TMOS data interface upstream Gateway IP address.
-  f5_ve_os_ssh_key:
+  f5_ve_os_f5_ve_os_ssh_key:
     type: string
     label: F5 VE Root SSH Key Name
     description: Name of key-pair to be installed for root access on the VE instances.
@@ -238,7 +238,7 @@ parameter_groups:
   - f5_ve_os_image
   - f5_ve_os_flavor
   - f5_ve_os_config_drive
-  - f5_ve_os_ssh_key
+  - f5_ve_os_f5_ve_os_ssh_key
   - f5_odk_package_url
   - f5_onboard_package_url
   - f5_common_templates_url
@@ -328,7 +328,7 @@ resources:
             __f5_ve_os_image__: { get_param: f5_ve_os_image }
             __f5_ve_os_flavor__: { get_param: f5_ve_os_flavor }
             __f5_ve_os_config_drive__: { get_param: f5_ve_os_config_drive }
-            __f5_ve_os_ssh_key__: { get_param: f5_ve_os_ssh_key }          
+            __f5_ve_os_f5_ve_os_ssh_key__: { get_param: f5_ve_os_f5_ve_os_ssh_key }          
             __f5_odk_package_url__: { get_param: f5_odk_package_url }
             __f5_onboard_package_url__: { get_param: f5_onboard_package_url }
             __f5_common_templates_url__: { get_param: f5_common_templates_url }
@@ -509,7 +509,7 @@ resources:
             p="$p      ve_image: __f5_ve_os_image__ \n"
             p="$p      ve_flavor: __f5_ve_os_flavor__ \n"
             p="$p      use_config_drive: __f5_ve_os_config_drive__ \n"
-            p="$p      ssh_key: __f5_ve_os_ssh_key__ \n"
+            p="$p      f5_ve_os_ssh_key: __f5_ve_os_f5_ve_os_ssh_key__ \n"
             p="$p      admin_password: __f5_ve_admin_password__ \n"
             p="$p      root_password: __f5_ve_root_password__ \n"
             p="$p      http_proxy_host: __http_proxy_host__ \n"
