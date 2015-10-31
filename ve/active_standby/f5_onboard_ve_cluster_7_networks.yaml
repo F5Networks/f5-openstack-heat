@@ -479,8 +479,8 @@ resources:
             export OS_TENANT_NAME=__f5_ve_os_tenant__
             export COMMON_RESOURCE_HEAT_QUERY_ATTEMPTS=100
             export COMMON_RESOUCES_HEAT_QUERY_SLEEP_INTERVAL=2
-            export CLUSTER_HEAT_QUERY_ATTEMPTS=100
-            export CLUSTER_HEAT_QUERY_SLEEP_INTERVAL=2
+            export CLUSTER_HEAT_QUERY_ATTEMPTS=600
+            export CLUSTER_HEAT_QUERY_SLEEP_INTERVAL=3
             
             # remove http proxy for local communications if not required
             if [[ $use_proxy_for_local_resources == 'FALSE' ]]
