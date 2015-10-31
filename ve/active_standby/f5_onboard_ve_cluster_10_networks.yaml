@@ -91,7 +91,7 @@ parameters:
     type: string
     label: F5 Common Template Directory URL
     description: The URL to download common Heat templates for F5 security groups and cluster topologies.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/common
+    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/ve/common
   f5_ve_os_stack_name:
     type: string
     label: VE Cluster Name
