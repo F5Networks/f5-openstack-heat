@@ -1,51 +1,66 @@
 heat_template_version: 2013-05-23
 
-description: This template deploys a TMOS VEs with 3 data networks.
+description: This template deploys a TMOS VEs with 1 data network.
 
 parameters:
-  f5_ve_image:
+  f5_ve_os_image:
     type: string
     label: F5 VE Image
     description: The image to be used on the compute instance.
     constraints:
       - custom_constraint: glance.image 
-  f5_ve_flavor:
+  f5_ve_os_flavor:
     type: string
     label: F5 VE Flavor
     description: Type of instance (flavor) to be used for the VE.
     default: m1.medium
     constraints:
       - custom_constraint: nova.flavor
-  f5_use_config_drive:
+  f5_ve_os_config_drive:
     type: boolean
     label: Use Config Drive
     description: Use config drive to provider meta and user data.
     default: false 
-  f5_mgmt_network:
+  f5_ve_os_mgmt_network:
     type: string
     label: VE Management Network
     description: Management Interface Network.
     constraints:
       - custom_constraint: neutron.network
-  f5_network_1:
+  f5_ve_os_network_1:
     type: string
     label: VE Network for the 1.1 Interface
-    description: First TMM Network.
+    description: VE Network for the 1.1 Interface.
     constraints:
       - custom_constraint: neutron.network
-  f5_network_2:
+  f5_ve_os_network_1_name:
     type: string
-    label: VE Network for the 1.2. Interface
-    description: Second TMM Network.
+    label: VE Network Name for the 1.1 Interface
+    description: TMM 1.1 network name.
+    default: None
+  f5_ve_os_network_2:
+    type: string
+    label: VE Network for the 1.2 Interface
+    description: VE Network for the 1.2 Interface.
     constraints:
       - custom_constraint: neutron.network
-  f5_network_3:
+  f5_ve_os_network_2_name:
+    type: string
+    label: VE Network Name for the 1.2 Interface
+    description: TMM 1.2 network name.
+    default: None
+  f5_ve_os_network_3:
     type: string
     label: VE Network for the 1.3 Interface
-    description: Third TMM Network.
+    description: VE Network for the 1.3 Interface.
     constraints:
       - custom_constraint: neutron.network
-  f5_default_gateway:
+  f5_ve_os_network_3_name:
+    type: string
+    label: VE Network Name for the 1.3 Interface
+    description: TMM 1.3 network name.
+    default: None
+  f5_ve_default_gateway:
     type: string
     label: Default Gateway IP
     default: None
@@ -74,26 +89,26 @@ parameters:
     default: 443
     constraints:
       - range: { min: 1, max: 65534 }
-  ssh_key:
+  f5_ve_os_ssh_key:
     type: string
     label: F5 FW Root SSH Key Name
     description: Name of key-pair to be installed on the FW instances.
     default: my_key
     constraints:
       - custom_constraint: nova.keypair
-  f5_admin_password:
+  f5_ve_admin_password:
     type: string
     label: F5 VE Admin User Password
     description: Password used to perform image import services
     default: admin
     hidden: true  
-  f5_root_password:
+  f5_ve_root_password:
     type: string
     label: F5 VE Root User Password
     description: Password used to perform image import services
     default: admin
     hidden: true
-  f5_license_basekey:
+  f5_ve_license_1:
     type: string
     label: F5 License Base Key
     description: F5 TMOS License Basekey
@@ -102,15 +117,18 @@ parameters:
 
 parameter_groups:
 - parameters:
-  - f5_ve_image
-  - f5_ve_flavor
-  - f5_use_config_drive
-  - ssh_key
-  - f5_mgmt_network
-  - f5_network_1
-  - f5_network_2
-  - f5_network_3
-  - f5_default_gateway
+  - f5_ve_os_image
+  - f5_ve_os_flavor
+  - f5_ve_os_config_drive
+  - f5_ve_os_ssh_key
+  - f5_ve_os_mgmt_network
+  - f5_ve_os_network_1
+  - f5_ve_os_network_1_name
+  - f5_ve_os_network_2
+  - f5_ve_os_network_2_name
+  - f5_ve_os_network_3
+  - f5_ve_os_network_3_name
+  - f5_ve_default_gateway
 - parameters:
   - http_proxy_host
   - http_proxy_port
@@ -118,214 +136,84 @@ parameter_groups:
   - license_activation_host
   - license_activation_port
 - parameters:
-  - f5_admin_password
-  - f5_root_password
-  - f5_license_basekey
+  - f5_ve_admin_password
+  - f5_ve_root_password
+  - f5_ve_license_1
 
 resources:
 
    bigip_data_security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      description: security group rules for data interfaces
-      name: bigip_open_security_group
-      rules: 
-        - protocol: icmp
-          direction: ingress
-        - protocol: icmp
-          direction: egress
-        - protocol: tcp
-          direction: ingress
-        - protocol: tcp
-          direction: egress
-        - protocol: udp
-          direction: ingress
-        - protocol: udp
-          direction: egress
+    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/common/bigip_data_security_group.yaml
 
    bigip_mgmt_security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      description: security group rules for bigip mgmt port
-      name: bigip_mgmt_security_group
-      rules:
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: icmp
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: tcp
-          port_range_min: 22
-          port_range_max: 22
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: tcp
-          port_range_min: 443
-          port_range_max: 443
-
-   bigip_control_security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      description: security group rules for ha and mirroring self ip address
-      name: bigip_control_security_group
-      rules:
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: icmp
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: udp
-          port_range_min: 1026
-          port_range_max: 1043
-        - remote_ip_prefix: 0.0.0.0/0
-          protocol: tcp
-          port_range_min: 4353
-          port_range_max: 4353
-       
-   f5_mgmt_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: f5_mgmt_network}
-      security_groups: [{get_resource: bigip_mgmt_security_group}]
-   f5_network_1_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: f5_network_1}
-      security_groups: [{get_resource: bigip_control_security_group}]
-   f5_network_2_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: f5_network_2}
-      security_groups: [{get_resource: bigip_data_security_group}]
-   f5_network_3_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: f5_network_3}
-      security_groups: [{get_resource: bigip_data_security_group}]   
+    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/common/bigip_mgmt_security_group.yaml
 
    f5_ve_instance:
-    type: OS::Nova::Server
+    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/common/f5_ve_standalone_2_nic.yaml
     properties:
-      image: { get_param: f5_ve_image }
-      flavor: { get_param: f5_ve_flavor }
-      config_drive: { get_param: f5_use_config_drive }
-      key_name: { get_param: ssh_key }
-      networks:
-        - port: {get_resource: f5_mgmt_port}
-        - port: {get_resource: f5_network_1_port}
-        - port: {get_resource: f5_network_2_port}
-        - port: {get_resource: f5_network_3_port}
-      user_data_format: RAW
-      user_data:
-        str_replace:
-          params:
-            __http_proxy_host__: { get_param: http_proxy_host }
-            __http_proxy_port__: { get_param: http_proxy_port }
-            __http_proxy_script_url__ : { get_param: http_proxy_script_url }
-            __license_activation_host__: { get_param: license_activation_host }
-            __license_activation_port__: { get_param: license_activation_port }
-            __f5_network_1__: { get_param: f5_network_1 }
-            __f5_network_2__: { get_param: f5_network_2 }
-            __f5_network_3__: { get_param: f5_network_3 }
-            __f5_admin_password__: { get_param: f5_admin_password }
-            __f5_root_password__: { get_param: f5_root_password }
-            __f5_license_basekey__: { get_param: f5_license_basekey }
-            __f5_default_gateway__: { get_param: f5_default_gateway }
-          template: |
-            {
-               "bigip": {
-                   "ssh_key_inject": "true",
-                   "change_passwords": "true",
-                   "admin_password": "__f5_admin_password__",
-                   "root_password": "__f5_root_password__",
-                   "license": {
-                       "basekey": "__f5_license_basekey__",
-                       "host": "__license_activation_host__",
-                       "port": "__license_activation_port__",
-                       "proxyhost": "__http_proxy_host__",
-                       "proxyport": "__http_proxy_port__",
-                       "proxyscripturl": "__http_proxy_script_url__"
-                   },
-                   "modules": {
-                       "auto_provision": "false",
-                       "ltm": "nominal"
-                   },
-                   "network": {
-                       "dhcp": "true",
-                       "selfip_prefix": "selfip-",
-                       "vlan_prefix": "network-",
-                       "routes": [
-                          {
-                            "destination": "0.0.0.0/0.0.0.0",
-                            "gateway": "__f5_default_gateway__"
-                          }
-                       ],
-                       "interfaces": {
-                           "1.1": {
-                               "dhcp": "true",
-                               "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__f5_network_1__",
-                               "selfip_description": "Self IP address for BIG-IP __f5_network_1__",
-                               "vlan_name": "vlan.__f5_network_1__",
-                               "vlan_description": "VLAN for BIG-IP __f5_network_1__ traffic",
-                               "is_failover": "true",
-                               "is_sync": "true",
-                               "is_mirror_primary": "true",
-                               "is_mirror_secondary": "false"
-                           },
-                           "1.2": {
-                               "dhcp": "true",
-                               "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__f5_network_2__",
-                               "selfip_description": "Self IP address for BIG-IP __f5_network_2__",
-                               "vlan_name": "vlan.__f5_network_2__",
-                               "vlan_description": "VLAN for BIG-IP __f5_network_2__ traffic",
-                               "is_failover": "false",
-                               "is_sync": "false",
-                               "is_mirror_primary": "false",
-                               "is_mirror_secondary": "false"
-                           },
-                           "1.3": {
-                               "dhcp": "true",
-                               "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__f5_network_3__",
-                               "selfip_description": "Self IP address for BIG-IP __f5_network_3__",
-                               "vlan_name": "vlan.__f5_network_3__",
-                               "vlan_description": "VLAN for BIG-IP __f5_network_3__ traffic",
-                               "is_failover": "false",
-                               "is_sync": "false",
-                               "is_mirror_primary": "false",
-                               "is_mirror_secondary": "false"
-                           }
-                       }
-                   }
-               }
-            }
+      ve_image: { get_param: f5_ve_os_image }
+      ve_flavor: { get_param: f5_ve_os_flavor }
+      use_config_drive: { get_param: f5_ve_os_config_drive }
+      f5_ve_os_ssh_key: { get_param: f5_ve_os_ssh_key }
+      admin_password: { get_param: f5_ve_admin_password }
+      root_password: { get_param: f5_ve_root_password }
+      http_proxy_host: { get_param: http_proxy_host }
+      http_proxy_port: { get_param: http_proxy_port }
+      http_proxy_script_url: { get_param: http_proxy_script_url }
+      license_activation_host: { get_param: license_activation_host }
+      license_activation_port: { get_param: license_activation_port }
+      license: { get_param: f5_ve_license_1 }
+      mgmt_network: { get_param: f5_ve_os_mgmt_network }
+      network_1: { get_param: f5_ve_os_network_1 }
+      network_1_name: { get_param: f5_ve_os_network_1_name }
+      network_2: { get_param: f5_ve_os_network_2 }
+      network_2_name: { get_param: f5_ve_os_network_2_name }
+      network_3: { get_param: f5_ve_os_network_3 }
+      network_3_name: { get_param: f5_ve_os_network_3_name }
+      default_gateway: { get_param: f5_ve_default_gateway }
+    
   
 outputs:
-  ve_instance_name:
-    description: Name of the instance
-    value: { get_attr: [f5_ve_instance, name] }
-  ve_instance_id:
-    description: ID of the instance
-    value: { get_resource: f5_ve_instance }
-  ve_mgmt_mac:
-    description: The mgmt MAC address of f5 VE instance
-    value: { get_attr: [f5_mgmt_port, mac_address] }
-  ve_mgmt_ip:
-    description: The mgmt IP address of f5 VE instance
-    value: { get_attr: [f5_mgmt_port, fixed_ips, 0, ip_address] }
-  ve_f5_network_1_mac:
-    description: The TMM 1.1 MAC address of f5 VE instance
-    value: { get_attr: [f5_network_1_port, mac_address] }
-  ve_f5_network_1_ip:
-    description: The TMM 1.1 IP address of f5 VE instance
-    value: { get_attr: [f5_network_1_port, fixed_ips, 0, ip_address] }
-  ve_f5_network_2_mac:
-    description: The TMM 1.2 MAC address of f5 VE instance
-    value: { get_attr: [f5_network_2_port, mac_address] }
-  ve_f5_network_2_ip:
-    description: The TMM 1.2 IP address of f5 VE instance
-    value: { get_attr: [f5_network_2_port, fixed_ips, 0, ip_address] }
-  ve_f5_network_3_mac:
-    description: The TMM 1.3 IP address of f5 VE instance
-    value: { get_attr: [f5_network_3_port, mac_address] }
-  ve_f5_network_3_ip:
-    description: The TMM 1.3 IP address of f5 VE instance
-    value: { get_attr: [f5_network_3_port, fixed_ips, 0, ip_address] }
+  f5_ve_instance_name:
+    description: VE Nova instance name
+    value: { get_attr: [f5_ve_instance, ve_instance_name] }
+  f5_ve_instance_id:
+    description: VE Nova instance ID
+    value: { get_attr: [f5_ve_instance, ve_instance_id] }
+  f5_ve_mgmt_ip:
+    description: VE management IP address
+    value: { get_attr: [f5_ve_instance, mgmt_ip] }
+  f5_ve_mgmt_mac:
+    description: VE management MAC address
+    value: { get_attr: [f5_ve_instance, mgmt_mac] }
+  f5_ve_mgmt_port:
+    description: VE management MAC port ID
+    value: { get_attr: [f5_ve_instance, mgmt_port] }
+  f5_ve_network_1_ip:
+    description: VE TMM 1.1 non floating SelfIP address
+    value: { get_attr: [f5_ve_instance, network_1_ip] }
+  f5_ve_network_1_mac:
+    description: VE TMM 1.1 MAC address
+    value: { get_attr: [f5_ve_instance, network_1_mac] }
+  f5_ve_network_1_port:
+    description: VE TMM 1.1 port ID
+    value: { get_attr: [f5_ve_instance, network_1_port] }
+  f5_ve_network_2_ip:
+    description: VE TMM 1.2 non floating SelfIP address
+    value: { get_attr: [f5_ve_instance, network_2_ip] }
+  f5_ve_network_2_mac:
+    description: VE TMM 1.2 MAC address
+    value: { get_attr: [f5_ve_instance, network_2_mac] }
+  f5_ve_network_1_port:
+    description: VE TMM 1.2 port ID
+    value: { get_attr: [f5_ve_instance, network_2_port] }
+  f5_ve_network_3_ip:
+    description: VE TMM 1.3 non floating SelfIP address
+    value: { get_attr: [f5_ve_instance, network_3_ip] }
+  f5_ve_network_3_mac:
+    description: VE TMM 1.3 MAC address
+    value: { get_attr: [f5_ve_instance, network_3_mac] }
+  f5_ve_network_3_port:
+    description: VE TMM 1.3 port ID
+    value: { get_attr: [f5_ve_instance, network_3_port] }
  
