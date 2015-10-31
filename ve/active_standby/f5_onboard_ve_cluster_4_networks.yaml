@@ -618,7 +618,7 @@ resources:
             fi
             
             need_network_2_floating_ip=`echo "__f5_ve_os_network_2_floating_ip__" | tr '[a-z]' '[A-Z]'`
-            if [[ $need_network_2_floating_ip == 'TRUE' ]]__f5_ve_os_network_1__
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
             then
                 echo -e "  f5_ve_network_2_floating_selfip_port:">>$template_file
                 echo -e "    type: OS::Neutron::Port">>$template_file 
