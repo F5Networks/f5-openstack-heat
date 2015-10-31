@@ -925,7 +925,7 @@ resources:
                NETWORK_2_FLOATING_CIDR=`echo $NETWORK_2_FLOATING_CIDR | tr -d '"'`
                VE1_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_1`
                VE1_NETWORK_2_PORT=`echo $VE1_NETWORK_2_PORT | tr -d '"'`
-               neutron port-update $VE2_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+               neutron port-update $VE1_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
                VE2_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_2`
                VE2_NETWORK_2_PORT=`echo $VE2_NETWORK_2_PORT | tr -d '"'`
                neutron port-update $VE2_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
@@ -941,7 +941,7 @@ resources:
                NETWORK_3_FLOATING_CIDR=`echo $NETWORK_3_FLOATING_CIDR | tr -d '"'`
                VE1_NETWORK_3_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_3_port_1`
                VE1_NETWORK_3_PORT=`echo $VE1_NETWORK_3_PORT | tr -d '"'`
-               neutron port-update $VE2_NETWORK_3_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_3_FLOATING_IP
+               neutron port-update $VE1_NETWORK_3_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_3_FLOATING_IP
                VE2_NETWORK_3_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_3_port_2`
                VE2_NETWORK_3_PORT=`echo $VE2_NETWORK_3_PORT | tr -d '"'`
                neutron port-update $VE2_NETWORK_3_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_3_FLOATING_IP
