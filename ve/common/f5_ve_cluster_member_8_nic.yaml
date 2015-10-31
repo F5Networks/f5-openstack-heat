@@ -21,7 +21,7 @@ parameters:
     label: Use Config Drive
     description: Use config drive to provider meta and user data.
     default: false 
-  ssh_key:
+  f5_ve_os_ssh_key:
     type: string
     label: F5 FW Root SSH Key Name
     description: Name of key-pair to be installed on the FW instances.
@@ -161,7 +161,7 @@ parameter_groups:
   - ve_flavor
   - use_config_drive
 - parameters:
-  - ssh_key
+  - f5_ve_os_ssh_key
   - admin_password
   - root_password
 - parameters:
@@ -242,7 +242,7 @@ resources:
     properties:
       image: { get_param: ve_image }
       flavor: { get_param: ve_flavor }
-      key_name: { get_param: ssh_key }
+      key_name: { get_param: f5_ve_os_ssh_key }
       config_drive: { get_param: use_config_drive }
       networks:
         - port: {get_resource: mgmt_port}
@@ -281,7 +281,7 @@ resources:
           template: |
             {
                "bigip": {
-                   "ssh_key_inject": "true",
+                   "f5_ve_os_ssh_key_inject": "true",
                    "change_passwords": "true",
                    "admin_password": "__admin_password__",
                    "root_password": "__root_password__",
