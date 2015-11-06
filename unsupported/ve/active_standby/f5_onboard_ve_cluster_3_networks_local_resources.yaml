@@ -120,7 +120,7 @@ parameters:
     label: F5 VE External Network
     description: Specify a specific Neutron external network for managment interface Floating IP creation.
     constraints:
-      - custom_constraints: neutron.network
+      - custom_constraint: neutron.network
   f5_ve_os_mgmt_network:
     type: string
     label: F5 VE Management Network
