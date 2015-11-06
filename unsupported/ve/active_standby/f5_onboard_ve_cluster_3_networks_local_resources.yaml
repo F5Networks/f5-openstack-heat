@@ -132,7 +132,7 @@ parameters:
     type: boolean
     label: Create F5 VE Management Neutron Floating IP
     description: Should a Neutron Floating IP be created for the VE management interface.
-    default: false
+    default: true
   f5_ve_os_ha_network:
     type: string
     label: F5 VE HA Network
