@@ -10,6 +10,11 @@ parameters:
     default: m1.medium
     constraints:
       - custom_constraint: nova.flavor 
+  use_config_drive:
+    type: boolean
+    label: F5 Onboard Server Use Config Drive
+    description: Use config drive to provider meta and user data to the orchestration instance.
+    default: false
   private_network:
     type: string
     label: F5 Onboard Server Management Network
@@ -70,6 +75,7 @@ parameters:
 parameter_groups:
 - parameters:
   - flavor
+  - use_config_drive
   - private_network
   - package_proxy
   - http_proxy_host
@@ -130,6 +136,7 @@ resources:
     depends_on: onboard_image
     properties:
       image: { get_resource: onboard_image }
+      config_drive: { get_param: use_config_drive }
       security_groups:
         - { get_resource: onboard_security_group }
       flavor: { get_param: flavor }
