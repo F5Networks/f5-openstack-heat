@@ -80,7 +80,7 @@ parameters:
     type: string
     label: VE Network for the 1.1 Interface
     description: TMM 1.1 network.
-    default: private-ha
+    default: private
     constraints:
       - custom_constraint: neutron.network
   network_1_name:
@@ -157,8 +157,8 @@ resources:
       config_drive: { get_param: use_config_drive }
       networks:
         - port: {get_resource: mgmt_port}
-        - port: {get_resource: ha_port}
         - port: {get_resource: network_1_port}
+        - port: {get_resource: network_2_port}
       user_data_format: RAW
       user_data:
         str_replace:

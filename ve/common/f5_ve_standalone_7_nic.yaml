@@ -233,8 +233,12 @@ resources:
       config_drive: { get_param: use_config_drive }
       networks:
         - port: {get_resource: mgmt_port}
-        - port: {get_resource: ha_port}
         - port: {get_resource: network_1_port}
+        - port: {get_resource: network_2_port}
+        - port: {get_resource: network_3_port}
+        - port: {get_resource: network_4_port}
+        - port: {get_resource: network_5_port}
+        - port: {get_resource: network_6_port}
       user_data_format: RAW
       user_data:
         str_replace:
