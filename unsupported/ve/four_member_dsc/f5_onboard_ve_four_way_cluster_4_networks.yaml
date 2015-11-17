@@ -1,335 +1,262 @@
 heat_template_version: 2014-10-16
 
 description: >
-    This template deploys a Linux image as an onboarding server for a four-way cluster of VEs with 3 nics.
+  This template deploys a Linux image as an onboarding server for a four-way cluster of VEs with 4 nics.
+
+parameter_groups:
+- parameters: [build_network, buildserver_image, use_config_drive, package_proxy,
+    http_proxy_host, http_proxy_port, http_proxy_script_url, use_proxy_for_local_resources,
+    license_activation_host, license_activation_port]
+- parameters: [f5_ve_os_stack_name, f5_ve_os_auth_url, f5_ve_os_tenant, f5_ve_os_user,
+    f5_ve_os_password, f5_ve_os_image, f5_ve_os_flavor, f5_ve_os_config_drive, f5_ve_os_ssh_key,
+    f5_odk_package_url, f5_onboard_package_url, f5_common_templates_url, f5_ve_default_gateway,
+    f5_ve_admin_password, f5_ve_root_password, f5_ve_license_1, f5_ve_license_2, f5_ve_license_3,
+    f5_ve_license_4]
+- parameters: [f5_ve_os_external_network, f5_ve_os_mgmt_network, f5_ve_os_mgmt_network_floating_ip,
+    f5_ve_os_ha_network, f5_ve_os_network_1, f5_ve_os_network_1_name, f5_ve_os_network_1_floating_ip,
+    f5_ve_os_network_2, f5_ve_os_network_2_name, f5_ve_os_network_2_floating_ip, f5_ve_os_network_3,
+    f5_ve_os_network_3_name, f5_ve_os_network_3_floating_ip, f5_ve_os_network_4, f5_ve_os_network_4_name,
+    f5_ve_os_network_4_floating_ip]
 
 parameters:
   build_network:
-    type: string
+    constraints:
+    - {custom_constraint: neutron.network}
+    description: Network to attach the orchestration instance. Must be able to reach
+      the publicURL for OS API services.
     label: F5 Onboard Server Orchestration Network
-    description: Network to attach the orchestration instance. Must be able to reach the publicURL for OS API services.
-    constraints:
-      - custom_constraint: neutron.network
+    type: string
   buildserver_image:
-    type: string
-    label: F5 Onboard OS Image
+    constraints:
+    - {custom_constraint: glance.image}
     description: Ubuntu image to use for the ochestration instance.
-    constraints:
-      - custom_constraint: glance.image
-  use_config_drive:
-    type: boolean
-    label: Use Config Drive for Orchestration Server
-    description: Use config drive to provider meta and user data to the orchestration instance.
-    default: false
-  package_proxy:
+    label: F5 Onboard OS Image
     type: string
-    label: Package Install Proxy URL for APT
-    description: APT HTTP caching proxy to use for orhcestration package dependancies.
-    default: None
-  http_proxy_host:
-    type: string
-    label: HTTP Proxy Host to use for orchestration instance access
-    default: None
-  http_proxy_port:
-    type: number
-    label: HTTP Proxy Port to use for orchestration instance access
-    default: 8080
-    constraints:
-      - range: { min: 1024, max: 65534 }
-  http_proxy_script_url:
-    type: string
-    label: HTTP Proxy Script URL for F5 License Client
-    description: F5 proxy script needed if HTTP proxy access is requried for VE license activation.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
-  use_proxy_for_local_resources:
-    type: boolean
-    label: User HTTP proxy for OpenStack API Access
-    description: Use the configured HTTP proxy when accessing OpenStack APIs.
-    default: false
-  license_activation_host:
-    type: string
-    label: License Activation Host
-    description: Alternative F5 license activation host. Only needed if license request should not go to activate.f5.com.
-    default: None
-  license_activation_port:
-    type: number
-    label: License Activation Port
-    description: Alternative F5 license activation port. Only needed if license request should not go to port 443.
-    default: 443
-    constraints:
-      - range: { min: 1, max: 65534 }
-  f5_odk_package_url:
-    type: string
-    label: F5 OpenStack Deployment Kit URL
-    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ orchestration.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/odk.deb
-  f5_onboard_package_url:
-    type: string
-    label: F5 Virtual Edition Onboard Tools URL
-    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ orchestration.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/f5_onboard.deb
-  f5_common_templates_url:
-    type: string
-    label: F5 Common Template Directory URL
-    description: The URL to download common Heat templates for F5 security groups and cluster topologies.
-    default: https://bldr-git.int.lineratesystems.com/breaux/openstack-heat-templates/raw/develop/unsupported/ve/common
-  f5_ve_os_stack_name:
-    type: string
-    label: VE Cluster Name
-    description: Unique Name for this VE Device Service Group cluster.
-    default: 'f5_ve_ha_1_0_1'
-  f5_ve_os_auth_url:
-    type: string
-    label: VE OS Keystone Auth URL
-    description: Keystone URL to perform VE instance creation.
-  f5_ve_os_tenant:
-    type: string
-    label: VE OS Create Tenant
-    description: Tenant to perform VE instance creation.
-    default: admin
-  f5_ve_os_user:
-    type: string
-    label: VE OS Create User
-    description: User to perform VE instance creation.
-    default: admin
-  f5_ve_os_password:
-    type: string
-    label: VE OS Create User Password
-    description: Password used to perform VE instance creation.
-    default: admin
-    hidden: true
-  f5_ve_os_image:
-    type: string
-    label: F5 VE Image
-    description: The image to be used on the VE instance.
-    constraints:
-      - custom_constraint: glance.image 
-  f5_ve_os_flavor:
-    type: string
-    label: F5 VE Flavor
-    description: Type of instance (flavor) to be used for the VE instance.
-    default: m1.medium
-    constraints:
-      - custom_constraint: nova.flavor 
-  f5_ve_os_config_drive:
-    type: boolean
-    label: Use Config Drive for VE Instances
-    description: Use config drive to provider meta and user data to the VE instance.
-    default: false 
-  f5_ve_os_external_network:
-    type: string
-    label: F5 VE External Network
-    description: Specify a specific Neutron external network for managment interface Floating IP creation.
-    constraints:
-      - custom_constraint: neutron.network
-  f5_ve_os_mgmt_network:
-    type: string
-    label: F5 VE Management Network
-    description: Neutron network for the VE management interface.
-    constraints:
-      - custom_constraint: neutron.network
-  f5_ve_os_mgmt_network_floating_ip:
-    type: boolean
-    label: Create F5 VE Management Neutron Floating IP
-    description: Should a Neutron Floating IP be created for the VE management interface.
-    default: false
-  f5_ve_os_ha_network:
-    type: string
-    label: F5 VE HA Network
-    description: Neutron network for the VE HA config sycn and mirroring interface.
-    constraints:
-      - custom_constraint: neutron.network
-  f5_ve_os_network_1:
-    type: string
-    label: F5 VE 1.2 Network
-    description: Neutron network for the VE 1.2 data interface.
-    constraints:
-      - custom_constraint: neutron.network
-  f5_ve_os_network_1_name:
-    type: string
-    label: F5 VE Network Name for the 1.2 Interface
-    description: TMM network name for the untagged VLAN associated with the 1.2 data interface.
-    default: None
-  f5_ve_os_network_1_floating_ip:
-    type: boolean
-    label: Create F5 VE TMOS 1.2 Network Floating SelfIP
-    description: Should a Floating SelfIP be created for the TMOS 1.2 data interface.
-    default: false
-  f5_ve_default_gateway:
-    type: string
-    label: VE Default Gateway IP
-    default: None
-    description: TMOS data interface upstream Gateway IP address.
-  f5_ve_os_ssh_key:
-    type: string
-    label: F5 VE Root SSH Key Name
-    description: Name of key-pair to be installed for root access on the VE instances.
-    default: None
-    constraints:
-      - custom_constraint: nova.keypair
+  f5_common_templates_url: {default: 'https://bldr-git.int.lineratesystems.com/breaux/openstack-heat-templates/raw/develop/unsupported/ve/common',
+    description: The URL to download common Heat templates for F5 security groups
+      and cluster topologies., label: F5 Common Template Directory URL, type: string}
+  f5_odk_package_url: {default: 'https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/odk.deb',
+    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ
+      orchestration., label: F5 OpenStack Deployment Kit URL, type: string}
+  f5_onboard_package_url: {default: 'https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/f5_onboard.deb',
+    description: The URL to download the ODK debian package for BIG-IP and BIG-IQ
+      orchestration., label: F5 Virtual Edition Onboard Tools URL, type: string}
   f5_ve_admin_password:
-    type: string
-    label: F5 VE Admin User Password
+    constraints:
+    - {allowed_pattern: '[a-zA-Z0-9_-]*', description: 'Password in templates are
+        limited to alpha, numeric, underscore, and dashes'}
+    default: admin
     description: TMOS admin password for the VE instances.
-    default: admin
     hidden: true
+    label: F5 VE Admin User Password
+    type: string
+  f5_ve_default_gateway: {default: None, description: TMOS data interface upstream
+      Gateway IP address., label: VE Default Gateway IP, type: string}
+  f5_ve_license_1: {default: None, description: F5 TMOS license basekey for the primary
+      VE instance., hidden: true, label: Primary VE License Base Key, type: string}
+  f5_ve_license_2: {default: None, description: F5 TMOS license basekey for the secondary
+      VE instance., hidden: true, label: Secondary VE License Base Key, type: string}
+  f5_ve_license_3: {default: None, description: F5 TMOS license basekey for the third
+      VE instance, hidden: true, label: Third VE License Base Key, type: string}
+  f5_ve_license_4: {default: None, description: F5 TMOS license basekey for the fourth
+      VE instance, hidden: true, label: Fourth VE License Base Key, type: string}
+  f5_ve_os_auth_url: {description: Keystone URL to perform VE instance creation.,
+    label: VE OS Keystone Auth URL, type: string}
+  f5_ve_os_config_drive: {default: false, description: Use config drive to provider
+      meta and user data to the VE instance., label: Use Config Drive for VE Instances,
+    type: boolean}
+  f5_ve_os_external_network:
     constraints:
-      - allowed_pattern: "[a-zA-Z0-9_-]*"
-        description: Password in templates are limited to alpha, numeric, underscore, and dashes
+    - {custom_constraint: neutron.network}
+    description: Specify a specific Neutron external network for managment interface
+      Floating IP creation.
+    label: F5 VE External Network
+    type: string
+  f5_ve_os_flavor:
+    constraints:
+    - {custom_constraint: nova.flavor}
+    default: m1.medium
+    description: Type of instance (flavor) to be used for the VE instance.
+    label: F5 VE Flavor
+    type: string
+  f5_ve_os_ha_network:
+    constraints:
+    - {custom_constraint: neutron.network}
+    description: Neutron network for the VE HA config sycn and mirroring interface.
+    label: F5 VE HA Network
+    type: string
+  f5_ve_os_image:
+    constraints:
+    - {custom_constraint: glance.image}
+    description: The image to be used on the VE instance.
+    label: F5 VE Image
+    type: string
+  f5_ve_os_mgmt_network:
+    constraints:
+    - {custom_constraint: neutron.network}
+    description: Neutron network for the VE management interface.
+    label: F5 VE Management Network
+    type: string
+  f5_ve_os_mgmt_network_floating_ip: {default: false, description: Should a Neutron
+      Floating IP be created for the VE management interface., label: Create F5 VE
+      Management Neutron Floating IP, type: boolean}
+  f5_ve_os_network_1:
+    constraints: &id001
+    - {custom_constraint: neutron.network}
+    description: Neutron network for the VE 1.2 data interface.
+    label: F5 VE 1.2 Network
+    type: string
+  f5_ve_os_network_1_floating_ip: {default: false, description: Should a Floating
+      SelfIP be created for the TMOS 1.2 data interface., label: Create F5 VE TMOS
+      1.2 Network Floating SelfIP, type: boolean}
+  f5_ve_os_network_1_name: {default: None, description: TMM network name for the untagged
+      VLAN associated with the 1.2 data interface., label: F5 VE Network Name for
+      the 1.2 Interface, type: string}
+  f5_ve_os_network_2:
+    constraints: *id001
+    description: Neutron network for the VE 1.3 data interface.
+    label: F5 VE 1.3 Network
+    type: string
+  f5_ve_os_network_2_floating_ip: {default: false, description: Should a Floating
+      SelfIP be created for the TMOS 1.3 data interface., label: Create F5 VE TMOS
+      1.3 Network Floating SelfIP, type: boolean}
+  f5_ve_os_network_2_name: {default: None, description: TMM network name for the untagged
+      VLAN associated with the 1.3 data interface., label: F5 VE Network Name for
+      the 1.3 Interface, type: string}
+  f5_ve_os_network_3:
+    constraints: *id001
+    description: Neutron network for the VE 1.4 data interface.
+    label: F5 VE 1.4 Network
+    type: string
+  f5_ve_os_network_3_floating_ip: {default: false, description: Should a Floating
+      SelfIP be created for the TMOS 1.4 data interface., label: Create F5 VE TMOS
+      1.4 Network Floating SelfIP, type: boolean}
+  f5_ve_os_network_3_name: {default: None, description: TMM network name for the untagged
+      VLAN associated with the 1.4 data interface., label: F5 VE Network Name for
+      the 1.4 Interface, type: string}
+  f5_ve_os_network_4:
+    constraints: *id001
+    description: Neutron network for the VE 1.5 data interface.
+    label: F5 VE 1.5 Network
+    type: string
+  f5_ve_os_network_4_floating_ip: {default: false, description: Should a Floating
+      SelfIP be created for the TMOS 1.5 data interface., label: Create F5 VE TMOS
+      1.5 Network Floating SelfIP, type: boolean}
+  f5_ve_os_network_4_name: {default: None, description: TMM network name for the untagged
+      VLAN associated with the 1.5 data interface., label: F5 VE Network Name for
+      the 1.5 Interface, type: string}
+  f5_ve_os_password: {default: admin, description: Password used to perform VE instance
+      creation., hidden: true, label: VE OS Create User Password, type: string}
+  f5_ve_os_ssh_key:
+    constraints:
+    - {custom_constraint: nova.keypair}
+    default: None
+    description: Name of key-pair to be installed for root access on the VE instances.
+    label: F5 VE Root SSH Key Name
+    type: string
+  f5_ve_os_stack_name: {default: f5_ve_ha_1_0_1, description: Unique Name for this
+      VE Device Service Group cluster., label: VE Cluster Name, type: string}
+  f5_ve_os_tenant: {default: admin, description: Tenant to perform VE instance creation.,
+    label: VE OS Create Tenant, type: string}
+  f5_ve_os_user: {default: admin, description: User to perform VE instance creation.,
+    label: VE OS Create User, type: string}
   f5_ve_root_password:
-    type: string
-    label: F5 VE Root User Password
-    description: TMOS root password for the VE instances.
-    default: admin
-    hidden: true
     constraints:
-      - allowed_pattern: "[a-zA-Z0-9_-]*"
-        description: Password in templates are limited to alpha, numeric, underscore, and dashes
-  f5_ve_license_1:
-    type: string
-    label: Primary VE License Base Key
-    description: F5 TMOS license basekey for the primary VE instance.
-    default: None
+    - {allowed_pattern: '[a-zA-Z0-9_-]*', description: 'Password in templates are
+        limited to alpha, numeric, underscore, and dashes'}
+    default: admin
+    description: TMOS root password for the VE instances.
     hidden: true
-  f5_ve_license_2:
+    label: F5 VE Root User Password
     type: string
-    label: Secondary VE License Base Key
-    description: F5 TMOS license basekey for the secondary VE instance.
-    default: None
-    hidden: true
-  f5_ve_license_3:
-    type: string
-    label: Third VE License Base Key
-    description: F5 TMOS license basekey for the third VE instance
-    default: None
-    hidden: true
-  f5_ve_license_4:
-    type: string
-    label: Fourth VE License Base Key
-    description: F5 TMOS license basekey for the fourth VE instance
-    default: None
-    hidden: true
-
-parameter_groups:
-- parameters:
-  - build_network
-  - buildserver_image
-  - use_config_drive
-  - package_proxy
-  - http_proxy_host
-  - http_proxy_port
-  - http_proxy_script_url
-  - use_proxy_for_local_resources
-  - license_activation_host
-  - license_activation_port
-- parameters:
-  - f5_ve_os_stack_name
-  - f5_ve_os_auth_url
-  - f5_ve_os_tenant
-  - f5_ve_os_user
-  - f5_ve_os_password
-  - f5_ve_os_image
-  - f5_ve_os_flavor
-  - f5_ve_os_config_drive
-  - f5_ve_os_ssh_key
-  - f5_odk_package_url
-  - f5_onboard_package_url
-  - f5_common_templates_url
-  - f5_ve_default_gateway
-  - f5_ve_admin_password
-  - f5_ve_root_password
-  - f5_ve_license_1
-  - f5_ve_license_2  
-  - f5_ve_license_3
-  - f5_ve_license_4
-- parameters:
-  - f5_ve_os_external_network
-  - f5_ve_os_mgmt_network
-  - f5_ve_os_mgmt_network_floating_ip
-  - f5_ve_os_ha_network
-  - f5_ve_os_network_1
-  - f5_ve_os_network_1_name
-  - f5_ve_os_network_1_floating_ip
+  http_proxy_host: {default: None, label: HTTP Proxy Host to use for orchestration
+      instance access, type: string}
+  http_proxy_port:
+    constraints:
+    - range: {max: 65534, min: 1024}
+    default: 8080
+    label: HTTP Proxy Port to use for orchestration instance access
+    type: number
+  http_proxy_script_url: {default: 'https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl',
+    description: F5 proxy script needed if HTTP proxy access is requried for VE license
+      activation., label: HTTP Proxy Script URL for F5 License Client, type: string}
+  license_activation_host: {default: None, description: Alternative F5 license activation
+      host. Only needed if license request should not go to activate.f5.com., label: License
+      Activation Host, type: string}
+  license_activation_port:
+    constraints:
+    - range: {max: 65534, min: 1}
+    default: 443
+    description: Alternative F5 license activation port. Only needed if license request
+      should not go to port 443.
+    label: License Activation Port
+    type: number
+  package_proxy: {default: None, description: APT HTTP caching proxy to use for orhcestration
+      package dependancies., label: Package Install Proxy URL for APT, type: string}
+  use_config_drive: {default: false, description: Use config drive to provider meta
+      and user data to the orchestration instance., label: Use Config Drive for Orchestration
+      Server, type: boolean}
+  use_proxy_for_local_resources: {default: false, description: Use the configured
+      HTTP proxy when accessing OpenStack APIs., label: User HTTP proxy for OpenStack
+      API Access, type: boolean}
 
 resources:
-
-  wait_condition:
-    type: OS::Heat::WaitCondition
-    properties:
-      handle: { get_resource: wait_handle }
-      count: 1
-      timeout: 3600
-
-  wait_handle:
-    type: OS::Heat::WaitConditionHandle
-
-  ve_cluster_orchestration_security_group:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      name: onboard_security_group
-      rules: 
-        - protocol: icmp
-          direction: ingress
-        - protocol: icmp
-          direction: egress
-        - protocol: tcp
-          direction: ingress
-        - protocol: tcp
-          direction: egress
-        - protocol: udp
-          direction: ingress
-        - protocol: udp
-          direction: egress            
-    
   ve_cluster_orchestration_instance:
-    type: OS::Nova::Server
     properties:
-      image: { get_param: buildserver_image }
-      key_name: { get_param: f5_ve_os_ssh_key }
-      security_groups:
-        - { get_resource: ve_cluster_orchestration_security_group }
+      config_drive: {get_param: use_config_drive}
       flavor: m1.medium
-      config_drive: { get_param: use_config_drive }
+      image: {get_param: buildserver_image}
+      key_name: {get_param: f5_ve_os_ssh_key}
       networks:
-        - network: { get_param: build_network }
-      user_data_format: RAW
+      - network: {get_param: build_network}
+      security_groups:
+      - {get_resource: ve_cluster_orchestration_security_group}
       user_data:
         str_replace:
           params:
-            __stack_id__: { get_param: "OS::stack_id" }
-            __package_proxy__: { get_param: package_proxy }
-            __http_proxy_host__: { get_param: http_proxy_host }
-            __http_proxy_port__: { get_param: http_proxy_port }
-            __http_proxy_script_url__ : { get_param: http_proxy_script_url }
-            __use_proxy_for_local_resources__ : { get_param: use_proxy_for_local_resources }
-            __license_activation_host__ : { get_param: license_activation_host }
-            __license_activation_port__ : { get_param: license_activation_port }
-            __f5_ve_os_stack_name__: { get_param: f5_ve_os_stack_name }
-            __f5_ve_os_auth_url__: { get_param: f5_ve_os_auth_url }
-            __f5_ve_os_tenant__: { get_param: f5_ve_os_tenant }
-            __f5_ve_os_user__: { get_param: f5_ve_os_user }
-            __f5_ve_os_password__: { get_param: f5_ve_os_password }
-            __f5_ve_os_image__: { get_param: f5_ve_os_image }
-            __f5_ve_os_flavor__: { get_param: f5_ve_os_flavor }
-            __f5_ve_os_config_drive__: { get_param: f5_ve_os_config_drive }
-            __f5_ve_os_ssh_key__: { get_param: f5_ve_os_ssh_key }          
-            __f5_odk_package_url__: { get_param: f5_odk_package_url }
-            __f5_onboard_package_url__: { get_param: f5_onboard_package_url }
-            __f5_common_templates_url__: { get_param: f5_common_templates_url }
-            __f5_ve_default_gateway__: { get_param: f5_ve_default_gateway }
-            __f5_ve_admin_password__: { get_param: f5_ve_admin_password }
-            __f5_ve_root_password__: { get_param: f5_ve_root_password }
-            __f5_ve_license_1__: { get_param: f5_ve_license_1 }
-            __f5_ve_license_2__: { get_param: f5_ve_license_2 }
-            __f5_ve_license_3__: { get_param: f5_ve_license_3 }
-            __f5_ve_license_4__: { get_param: f5_ve_license_4 }
-            __f5_ve_os_external_network__: { get_param: f5_ve_os_external_network }
-            __f5_ve_os_mgmt_network__: { get_param: f5_ve_os_mgmt_network }
-            __f5_ve_os_mgmt_network_floating_ip__: { get_param: f5_ve_os_mgmt_network_floating_ip }
-            __f5_ve_os_ha_network__: { get_param: f5_ve_os_ha_network }
-            __f5_ve_os_network_1__: { get_param: f5_ve_os_network_1 }
-            __f5_ve_os_network_1_name__: { get_param: f5_ve_os_network_1_name }
-            __f5_ve_os_network_1_floating_ip__: { get_param: f5_ve_os_network_1_floating_ip }
+            __f5_common_templates_url__: {get_param: f5_common_templates_url}
+            __f5_odk_package_url__: {get_param: f5_odk_package_url}
+            __f5_onboard_package_url__: {get_param: f5_onboard_package_url}
+            __f5_ve_admin_password__: {get_param: f5_ve_admin_password}
+            __f5_ve_default_gateway__: {get_param: f5_ve_default_gateway}
+            __f5_ve_license_1__: {get_param: f5_ve_license_1}
+            __f5_ve_license_2__: {get_param: f5_ve_license_2}
+            __f5_ve_license_3__: {get_param: f5_ve_license_3}
+            __f5_ve_license_4__: {get_param: f5_ve_license_4}
+            __f5_ve_os_auth_url__: {get_param: f5_ve_os_auth_url}
+            __f5_ve_os_config_drive__: {get_param: f5_ve_os_config_drive}
+            __f5_ve_os_external_network__: {get_param: f5_ve_os_external_network}
+            __f5_ve_os_flavor__: {get_param: f5_ve_os_flavor}
+            __f5_ve_os_ha_network__: {get_param: f5_ve_os_ha_network}
+            __f5_ve_os_image__: {get_param: f5_ve_os_image}
+            __f5_ve_os_mgmt_network__: {get_param: f5_ve_os_mgmt_network}
+            __f5_ve_os_mgmt_network_floating_ip__: {get_param: f5_ve_os_mgmt_network_floating_ip}
+            __f5_ve_os_network_1__: {get_param: f5_ve_os_network_1}
+            __f5_ve_os_network_1_floating_ip__: {get_param: f5_ve_os_network_1_floating_ip}
+            __f5_ve_os_network_1_name__: {get_param: f5_ve_os_network_1_name}
+            __f5_ve_os_network_2__: {get_param: f5_ve_os_network_2}
+            __f5_ve_os_network_2_floating_ip__: {get_param: f5_ve_os_network_2_floating_ip}
+            __f5_ve_os_network_2_name__: {get_param: f5_ve_os_network_2_name}
+            __f5_ve_os_network_3__: {get_param: f5_ve_os_network_3}
+            __f5_ve_os_network_3_floating_ip__: {get_param: f5_ve_os_network_3_floating_ip}
+            __f5_ve_os_network_3_name__: {get_param: f5_ve_os_network_3_name}
+            __f5_ve_os_network_4__: {get_param: f5_ve_os_network_4}
+            __f5_ve_os_network_4_floating_ip__: {get_param: f5_ve_os_network_4_floating_ip}
+            __f5_ve_os_network_4_name__: {get_param: f5_ve_os_network_4_name}
+            __f5_ve_os_password__: {get_param: f5_ve_os_password}
+            __f5_ve_os_ssh_key__: {get_param: f5_ve_os_ssh_key}
+            __f5_ve_os_stack_name__: {get_param: f5_ve_os_stack_name}
+            __f5_ve_os_tenant__: {get_param: f5_ve_os_tenant}
+            __f5_ve_os_user__: {get_param: f5_ve_os_user}
+            __f5_ve_root_password__: {get_param: f5_ve_root_password}
+            __http_proxy_host__: {get_param: http_proxy_host}
+            __http_proxy_port__: {get_param: http_proxy_port}
+            __http_proxy_script_url__: {get_param: http_proxy_script_url}
+            __license_activation_host__: {get_param: license_activation_host}
+            __license_activation_port__: {get_param: license_activation_port}
+            __package_proxy__: {get_param: package_proxy}
+            __stack_id__: {get_param: 'OS::stack_id'}
+            __use_proxy_for_local_resources__: {get_param: use_proxy_for_local_resources}
           template: |
             #!/bin/bash -ex
 
@@ -515,12 +442,20 @@ resources:
             p="$p      network_1: __f5_ve_os_network_1__ \n"
             p="$p      network_1_name: $NETWORK_1_NAME\n"
 
+            NETWORK_2_NAME="__f5_ve_os_network_2_name__"
+            if [[ $NETWORK_2_NAME == "None" ]]
+            then
+                NETWORK_2_NAME=`neutron net-list |grep __f5_ve_os_network_2__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
+            fi
+            p="$p      network_2: __f5_ve_os_network_2__ \n"
+            p="$p      network_2_name: $NETWORK_2_NAME\n"
+            
             #############################################
             # Add instances and licenses for four VEs
             
             # add the first VE instance resource
             echo -e "  f5_ve_instance_1:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the first VE instance parameters
             echo -e "$p">>$template_file
             
@@ -531,7 +466,7 @@ resources:
             
             # add the second VE instance resource
             echo -e "  f5_ve_instance_2:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the second VE instance parameters
             echo -e "$p">>$template_file
             
@@ -542,7 +477,7 @@ resources:
 
             # add the third VE instance resource
             echo -e "  f5_ve_instance_3:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the third VE instance parameters
             echo -e "$p">>$template_file
             
@@ -553,7 +488,7 @@ resources:
             
             # add the fourth VE instance resource
             echo -e "  f5_ve_instance_4:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the second VE instance parameters
             echo -e "$p">>$template_file
             
@@ -607,6 +542,17 @@ resources:
                 echo -e "        device_id: { get_attr: [f5_ve_instance_1, ve_instance_id] }">>$template_file
                 echo -e "        device_owner: __f5_ve_os_stack_name__">>$template_file
             fi
+            need_network_2_floating_ip=`echo "__f5_ve_os_network_2_floating_ip__" | tr '[a-z]' '[A-Z]'`
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+                echo -e "  f5_ve_network_2_floating_selfip_port:">>$template_file
+                echo -e "    type: OS::Neutron::Port">>$template_file 
+                echo -e "    properties:">>$template_file
+                echo -e "        network: __f5_ve_os_network_2__">>$template_file
+                echo -e "        device_id: { get_attr: [f5_ve_instance_1, ve_instance_id] }">>$template_file
+                echo -e "        device_owner: __f5_ve_os_stack_name__">>$template_file
+            fi
+
             # create verbose outputs to provide details of the cluster for upstream
             # orchestration scripting
             echo -e "outputs:">>$template_file
@@ -657,6 +603,16 @@ resources:
             echo -e "  f5_ve_network_1_port_1:">>$template_file
             echo -e "    description: VE 1 TMM 1.2 port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, network_1_port] }">>$template_file
+            # first VE Neutron data interfaces information
+            echo -e "  f5_ve_network_2_ip_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 port ID">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_port] }">>$template_file
             # second VE Nova instance information
             echo -e "  f5_ve_instance_name_2:">>$template_file
             echo -e "    description: VE 2 Nova instance name">>$template_file
@@ -703,6 +659,16 @@ resources:
             echo -e "  f5_ve_network_1_port_2:">>$template_file
             echo -e "    description: VE 2 TMM 1.2 port ID">>$template_file8.5GB
             echo -e "    value: { get_attr: [f5_ve_instance_2, network_1_port] }">>$template_file
+            # second VE Neutron data interfaces information
+            echo -e "  f5_ve_network_2_ip_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 port ID">>$template_file8.5GB
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_port] }">>$template_file
             # third VE Nova instance information
             echo -e "  f5_ve_instance_name_3:">>$template_file
             echo -e "    description: VE 3 Nova instance name">>$template_file
@@ -749,6 +715,16 @@ resources:
             echo -e "  f5_ve_network_1_port_3:">>$template_file
             echo -e "    description: VE 3 TMM 1.2 port ID">>$template_file8.5GB
             echo -e "    value: { get_attr: [f5_ve_instance_3, network_1_port] }">>$template_file
+            # third VE Neutron data interfaces information
+            echo -e "  f5_ve_network_2_ip_3:">>$template_file
+            echo -e "    description: VE 3 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_3, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_3:">>$template_file
+            echo -e "    description: VE 3 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_3, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_3:">>$template_file
+            echo -e "    description: VE 3 TMM 1.3 port ID">>$template_file8.5GB
+            echo -e "    value: { get_attr: [f5_ve_instance_3, network_2_port] }">>$template_file
             # fourth VE Nova instance information
             echo -e "  f5_ve_instance_name_4:">>$template_file
             echo -e "    description: VE 4 Nova instance name">>$template_file
@@ -795,6 +771,17 @@ resources:
             echo -e "  f5_ve_network_1_port_4:">>$template_file
             echo -e "    description: VE 4 TMM 1.2 port ID">>$template_file8.5GB
             echo -e "    value: { get_attr: [f5_ve_instance_4, network_1_port] }">>$template_file
+            # fourth VE Neutron data interfaces information
+            echo -e "  f5_ve_network_2_ip_4:">>$template_file
+            echo -e "    description: VE 4 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_4, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_4:">>$template_file
+            echo -e "    description: VE 4 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_4, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_4:">>$template_file
+            echo -e "    description: VE 4 TMM 1.3 port ID">>$template_file8.5GB
+            echo -e "    value: { get_attr: [f5_ve_instance_4, network_2_port] }">>$template_file
+
             # VE Neutron data for floating SelfIP address
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
@@ -810,6 +797,22 @@ resources:
                 echo -e "  f5_ve_network_1_floating_selfip_port:">>$template_file
                 echo -e "    description: TMM 1.2 Floating SelfIP port ID">>$template_file
                 echo -e "    value: { get_resource: f5_ve_network_1_floating_selfip_port }">>$template_file
+            fi
+            
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+                echo -e "  f5_ve_network_2_floating_selfip_ip:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP address">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, fixed_ips, 0, ip_address] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_subnet_id:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP Subnet ID">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, fixed_ips, 0, subnet_id] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_mac:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP port MAC address">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, mac_address] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_port:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP port ID">>$template_file
+                echo -e "    value: { get_resource: f5_ve_network_2_floating_selfip_port }">>$template_file
             fi
             
             # display template to console output
@@ -879,6 +882,29 @@ resources:
                neutron port-update $VE4_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_1_FLOATING_IP
             fi
 
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+               NETWORK_2_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_ip`
+               NETWORK_2_FLOATING_IP=`echo $NETWORK_2_FLOATING_IP | tr -d '"'`
+               NETWORK_2_FLOATING_IP_SUBNET_ID=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_subnet_id`
+               NETWORK_2_FLOATING_IP_SUBNET_ID=`echo $NETWORK_2_FLOATING_IP_SUBNET_ID | tr -d '"'`
+               NETWORK_2_FLOATING_CIDR=`neutron subnet-show $NETWORK_2_FLOATING_IP_SUBNET_ID|grep cidr|awk -F '|' '{print $3}'`
+               NETWORK_2_FLOATING_CIDR=`echo $NETWORK_2_FLOATING_CIDR | tr -d '"'`
+
+               VE1_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_1`
+               VE1_NETWORK_2_PORT=`echo $VE1_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE1_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+               VE2_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_2`
+               VE2_NETWORK_2_PORT=`echo $VE2_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE2_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+               VE3_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_3`
+               VE3_NETWORK_2_PORT=`echo $VE3_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE3_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+               VE4_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_4`
+               VE4_NETWORK_2_PORT=`echo $VE4_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE4_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+            fi
+   
             # query heat VE instance stack for the assigned IP addresses to cluster the VEs
             VE1_MGMT_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_mgmt_ip_1`
             VE1_MGMT_IP=`echo $VE1_MGMT_IP | tr -d '"'`
@@ -950,6 +976,7 @@ resources:
             # Path to download local copy of cluster.py
             wget --no-check-certificate -O /usr/lib/python2.7/dist-packages/f5/bigip/interfaces/cluster.py https://bldr-git.int.lineratesystems.com/breaux/f5-common-python-local/raw/develop_breaux_four-way-cluster/f5/bigip/interfaces/cluster.py
 
+            wget --no-check-certificate -O /usr/lib/python2.7/dist-packages/f5/onboard/bigip/cluster_generic.py https://bldr-git.int.lineratesystems.com/breaux/f5-openstack-onboard-local/raw/onboard_breaux_no_failover/f5_onboarding/cluster_generic.py
             # cluster VEs
             # cluster tenant stacked BIG-IPS
             source f5-onboard-utils
@@ -978,6 +1005,40 @@ resources:
                 --bigip-icontrol-username admin \
                 --bigip-icontrol-password __f5_ve_admin_password__
             fi
+
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+               NETWORK_2_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_ip`
+               NETWORK_2_FLOATING_IP=`echo $NETWORK_2_FLOATING_IP | tr -d '"'`
+               python $F5_ONBOARD_BIGIP_PY_DIR/add_floating_self_ips.py \
+                --network-list $NETWORK_2_NAME \
+                --selfip-list $NETWORK_2_FLOATING_IP \
+                --cidr-list $NETWORK_2_FLOATING_CIDR \
+                --access-list all \
+                --bigip-icontrol-host $VE1_MGMT_FLOAT_IP \
+                --bigip-icontrol-username admin \
+                --bigip-icontrol-password __f5_ve_admin_password__
+            fi
             
             # delete this orchestration stack
             heat stack-delete __stack_id__
+      user_data_format: RAW
+    type: OS::Nova::Server
+  ve_cluster_orchestration_security_group:
+    properties:
+      name: onboard_security_group
+      rules:
+      - {direction: ingress, protocol: icmp}
+      - {direction: egress, protocol: icmp}
+      - {direction: ingress, protocol: tcp}
+      - {direction: egress, protocol: tcp}
+      - {direction: ingress, protocol: udp}
+      - {direction: egress, protocol: udp}
+    type: OS::Neutron::SecurityGroup
+  wait_condition:
+    properties:
+      count: 1
+      handle: {get_resource: wait_handle}
+      timeout: 3600
+    type: OS::Heat::WaitCondition
+  wait_handle: {type: 'OS::Heat::WaitConditionHandle'}
