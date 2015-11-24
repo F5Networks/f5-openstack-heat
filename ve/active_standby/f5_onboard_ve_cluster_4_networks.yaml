@@ -1,6 +1,6 @@
 ################################################################################
 #
-# F5 Heat Template to Orchestrate a 3 NIC TMOS Active/Standby VE Cluster
+# F5 Heat Template to Orchestrate a 4 NIC TMOS Active/Standby VE Cluster
 #
 #    Management Network
 # -------------------------------------------
@@ -9,15 +9,15 @@
 #        -------      |      -------               eth0 - Management Interface
 #        | VE  | 1.1  | 1.1  | VE  |               TMM 1.1 - HA Interface
 #        |     |   ---|---   |     |               TMM 1.2 - Network 1
-#        -------      |      -------
-# 1.2      |                     |
+#        -------      |      -------               TMM 1.3 - Network 2
+# 1.2-3    | |                 | |
 # -------------------------------------------
-#    Data Network
+#    Data Networks
 #
 ################################################################################
 heat_template_version: 2014-10-16
 
-description: F5 Heat Template to Orchestrate a 3 NIC TMOS Active/Standby VE Cluster
+description: F5 Heat Template to Orchestrate a 4 NIC TMOS Active/Standby VE Cluster
 
 parameters:
   build_network:
@@ -174,6 +174,23 @@ parameters:
     label: Create F5 VE TMOS 1.2 Network Floating SelfIP
     description: Should a Floating SelfIP be created for the TMOS 1.2 data interface.
     default: false
+  f5_ve_os_network_2:
+    type: string
+    label: F5 VE 1.3 Network
+    description: Neutron network for the VE 1.3 data interface.
+    default: None
+    constraints:
+      - custom_constraint: neutron.network
+  f5_ve_os_network_2_name:
+    type: string
+    label: F5 VE Network Name for the 1.3 Interface
+    description: TMM network name for the untagged VLAN associated with the 1.3 data interface.
+    default: None
+  f5_ve_os_network_2_floating_ip:
+    type: boolean
+    label: Create F5 VE TMOS 1.3 Network Floating SelfIP
+    description: Should a Floating SelfIP be created for the TMOS 1.3 data interface.
+    default: false
   f5_ve_default_gateway:
     type: string
     label: VE Default Gateway IP
@@ -255,6 +272,9 @@ parameter_groups:
   - f5_ve_os_network_1
   - f5_ve_os_network_1_name
   - f5_ve_os_network_1_floating_ip
+  - f5_ve_os_network_2
+  - f5_ve_os_network_2_name
+  - f5_ve_os_network_2_floating_ip
 
 resources:
 
@@ -344,6 +364,9 @@ resources:
             __f5_ve_os_network_1__: { get_param: f5_ve_os_network_1 }
             __f5_ve_os_network_1_name__: { get_param: f5_ve_os_network_1_name }
             __f5_ve_os_network_1_floating_ip__: { get_param: f5_ve_os_network_1_floating_ip }
+            __f5_ve_os_network_2__: { get_param: f5_ve_os_network_2 }
+            __f5_ve_os_network_2_name__: { get_param: f5_ve_os_network_2_name }
+            __f5_ve_os_network_2_floating_ip__: { get_param: f5_ve_os_network_2_floating_ip }            
           template: |
             #!/bin/bash -ex
 
@@ -528,11 +551,19 @@ resources:
                 NETWORK_1_NAME=`neutron net-list |grep __f5_ve_os_network_1__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
             fi
             p="$p      network_1: __f5_ve_os_network_1__ \n"
-            p="$p      network_1_name: $NETWORK_1_NAME"
-            
+            p="$p      network_1_name: $NETWORK_1_NAME \n"
+
+            NETWORK_2_NAME="__f5_ve_os_network_2_name__"
+            if [[ $NETWORK_2_NAME == "None" ]]
+            then
+                NETWORK_2_NAME=`neutron net-list |grep __f5_ve_os_network_2__|awk -F '|' '{print $3}'| tr -d '[[:space:]]'`
+            fi
+            p="$p      network_2: __f5_ve_os_network_2__ \n"
+            p="$p      network_2_name: $NETWORK_2_NAME"
+                        
             # add the first VE instance resource
             echo -e "  f5_ve_instance_1:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the first VE instance parameters
             echo -e "$p">>$template_file
             
@@ -543,7 +574,7 @@ resources:
             
             # add the second VE instance resource
             echo -e "  f5_ve_instance_2:">>$template_file
-            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_3_nic.yaml">>$template_file
+            echo -e "    type: __f5_common_templates_url__/f5_ve_cluster_member_4_nic.yaml">>$template_file
             # add the second VE instance parameters
             echo -e "$p">>$template_file
             
@@ -585,6 +616,17 @@ resources:
                 echo -e "        device_id: { get_attr: [f5_ve_instance_1, ve_instance_id] }">>$template_file
                 echo -e "        device_owner: __f5_ve_os_stack_name__">>$template_file
             fi
+            
+            need_network_2_floating_ip=`echo "__f5_ve_os_network_2_floating_ip__" | tr '[a-z]' '[A-Z]'`
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+                echo -e "  f5_ve_network_2_floating_selfip_port:">>$template_file
+                echo -e "    type: OS::Neutron::Port">>$template_file 
+                echo -e "    properties:">>$template_file
+                echo -e "        network: __f5_ve_os_network_2__">>$template_file
+                echo -e "        device_id: { get_attr: [f5_ve_instance_1, ve_instance_id] }">>$template_file
+                echo -e "        device_owner: __f5_ve_os_stack_name__">>$template_file
+            fi            
             
             # create verbose outputs to provide details of the cluster for upstream
             # orchestration scripting
@@ -636,6 +678,16 @@ resources:
             echo -e "  f5_ve_network_1_port_1:">>$template_file
             echo -e "    description: VE 1 TMM 1.2 port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_1, network_1_port] }">>$template_file
+
+            echo -e "  f5_ve_network_2_ip_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_1:">>$template_file
+            echo -e "    description: VE 1 TMM 1.3 port ID">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_1, network_2_port] }">>$template_file
           
             # second VE Nova instance information
             echo -e "  f5_ve_instance_name_2:">>$template_file
@@ -684,6 +736,16 @@ resources:
             echo -e "    description: VE 2 TMM 1.2 port ID">>$template_file
             echo -e "    value: { get_attr: [f5_ve_instance_2, network_1_port] }">>$template_file
 
+            echo -e "  f5_ve_network_2_ip_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 non floating SelfIP address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_ip] }">>$template_file
+            echo -e "  f5_ve_network_2_mac_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 MAC address">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_mac] }">>$template_file
+            echo -e "  f5_ve_network_2_port_2:">>$template_file
+            echo -e "    description: VE 2 TMM 1.3 port ID">>$template_file
+            echo -e "    value: { get_attr: [f5_ve_instance_2, network_2_port] }">>$template_file
+
             # VE Neutron data for floating SelfIP address
             if [[ $need_network_1_floating_ip == 'TRUE' ]]
             then
@@ -699,6 +761,21 @@ resources:
                 echo -e "  f5_ve_network_1_floating_selfip_port:">>$template_file
                 echo -e "    description: TMM 1.2 Floating SelfIP port ID">>$template_file
                 echo -e "    value: { get_resource: f5_ve_network_1_floating_selfip_port }">>$template_file
+            fi
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+                echo -e "  f5_ve_network_2_floating_selfip_ip:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP address">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, fixed_ips, 0, ip_address] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_subnet_id:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP Subnet ID">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, fixed_ips, 0, subnet_id] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_mac:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP port MAC address">>$template_file
+                echo -e "    value: { get_attr: [f5_ve_network_2_floating_selfip_port, mac_address] }">>$template_file
+                echo -e "  f5_ve_network_2_floating_selfip_port:">>$template_file
+                echo -e "    description: TMM 1.3 Floating SelfIP port ID">>$template_file
+                echo -e "    value: { get_resource: f5_ve_network_2_floating_selfip_port }">>$template_file
             fi
             
             # display template to console output
@@ -759,6 +836,22 @@ resources:
                VE2_NETWORK_1_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_1_port_2`
                VE2_NETWORK_1_PORT=`echo $VE2_NETWORK_1_PORT | tr -d '"'`
                neutron port-update $VE2_NETWORK_1_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_1_FLOATING_IP
+            fi
+
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+               NETWORK_2_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_ip`
+               NETWORK_2_FLOATING_IP=`echo $NETWORK_2_FLOATING_IP | tr -d '"'`
+               NETWORK_2_FLOATING_IP_SUBNET_ID=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_subnet_id`
+               NETWORK_2_FLOATING_IP_SUBNET_ID=`echo $NETWORK_2_FLOATING_IP_SUBNET_ID | tr -d '"'`
+               NETWORK_2_FLOATING_CIDR=`neutron subnet-show $NETWORK_2_FLOATING_IP_SUBNET_ID|grep cidr|awk -F '|' '{print $3}'`
+               NETWORK_2_FLOATING_CIDR=`echo $NETWORK_2_FLOATING_CIDR | tr -d '"'`
+               VE1_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_1`
+               VE1_NETWORK_2_PORT=`echo $VE1_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE1_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
+               VE2_NETWORK_2_PORT=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_port_2`
+               VE2_NETWORK_2_PORT=`echo $VE2_NETWORK_2_PORT | tr -d '"'`
+               neutron port-update $VE2_NETWORK_2_PORT --allowed_address_pairs list=true type=dict ip_address=$NETWORK_2_FLOATING_IP
             fi
             
             # query heat VE instance stack for the assigned IP addresses to cluster the VEs
@@ -830,6 +923,20 @@ resources:
                 --network-list $NETWORK_1_NAME \
                 --selfip-list $NETWORK_1_FLOATING_IP \
                 --cidr-list $NETWORK_1_FLOATING_CIDR \
+                --access-list all \
+                --bigip-icontrol-host $VE1_MGMT_FLOAT_IP \
+                --bigip-icontrol-username admin \
+                --bigip-icontrol-password __f5_ve_admin_password__
+            fi
+
+            if [[ $need_network_2_floating_ip == 'TRUE' ]]
+            then
+               NETWORK_2_FLOATING_IP=`heat output-show __f5_ve_os_stack_name__ f5_ve_network_2_floating_selfip_ip`
+               NETWORK_2_FLOATING_IP=`echo $NETWORK_2_FLOATING_IP | tr -d '"'`
+               python $F5_ONBOARD_BIGIP_PY_DIR/add_floating_self_ips.py \
+                --network-list $NETWORK_2_NAME \
+                --selfip-list $NETWORK_2_FLOATING_IP \
+                --cidr-list $NETWORK_2_FLOATING_CIDR \
                 --access-list all \
                 --bigip-icontrol-host $VE1_MGMT_FLOAT_IP \
                 --bigip-icontrol-username admin \

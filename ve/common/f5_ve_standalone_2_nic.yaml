@@ -1,6 +1,6 @@
 heat_template_version: 2014-10-16
 
-description: This template deploys a standard f5 VE ready for clustering.
+description: This template deploys a standard f5 standalone VE.
 
 parameters:
   ve_image:
@@ -76,23 +76,17 @@ parameters:
     description: Management Interface Network.
     constraints:
       - custom_constraint: neutron.network
-  ha_network:
-    type: string
-    label: VE HA Network
-    description: HA Interface Network.
-    default: private-ha
-    constraints:
-      - custom_constraint: neutron.network
   network_1:
     type: string
-    label: VE Network for the 1.2 Interface
-    description: TMM 1.2 network.
+    label: VE Network for the 1.1 Interface
+    description: TMM 1.1 network.
+    default: private-ha
     constraints:
       - custom_constraint: neutron.network
   network_1_name:
     type: string
-    label: VE Network Name for the 1.2 Interface
-    description: TMM 1.2 network name.
+    label: VE Network Name for the 1.1 Interface
+    description: TMM 1.1 network name.
     default: None
   default_gateway:
     type: string
@@ -118,7 +112,6 @@ parameter_groups:
   - license
 - parameters:
   - mgmt_network
-  - ha_network
   - network_1
   - network_1_name
   - default_gateway  
@@ -130,12 +123,6 @@ resources:
        network: {get_param: mgmt_network}
        security_groups:
          - bigip_mgmt_security_group
-   ha_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: ha_network}
-      security_groups:
-        - bigip_control_security_group
    network_1_port:
     type: OS::Neutron::Port
     properties:
@@ -151,7 +138,6 @@ resources:
       config_drive: { get_param: use_config_drive }
       networks:
         - port: {get_resource: mgmt_port}
-        - port: {get_resource: ha_port}
         - port: {get_resource: network_1_port}
       user_data_format: RAW
       user_data:
@@ -201,18 +187,6 @@ resources:
                            "1.1": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.HA",
-                               "selfip_description": "Self IP address for BIG-IP Cluster HA subnet",
-                               "vlan_name": "vlan.HA",
-                               "vlan_description": "VLAN for BIG-IP Cluster HA traffic",
-                               "is_failover": "true",
-                               "is_sync": "true",
-                               "is_mirror_primary": "true",
-                               "is_mirror_secondary": "false"
-                           },
-                           "1.2": {
-                               "dhcp": "true",
-                               "selfip_allow_service": "default",
                                "selfip_name": "selfip.__network_1_name__",
                                "selfip_description": "Self IP address for BIG-IP __network_1_name__ network",
                                "vlan_name": "__network_1_name__",
@@ -243,21 +217,12 @@ outputs:
   mgmt_port:
     description: The mgmt port id of f5 VE instance
     value: { get_resource: mgmt_port }
-  ha_ip:
-    description: The HA IP address of f5 ve instance
-    value: { get_attr: [ha_port, fixed_ips, 0, ip_address] }
-  ha_mac:
-    description: The HA MAC address of f5 VE instance
-    value: { get_attr: [ha_port, mac_address] }
-  ha_port:
-    description: The ha port id of f5 VE instance
-    value: { get_resource: ha_port }
   network_1_ip:
-    description: The 1.2 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.1 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_1_port, fixed_ips, 0, ip_address] }
   network_1_mac:
-    description: The 1.2 MAC address of f5 VE instance
+    description: The 1.1 MAC address of f5 VE instance
     value: { get_attr: [network_1_port, mac_address] }
   network_1_port:
-    description: The 1.2 port id of f5 VE instance
+    description: The 1.1 port id of f5 VE instance
     value: { get_resource: network_1_port }

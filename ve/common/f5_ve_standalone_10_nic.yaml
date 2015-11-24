@@ -1,6 +1,6 @@
 heat_template_version: 2014-10-16
 
-description: This template deploys a standard f5 VE ready for clustering.
+description: This template deploys a standard f5 standalone VE.
 
 parameters:
   ve_image:
@@ -76,100 +76,105 @@ parameters:
     description: Management Interface Network.
     constraints:
       - custom_constraint: neutron.network
-  ha_network:
-    type: string
-    label: VE HA Network
-    description: HA Interface Network.
-    default: private-ha
-    constraints:
-      - custom_constraint: neutron.network
   network_1:
     type: string
-    label: VE Network for the 1.2 Interface
-    description: 1.2 TMM network.
+    label: VE Network for the 1.1 Interface
+    description: TMM 1.1 network.
+    default: private-ha
     constraints:
       - custom_constraint: neutron.network
   network_1_name:
     type: string
-    label: VE Network Name for the 1.2 Interface
-    description: 1.2 TMM network name.
+    label: VE Network Name for the 1.1 Interface
+    description: TMM 1.1 network name.
     default: None
   network_2:
     type: string
-    label: VE Network for the 1.3 Interface
-    description: 1.3 TMM network.
+    label: VE Network for the 1.2 Interface
+    description: TMM 1.2 network.
     constraints:
       - custom_constraint: neutron.network
   network_2_name:
     type: string
-    label: VE Network Name for the 1.3 Interface
-    description: 1.3 TMM network name.
+    label: VE Network Name for the 1.2 Interface
+    description: TMM 1.2 network name.
     default: None
   network_3:
     type: string
-    label: VE Network for the 1.4 Interface
-    description: 1.4 TMM network.
+    label: VE Network for the 1.3 Interface
+    description: TMM 1.3 network.
     constraints:
       - custom_constraint: neutron.network
   network_3_name:
     type: string
-    label: VE Network Name for the 1.4 Interface
-    description: 1.4 TMM network name.
+    label: VE Network Name for the 1.3 Interface
+    description: TMM 1.3 network name.
     default: None
   network_4:
     type: string
-    label: VE Network for the 1.5 Interface
-    description: 1.5 TMM network.
+    label: VE Network for the 1.4 Interface
+    description: TMM 1.4 network.
     constraints:
       - custom_constraint: neutron.network
   network_4_name:
     type: string
-    label: VE Network Name for the 1.5 Interface
-    description: 1.5 TMM network name.
+    label: VE Network Name for the 1.4 Interface
+    description: TMM 1.4 network name.
     default: None
   network_5:
     type: string
-    label: VE Network for the 1.6 Interface
-    description: 1.6 TMM network.
+    label: VE Network for the 1.5 Interface
+    description: TMM 1.5 network.
     constraints:
       - custom_constraint: neutron.network
   network_5_name:
     type: string
-    label: VE Network Name for the 1.6 Interface
-    description: 1.6 TMM network name.
+    label: VE Network Name for the 1.5 Interface
+    description: TMM 1.5 network name.
     default: None
   network_6:
     type: string
-    label: VE Network for the 1.7 Interface
-    description: 1.7 TMM network.
+    label: VE Network for the 1.6 Interface
+    description: TMM 1.6 network.
     constraints:
       - custom_constraint: neutron.network
   network_6_name:
     type: string
-    label: VE Network Name for the 1.7 Interface
-    description: 1.7 TMM network name.
+    label: VE Network Name for the 1.6 Interface
+    description: TMM 1.6 network name.
     default: None
   network_7:
     type: string
-    label: VE Network for the 1.8 Interface
-    description: 1.8 TMM network.
+    label: VE Network for the 1.7 Interface
+    description: TMM 1.7 network.
     constraints:
       - custom_constraint: neutron.network
   network_7_name:
     type: string
-    label: VE Network Name for the 1.8 Interface
-    description: 1.8 TMM network name.
+    label: VE Network Name for the 1.7 Interface
+    description: TMM 1.7 network name.
     default: None
   network_8:
     type: string
-    label: VE Network for the 1.9 Interface
-    description: 1.9 TMM network.
+    label: VE Network for the 1.8 Interface
+    description: TMM 1.8 network.
     constraints:
       - custom_constraint: neutron.network
   network_8_name:
     type: string
+    label: VE Network Name for the 1.8 Interface
+    description: TMM 1.8 network name.
+    default: None
+  network_9:
+    type: string
+    label: VE Network for the 1.9 Interface
+    description: TMM 1.9 network.
+    constraints:
+      - custom_constraint: neutron.network
+  network_9_name:
+    type: string
     label: VE Network Name for the 1.9 Interface
-    description: 1.9 TMM network name.
+    description: TMM 1.9 network name.
     default: None
   default_gateway:
     type: string
@@ -195,7 +200,6 @@ parameter_groups:
   - license
 - parameters:
   - mgmt_network
-  - ha_network
   - network_1
   - network_1_name
   - network_2
@@ -212,6 +216,8 @@ parameter_groups:
   - network_7_name
   - network_8
   - network_8_name
+  - network_9
+  - network_9_name
   - default_gateway  
 
 resources:
@@ -221,12 +227,6 @@ resources:
        network: {get_param: mgmt_network}
        security_groups:
          - bigip_mgmt_security_group
-   ha_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: ha_network}
-      security_groups:
-        - bigip_control_security_group
    network_1_port:
     type: OS::Neutron::Port
     properties:
@@ -275,6 +275,12 @@ resources:
       network: {get_param: network_8 }
       security_groups:
         - bigip_data_security_group
+   network_9_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: network_9 }
+      security_groups:
+        - bigip_data_security_group
    ve_instance:
     type: OS::Nova::Server
     properties:
@@ -284,7 +290,6 @@ resources:
       config_drive: { get_param: use_config_drive }
       networks:
         - port: {get_resource: mgmt_port}
-        - port: {get_resource: ha_port}
         - port: {get_resource: network_1_port}
         - port: {get_resource: network_2_port}
         - port: {get_resource: network_3_port}
@@ -293,6 +298,7 @@ resources:
         - port: {get_resource: network_6_port}
         - port: {get_resource: network_7_port}
         - port: {get_resource: network_8_port}
+        - port: {get_resource: network_9_port}
       user_data_format: RAW
       user_data:
         str_replace:
@@ -322,6 +328,8 @@ resources:
             __network_7_name__: { get_param: network_7_name }
             __network_8__: { get_param: network_8 }
             __network_8_name__: { get_param: network_8_name }
+            __network_9__: { get_param: network_9 }
+            __network_9_name__: { get_param: network_9_name }
           template: |
             {
                "bigip": {
@@ -355,22 +363,22 @@ resources:
                            "1.1": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.HA",
-                               "selfip_description": "Self IP address for BIG-IP Cluster HA subnet",
-                               "vlan_name": "vlan.HA",
-                               "vlan_description": "VLAN for BIG-IP Cluster HA traffic",
-                               "is_failover": "true",
-                               "is_sync": "true",
-                               "is_mirror_primary": "true",
+                               "selfip_name": "selfip.__network_1_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_1_name__ network",
+                               "vlan_name": "__network_1_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_1_name__ network traffic",
+                               "is_failover": "false",
+                               "is_sync": "false",
+                               "is_mirror_primary": "false",
                                "is_mirror_secondary": "false"
                            },
                            "1.2": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_1_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_1_name__",
-                               "vlan_name": "__network_1_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_1_name__ traffic",
+                               "selfip_name": "selfip.__network_2_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_2_name__ network",
+                               "vlan_name": "__network_2_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_2_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -379,10 +387,10 @@ resources:
                            "1.3": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_2_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_2_name__",
-                               "vlan_name": "__network_2_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_2_name__ traffic",
+                               "selfip_name": "selfip.__network_3_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_3_name__ network",
+                               "vlan_name": "__network_3_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_3_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -391,10 +399,10 @@ resources:
                            "1.4": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_3_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_3_name__",
-                               "vlan_name": "__network_3_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_3_name__ traffic",
+                               "selfip_name": "selfip.__network_4_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_4_name__ network",
+                               "vlan_name": "__network_4_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_4_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -403,10 +411,10 @@ resources:
                            "1.5": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_4_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_4_name__",
-                               "vlan_name": "__network_4_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_4_name__ traffic",
+                               "selfip_name": "selfip.__network_5_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_5_name__ network",
+                               "vlan_name": "__network_5_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_5_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -415,10 +423,10 @@ resources:
                            "1.6": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_5_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_5_name__",
-                               "vlan_name": "__network_5_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_5_name__ traffic",
+                               "selfip_name": "selfip.__network_6_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_6_name__ network",
+                               "vlan_name": "__network_6_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_6_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -427,10 +435,10 @@ resources:
                            "1.7": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_6_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_6_name__",
-                               "vlan_name": "__network_6_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_6_name__ traffic",
+                               "selfip_name": "selfip.__network_7_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_7_name__ network",
+                               "vlan_name": "__network_7_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_7_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -439,10 +447,10 @@ resources:
                            "1.8": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_7_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_7_name__",
-                               "vlan_name": "__network_7_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_7_name__ traffic",
+                               "selfip_name": "selfip.__network_8_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_8_name__ network",
+                               "vlan_name": "__network_8_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_8_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -451,10 +459,10 @@ resources:
                            "1.9": {
                                "dhcp": "true",
                                "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_8_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_8_name__",
-                               "vlan_name": "__network_8_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_8_name__ traffic",
+                               "selfip_name": "selfip.__network_9_name__",
+                               "selfip_description": "Self IP address for BIG-IP __network_9_name__ network",
+                               "vlan_name": "__network_9_name__",
+                               "vlan_description": "VLAN for BIG-IP __network_9_name__ network traffic",
                                "is_failover": "false",
                                "is_sync": "false",
                                "is_mirror_primary": "false",
@@ -481,84 +489,84 @@ outputs:
   mgmt_port:
     description: The mgmt port id of f5 VE instance
     value: { get_resource: mgmt_port }
-  ha_ip:
-    description: The HA IP address of f5 ve instance
-    value: { get_attr: [ha_port, fixed_ips, 0, ip_address] }
-  ha_mac:
-    description: The HA MAC address of f5 VE instance
-    value: { get_attr: [ha_port, mac_address] }
-  ha_port:
-    description: The ha port id of f5 VE instance
-    value: { get_resource: ha_port }
   network_1_ip:
-    description: The 1.2 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.1 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_1_port, fixed_ips, 0, ip_address] }
   network_1_mac:
-    description: The 1.2 MAC address of f5 VE instance
+    description: The 1.1 MAC address of f5 VE instance
     value: { get_attr: [network_1_port, mac_address] }
   network_1_port:
-    description: The 1.2 port id of f5 VE instance
+    description: The 1.1 port id of f5 VE instance
     value: { get_resource: network_1_port }
   network_2_ip:
-    description: The 1.3 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.2 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_2_port, fixed_ips, 0, ip_address] }
   network_2_mac:
-    description: The 1.3 MAC address of f5 VE instance
+    description: The 1.2 MAC address of f5 VE instance
     value: { get_attr: [network_2_port, mac_address] }
   network_2_port:
-    description: The 1.3 port id of f5 VE instance
+    description: The 1.2 port id of f5 VE instance
     value: { get_resource: network_2_port }
   network_3_ip:
-    description: The 1.4 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.3 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_3_port, fixed_ips, 0, ip_address] }
   network_3_mac:
-    description: The 1.4 MAC address of f5 VE instance
+    description: The 1.3 MAC address of f5 VE instance
     value: { get_attr: [network_3_port, mac_address] }
   network_3_port:
-    description: The 1.4 port id of f5 VE instance
+    description: The 1.3 port id of f5 VE instance
     value: { get_resource: network_3_port }
   network_4_ip:
-    description: The 1.5 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.4 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_4_port, fixed_ips, 0, ip_address] }
   network_4_mac:
-    description: The 1.5 MAC address of f5 VE instance
+    description: The 1.4 MAC address of f5 VE instance
     value: { get_attr: [network_4_port, mac_address] }
   network_4_port:
-    description: The 1.5 port id of f5 VE instance
+    description: The 1.4 port id of f5 VE instance
     value: { get_resource: network_4_port }
   network_5_ip:
-    description: The 1.6 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.5 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_5_port, fixed_ips, 0, ip_address] }
   network_5_mac:
-    description: The 1.6 MAC address of f5 VE instance
+    description: The 1.5 MAC address of f5 VE instance
     value: { get_attr: [network_5_port, mac_address] }
   network_5_port:
-    description: The 1.6 port id of f5 VE instance
+    description: The 1.5 port id of f5 VE instance
     value: { get_resource: network_5_port }
   network_6_ip:
-    description: The 1.7 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.6 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_6_port, fixed_ips, 0, ip_address] }
   network_6_mac:
-    description: The 1.7 MAC address of f5 VE instance
+    description: The 1.6 MAC address of f5 VE instance
     value: { get_attr: [network_6_port, mac_address] }
   network_6_port:
-    description: The 1.7 port id of f5 VE instance
+    description: The 1.6 port id of f5 VE instance
     value: { get_resource: network_6_port }
   network_7_ip:
-    description: The 1.8 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.7 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_7_port, fixed_ips, 0, ip_address] }
   network_7_mac:
-    description: The 1.8 MAC address of f5 VE instance
+    description: The 1.7 MAC address of f5 VE instance
     value: { get_attr: [network_7_port, mac_address] }
   network_7_port:
-    description: The 1.8 port id of f5 VE instance
+    description: The 1.7 port id of f5 VE instance
     value: { get_resource: network_7_port }
   network_8_ip:
-    description: The 1.9 Nonfloating SelfIP address of f5 ve instance
+    description: The 1.8 Nonfloating SelfIP address of f5 ve instance
     value: { get_attr: [network_8_port, fixed_ips, 0, ip_address] }
   network_8_mac:
-    description: The 1.9 MAC address of f5 VE instance
+    description: The 1.8 MAC address of f5 VE instance
     value: { get_attr: [network_8_port, mac_address] }
   network_8_port:
-    description: The 1.9 port id of f5 VE instance
+    description: The 1.8 port id of f5 VE instance
     value: { get_resource: network_8_port }
+  network_9_ip:
+    description: The 1.9 Nonfloating SelfIP address of f5 ve instance
+    value: { get_attr: [network_9_port, fixed_ips, 0, ip_address] }
+  network_9_mac:
+    description: The 1.9 MAC address of f5 VE instance
+    value: { get_attr: [network_9_port, mac_address] }
+  network_9_port:
+    description: The 1.9 port id of f5 VE instance
+    value: { get_resource: network_9_port }
