@@ -1,3 +1,17 @@
+# Copyright 2015 F5 Networks
+#
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+
 heat_template_version: 2014-10-16
 
 description: >
@@ -947,8 +961,10 @@ resources:
                 unset https_proxy
             fi
             
-            # Path to download local copy of cluster.py
+            # TODO: These wgets are just patches to cluster.py and cluster_generic.py until we have redeployable packages of the refactored odk/onboard/common code.
             wget --no-check-certificate -O /usr/lib/python2.7/dist-packages/f5/bigip/interfaces/cluster.py https://bldr-git.int.lineratesystems.com/breaux/f5-common-python-local/raw/develop_breaux_four-way-cluster/f5/bigip/interfaces/cluster.py
+
+            wget --no-check-certificate -O /usr/lib/python2.7/dist-packages/f5/onboard/bigip/cluster_generic.py https://bldr-git.int.lineratesystems.com/breaux/f5-openstack-onboard-local/raw/onboard_breaux_no_failover/f5_onboarding/cluster_generic.py
 
             # cluster VEs
             # cluster tenant stacked BIG-IPS
