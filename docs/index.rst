@@ -1,35 +1,37 @@
-f5-openstack-heat
-=================
+F5 Networks OpenStack Heat Template Library
+===========================================
 
 Introduction
 ------------
-OpenStack Heat templates for applications using F5 BigIP and F5 VE deployments.
+OpenStack Heat templates for applications stacks that include F5 BigIP
+configurations and templates for deploying F5 VE in an OpenStack cloud.
 
-Supported and Unsupported Templates
------------------------------------
 The two top level directories that exist in this repo which contain Heat
 templates are :code:`f5_supported` and :code:`unsupported`.
 
-f5_supported
-~~~~~~~~~~~~
+F5 Supported Templates
+~~~~~~~~~~~~~~~~~~~~~~
 The :code:`f5_supported` directory contains templates that are officially supported
 by F5 Networks for customers with a support contract.  Users who require
 support should contact F5 Support through usual means.
 
-unsupported
-~~~~~~~~~~~
+.. toctree::
+   :maxdepth: 1
+
+   templates/f5_supported/templates
+
+Unsupported Templates
+~~~~~~~~~~~~~~~~~~~~~
 The :code:`unsupported` directory contains templates that are experimental and should
 be used **AT YOUR OWN RISK**.  These templates may have been contributed by
 other users or are under development by F5.  Regardless of a customer's status
 of a valid support contract, F5 will not support templates that are in this
 directory.
 
-Releases and Versions
----------------------
-This branch supports the OpenStack Kilo release.
+.. toctree::
+   :maxdepth: 1
 
-For more information about F5 Networks's OpenStack versioning and support
-matrix please see `F5 Networks OpenStack Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
+   templates/unsupported/templates
 
 Installation & Configuration
 ----------------------------
@@ -40,26 +42,11 @@ Some templates may require
 `F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`__
 to be installed.
 
-Documentation
--------------
-Project documentation can be found on `Read The Docs <https://f5-openstack-heat.readthedocs.org>`__
-
-Filing Issues
--------------
-If you find an issue we would love to hear about it. Please let us
-know by filing an issue in this repository and tell us as much as you can
-about what you found and how you found it.
-
-For more information see the Issues section of
-`Contributing <CONTRIBUTING.md>`__.
-
-Contributing
-------------
-See `Contributing <CONTRIBUTING.md>`__
-
 Contact
 -------
-f5_openstack_heat@f5.com
+Have questions or like to see new templates?  We'd love to hear from you.  You
+can email the team at f5_openstack_heat@f5.com, or visit us at
+`F5Networks/f5-openstack-heat <https://github.com/F5Networks/f5-openstack-heat>`__.
 
 Copyright
 ---------
@@ -67,7 +54,11 @@ Copyright 2013-2016 F5 Networks Inc.
 
 Support
 -------
-See `Support <SUPPORT.md>`__
+Maintenance and support of the unmodified F5 code is provided only to customers
+who have an existing support contract, purchased separately subject to F5’s
+support policies available at http://www.f5.com/about/guidelines-policies/ and
+http://askf5.com.  F5 will not provide maintenance and support services of
+modified F5 code or code that does not have an existing support contract.
 
 License
 -------

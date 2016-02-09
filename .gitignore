@@ -1,0 +1,10 @@
+# docs dynamic directories
+docs/_build
+docs/_static
+docs/_templates
+
+# Project files
+.idea/
+
+# Python files
+*.py[cod]
