@@ -33,6 +33,13 @@ directory.
 
    templates/unsupported/templates
 
+Releases and Versions
+---------------------
+|release| supports the OpenStack |openstack_release| release.
+
+For more information about F5 Networks's OpenStack versioning and support
+matrix please see `F5 Networks OpenStack Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
+
 Installation & Configuration
 ----------------------------
 Heat templates can be loaded via the OpenStack Horizon GUI or using the Heat
