@@ -56,7 +56,7 @@ parameters:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
     description: F5 proxy script needed if HTTP proxy access is requried for VE license activation.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+    default: None
   use_proxy_for_local_resources:
     type: boolean
     label: User HTTP proxy for OpenStack API Access
@@ -88,7 +88,7 @@ parameters:
     type: string
     label: F5 Common Template Directory URL
     description: The URL to download common Heat templates for F5 security groups and cluster topologies.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/ve/common
+    default: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common
   f5_ve_os_stack_name:
     type: string
     label: VE Cluster Name
@@ -98,7 +98,7 @@ parameters:
     type: string
     label: VE OS Keystone Auth URL
     description: Keystone URL to perform VE instance creation.
-    default: http://localhost:5000/v2.0
+    default: http://<keystone_host_name>:5000/v2.0
   f5_ve_os_tenant:
     type: string
     label: VE OS Create Tenant

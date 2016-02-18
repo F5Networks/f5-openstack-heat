@@ -54,7 +54,7 @@ parameters:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
     description: F5 proxy script needed if HTTP proxy access is requried for VE license activation.
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+    default: None
   use_proxy_for_local_resources:
     type: boolean
     label: User HTTP proxy for OpenStack API Access
@@ -86,7 +86,7 @@ parameters:
     type: string
     label: F5 Common Template Directory URL
     description: The URL to download common Heat templates for F5 security groups and cluster topologies.
-    default: https://bldr-git.int.lineratesystems.com/breaux/openstack-heat-templates/raw/develop/unsupported/ve/common
+    default: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common
   f5_ve_os_stack_name:
     type: string
     label: VE Cluster Name
@@ -110,7 +110,6 @@ parameters:
     type: string
     label: VE OS Create User Password
     description: Password used to perform VE instance creation.
-    default: admin
     hidden: true
   f5_ve_os_image:
     type: string
@@ -185,7 +184,6 @@ parameters:
     type: string
     label: F5 VE Admin User Password
     description: TMOS admin password for the VE instances.
-    default: admin
     hidden: true
     constraints:
       - allowed_pattern: "[a-zA-Z0-9_-]*"
@@ -194,7 +192,6 @@ parameters:
     type: string
     label: F5 VE Root User Password
     description: TMOS root password for the VE instances.
-    default: admin
     hidden: true
     constraints:
       - allowed_pattern: "[a-zA-Z0-9_-]*"
@@ -203,25 +200,21 @@ parameters:
     type: string
     label: Primary VE License Base Key
     description: F5 TMOS license basekey for the primary VE instance.
-    default: None
     hidden: true
   f5_ve_license_2:
     type: string
     label: Secondary VE License Base Key
     description: F5 TMOS license basekey for the secondary VE instance.
-    default: None
     hidden: true
   f5_ve_license_3:
     type: string
     label: Third VE License Base Key
     description: F5 TMOS license basekey for the third VE instance
-    default: None
     hidden: true
   f5_ve_license_4:
     type: string
     label: Fourth VE License Base Key
     description: F5 TMOS license basekey for the fourth VE instance
-    default: None
     hidden: true
 
 parameter_groups:

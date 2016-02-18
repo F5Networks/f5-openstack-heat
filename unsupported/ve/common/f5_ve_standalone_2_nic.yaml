@@ -25,20 +25,20 @@ parameters:
     type: string
     label: F5 FW Root SSH Key Name
     description: Name of key-pair to be installed on the FW instances.
-    default: my_key
+    default: my_key # Remove default
     constraints:
       - custom_constraint: nova.keypair
   admin_password:
     type: string
     label: F5 VE Admin User Password
-    description: Password used to perform image import services
-    default: admin
+    description: Password used to perform image import services. Can be a hash for a salted password or password phrase.
+    default: admin # Remove default
     hidden: true  
   root_password:
     type: string
     label: F5 VE Root User Password
-    description: Password used to perform image import services
-    default: admin
+    description: Password used to perform image import services. Can be a hash for a salted password or password phrase.
+    default: admin # Remove default
     hidden: true
   http_proxy_host:
     type: string
@@ -53,7 +53,7 @@ parameters:
   http_proxy_script_url:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+    default: None # Make None
   license_activation_host:
     type: string
     label: License Activation Host
@@ -68,7 +68,7 @@ parameters:
     type: string
     label: Primary VE License Base Key
     description: F5 TMOS License Basekey
-    default: None
+    default: None # Remove
     hidden: true
   mgmt_network:
     type: string
@@ -80,14 +80,14 @@ parameters:
     type: string
     label: VE Network for the 1.1 Interface
     description: TMM 1.1 network.
-    default: private-ha
+    default: private-ha # Remove
     constraints:
       - custom_constraint: neutron.network
   network_1_name:
     type: string
     label: VE Network Name for the 1.1 Interface
     description: TMM 1.1 network name.
-    default: None
+    default: network-1.1 # change in all
   default_gateway:
     type: string
     label: Default Gateway IP

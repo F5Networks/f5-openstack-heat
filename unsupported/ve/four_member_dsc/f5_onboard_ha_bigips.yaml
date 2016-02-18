@@ -20,34 +20,29 @@ parameters:
     type: string
     label: VE Management Network
     description: Management Interface Network.
-    default: private-mgmt
     constraints:
       - custom_constraint: neutron.network
   ha_network:
     type: string
     label: VE HA Network
     description: HA Interface Network.
-    default: private-ha
     constraints:
       - custom_constraint: neutron.network
   trusted_network:
     type: string
     label: VE Trusted Network
     description: Trusted Interface Network.
-    default: private-trusted
     constraints:
       - custom_constraint: neutron.network
   untrusted_network:
     type: string
     label: VE Untrusted Network
     description: Untrusted Interface Network.
-    default: private-mgmt
     constraints:
       - custom_constraint: neutron.network
   default_gateway:
     type: string
     label: Gateway IP
-    default: 172.17.1.1
     description: Upstream Gateway IP Address
   http_proxy_host:
     type: string
@@ -62,7 +57,7 @@ parameters:
   http_proxy_script_url:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+    default: None
   license_activation_host:
     type: string
     label: License Activation Host
@@ -82,32 +77,27 @@ parameters:
     type: string
     label: F5 FW Root SSH Key Name
     description: Name of key-pair to be installed on the FW instances.
-    default: my_key
     constraints:
       - custom_constraint: nova.keypair
   f5_admin_password:
     type: string
     label: F5 FW Admin User Password
     description: Password used to perform image import services
-    default: admin
     hidden: true  
   f5_root_password:
     type: string
     label: F5 FW Root User Password
     description: Password used to perform image import services
-    default: admin
     hidden: true
   f5_license_1:
     type: string
     label: Primary FW License Base Key
     description: F5 TMOS License Basekey
-    default: None
     hidden: true
   f5_license_2:
     type: string
     label: Secondary FW License Base Key
     description: F5 TMOS License Basekey
-    default: None
     hidden: true
 
 parameter_groups:
