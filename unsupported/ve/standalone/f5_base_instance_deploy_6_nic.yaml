@@ -37,7 +37,7 @@ parameters:
     type: string
     label: VE Network Name for the 1.1 Interface
     description: TMM 1.1 network name.
-    default: None
+    default: network-1.1
   f5_ve_os_network_2:
     type: string
     label: VE Network for the 1.2 Interface
@@ -48,7 +48,7 @@ parameters:
     type: string
     label: VE Network Name for the 1.2 Interface
     description: TMM 1.2 network name.
-    default: None
+    default: network-1.2
   f5_ve_os_network_3:
     type: string
     label: VE Network for the 1.3 Interface
@@ -59,7 +59,7 @@ parameters:
     type: string
     label: VE Network Name for the 1.3 Interface
     description: TMM 1.3 network name.
-    default: None
+    default: network-1.3
   f5_ve_os_network_4:
     type: string
     label: VE Network for the 1.4 Interface
@@ -70,7 +70,7 @@ parameters:
     type: string
     label: VE Network Name for the 1.4 Interface
     description: TMM 1.4 network name.
-    default: None
+    default: network-1.4
   f5_ve_os_network_5:
     type: string
     label: VE Network for the 1.5 Interface
@@ -81,7 +81,7 @@ parameters:
     type: string
     label: VE Network Name for the 1.5 Interface
     description: TMM 1.5 network name.
-    default: None
+    default: network-1.5
   f5_ve_default_gateway:
     type: string
     label: Default Gateway IP
@@ -100,7 +100,7 @@ parameters:
   http_proxy_script_url:
     type: string
     label: HTTP Proxy Script URL for F5 License Client
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/f5_license_http_proxy.pl
+    default: None
   license_activation_host:
     type: string
     label: License Activation Host
@@ -115,26 +115,22 @@ parameters:
     type: string
     label: F5 FW Root SSH Key Name
     description: Name of key-pair to be installed on the FW instances.
-    default: my_key
     constraints:
       - custom_constraint: nova.keypair
   f5_ve_admin_password:
     type: string
     label: F5 VE Admin User Password
     description: Password used to perform image import services
-    default: admin
     hidden: true  
   f5_ve_root_password:
     type: string
     label: F5 VE Root User Password
     description: Password used to perform image import services
-    default: admin
     hidden: true
   f5_ve_license_1:
     type: string
     label: F5 License Base Key
     description: F5 TMOS License Basekey
-    default: None
     hidden: true
 
 parameter_groups:
@@ -169,13 +165,13 @@ parameter_groups:
 resources:
 
    bigip_data_security_group:
-    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/ve/common/bigip_data_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
 
    bigip_mgmt_security_group:
-    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/ve/common/bigip_mgmt_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
 
    f5_ve_instance:
-    type: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/templates/ve/common/f5_ve_standalone_2_nic.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/f5_ve_standalone_2_nic.yaml
     properties:
       ve_image: { get_param: f5_ve_os_image }
       ve_flavor: { get_param: f5_ve_os_flavor }
