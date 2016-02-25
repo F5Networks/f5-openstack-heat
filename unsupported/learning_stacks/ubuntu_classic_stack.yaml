@@ -1,6 +1,6 @@
 description: >
     This template is a starting point to learning about heat. Note: this
-    can be used directly with the Boulder OpenStack, although, the
+    can be used directly with the Boulder OpenStack, although the
     passwords and usernames may change.
 
 heat_template_version: '2015-04-30'

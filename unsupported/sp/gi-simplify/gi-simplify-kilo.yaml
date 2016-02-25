@@ -23,7 +23,7 @@ description: >
     networks that cannot readily be scaled, increase deployment and operating costs,
     and reduces the ability to add or adapt new services.
 
-    Once established in a position to steer traffic to VAS platforms, the BIG-IP
+    Once established in a position to steer traffic to VAS platforms, the BIG-IP®
     platform enables CSPs to consolidate several incremental network functions to
     increase network efficiency and ROI. F5 products provide a number of additional
     service functions, including security, translation, processing offloading,
@@ -331,51 +331,51 @@ parameters:
 
     bigip_name:
         type: string
-        description: The hostname of the BIG-IP device
+        description: The hostname of the BIG-IP® device
         default: pem.os.hype.f5net.com
     bigip_image:
         type: string
-        description: BIG-IP image used
+        description: BIG-IP® image used
         default: BIGIP-12.0.0.0.0.606-OpenStack
     bigip_flavor:
         type: string
-        description: BIG-IP flavor used
+        description: BIG-IP® flavor used
         default: m1.xlarge
     bigip_control_ip:
         type: string
-        description: IP address of the BIG-IP device on the control network
+        description: IP address of the BIG-IP® device on the control network
         default: 10.0.16.1
     bigip_subs_pem_ip:
         type: string
-        description: IP address of the BIG-IP device on the subs_pem network
+        description: IP address of the BIG-IP® device on the subs_pem network
         default: 10.0.24.2
     bigip_to_vas1_ip:
         type: string
-        description: IP address of the BIG-IP device on the to_vas1 network
+        description: IP address of the BIG-IP® device on the to_vas1 network
         default: 192.168.1.2
     bigip_from_vas1_ip:
         type: string
-        description: IP address of the BIG-IP device on the from_vas1 network
+        description: IP address of the BIG-IP® device on the from_vas1 network
         default: 192.168.2.2
     bigip_to_vas2_ip:
         type: string
-        description: IP address of the BIG-IP device on the to_vas2 network
+        description: IP address of the BIG-IP® device on the to_vas2 network
         default: 192.168.3.2
     bigip_from_vas2_ip:
         type: string
-        description: IP address of the BIG-IP device on the from_vas2 network
+        description: IP address of the BIG-IP® device on the from_vas2 network
         default: 192.168.4.2
     bigip_to_vas3_ip:
         type: string
-        description: IP address of the BIG-IP device on the to_vas3 network
+        description: IP address of the BIG-IP® device on the to_vas3 network
         default: 192.168.5.2
     bigip_from_vas3_ip:
         type: string
-        description: IP address of the BIG-IP device on the from_vas3 network
+        description: IP address of the BIG-IP® device on the from_vas3 network
         default: 192.168.6.2
     bigip_internet_pem_ip:
         type: string
-        description: IP address of the BIG-IP device on the internet_pem network
+        description: IP address of the BIG-IP® device on the internet_pem network
         default: 10.0.32.1
 
 resources:
