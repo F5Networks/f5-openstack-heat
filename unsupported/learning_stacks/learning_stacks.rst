@@ -1,0 +1,7 @@
+Learning Stacks
+===============
+If you are just starting out with orchestration in OpenStack, this is a good place to get an idea of how a Heat stack manages resources. The stack deploys a client, device-under-test, and a server and creates nearly all network plumbing necessary with the exception of the external network.
+
+Multi-Homing
+------------
+Three Ubuntu 14.04 instances are created. Each instance connects to a data network, which is associated with the floating IP for that instance. In addition, the client connects to the DUT via the client_test_network. The server connects to the DUT via the server_test_network. All instances in this stack are multi-homed. This is important to know because default Ubuntu cloud images for 14.04 do not support multiple nics out of the box. You can solve these problems by referring to this `cloudify blog <http://getcloudify.org/2015/05/18/openstack-neutron-nova-cloud-vm-networking-network-automation-orchestration.html>` regarding a multi-homed instance in OpenStack. We have solved this problem by using `ifplugd <http://0pointer.de/lennart/projects/ifplugd/>`, a service baked into the image that waits for any and all interfaces to be hotplugged. Cloud-init creates the port on the OpenStack side for this instance to connect to the additional networks, and it also configures the ethernet devices to be available on the instance. It does not however, bring up the additional interfaces. That's the job of ifplugd or your startup script and whatever you choose to use.
