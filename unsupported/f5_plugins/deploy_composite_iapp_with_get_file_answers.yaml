@@ -1,0 +1,229 @@
+# Copyright 2015-2016 F5 Networks Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+#
+
+heat_template_version: 2015-04-30
+
+description: Deploy iapp template and service using the get_file function to retrieve iapp service answers
+
+parameters:
+  iapp_template_name:
+    type: string
+    label: iApp Template Name
+    default: iapp_test_template
+  iapp_service_name:
+    type: string
+    label: iApp Service Name
+    default: iapp_test_service
+  ve_instance:
+    type: string
+    label: VE Instance IP
+    description: IP of existing VE
+  bigip_un:
+    type: string
+    label: BigIP Login Username
+    default: admin
+  bigip_pw:
+    type: string
+    label: BigIP Login Password
+    hidden: true
+parameter_groups:
+  - label: VE Parameters
+    parameters:
+      - ve_instance
+      - bigip_un
+      - bigip_pw
+  - label: Pool Parameters
+    parameters:
+      - iapp_template_name
+      - iapp_service_name
+resources:
+  bigip_rsrc:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: ve_instance }
+      username: { get_param: bigip_un }
+      password: { get_param: bigip_pw }
+  partition:
+    type: F5::Sys::Partition
+    depends_on: bigip_rsrc
+    properties:
+      name: Common
+      bigip_server: { get_resource: bigip_rsrc }
+  iapp_service:
+    type: F5::Sys::iAppService
+    depends_on: [iapp_template, partition]
+    properties:
+      name: { get_param: iapp_service_name }
+      bigip_server: { get_resource: bigip_rsrc }
+      partition: { get_resource: partition }
+      template_name: { get_param: iapp_template_name }
+      lists:
+        get_file: iapp_answers/lab_1_list.json
+      variables: |
+        [
+            {
+              "name": "some_variables__drop_down",
+              "encrypted": "no",
+              "value": "choice 2"
+            },
+            {
+              "name": "some_variables__more_input",
+              "encrypted": "no",
+              "value": "Yes"
+            },
+            {
+              "name": "some_variables__string_input_one",
+              "encrypted": "no",
+              "value": "testing"
+            },
+            {
+              "name": "some_variables__string_input_two",
+              "encrypted": "no",
+              "value": "Hello"
+            }
+          ]
+      tables: |
+        [
+            {
+              "name": "some_variables__name_value_pairs",
+              "columnNames": [
+                "name",
+                "value"
+              ],
+              "rows": [
+                {
+                  "row": [
+                    "John",
+                    "31"
+                  ]
+                },
+                {
+                  "row": [
+                    "Mark",
+                    "2"
+                  ]
+                },
+                {
+                  "row": [
+                    "Jane",
+                    "30"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "some_variables__table2",
+              "columnNames": [
+                "city",
+                "state"
+              ],
+              "rows": [
+                {
+                  "row": [
+                    "Baton Rouge",
+                    "LA"
+                  ]
+                },
+                {
+                  "row": [
+                    "Boulder",
+                    "CO"
+                  ]
+                }
+              ]
+            }
+          ]
+
+  iapp_template:
+    type: F5::Sys::iAppCompositeTemplate
+    depends_on: [bigip_rsrc, partition]
+    properties:
+      name: { get_param: iapp_template_name }
+      bigip_server: { get_resource: bigip_rsrc }
+      partition: { get_resource: partition }
+      requires_modules: [ ltm ]
+      presentation: |
+        include "/Common/f5.apl_common"
+
+        section hello_world {
+            message hello "Hello World!"
+        }
+        section some_variables {
+            string string_input_one
+            choice drop_down { 
+                "choice 1",
+                "choice 2"
+            }
+            multichoice multi {
+                "Option 1",
+                "Option 2",
+                "Bonus Option",
+                "Yet Another Option"
+            }
+            table name_value_pairs {
+                string name
+                string value
+            }
+            multichoice multi_2 {
+                "Test A",
+                "Test B",
+                "Test C"
+            }
+            table table2 {
+                string city
+                string state
+            }
+            noyes more_input
+            optional ( more_input == "Yes" ) {
+                string string_input_two
+            }
+        }
+
+        text {
+            hello_world "Greeting the World"
+            hello_world.hello "I say:"
+
+            some_variables "Some Input Fields"
+            some_variables.string_input_one    "Enter a string value."
+            some_variables.drop_down "Select a value."
+            some_variables.multi "Select one or more values."
+            some_variables.name_value_pairs    "Enter a list of name/value pairs"
+            some_variables.name_value_pairs.name "name"
+            some_variables.name_value_pairs.value "value"
+            some_variables.more_input "Do you want to enter another string?"
+            some_variables.string_input_two "Enter another string."
+        }
+      implementation: | 
+        tmsh::log_dest file
+        tmsh::log_level crit
+
+
+        puts " "
+        puts " "
+        puts "Starting the Lab 1 template."
+        puts " "
+
+        puts "The first string input |$::some_variables__string_input_one|"
+        puts "the drop-down choice |$::some_variables__drop_down|"
+        puts "The multichoice |$::some_variables__multi|"
+        puts "The name/value pairs |$::some_variables__name_value_pairs|"
+        if { $::some_variables__more_input == "Yes" } {
+            puts "The second string input |$::some_variables__string_input_two|"
+        }
+
+        puts " "
+        puts "Ending the Lab 1 template."
+        puts " "

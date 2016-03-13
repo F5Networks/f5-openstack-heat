@@ -1,0 +1,92 @@
+heat_template_version: 2015-04-30
+
+description: Creates a client instance which curls a Virtual IP
+
+parameters:
+  external_network:
+    default: external_network
+    description: External network used for floating IPs
+    label: External network name or ID
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  client_image:
+    description: Image to serve as client
+    label: Client Glance Image
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+  client_server_flavor:
+    description: Flavor of client and server image
+    label: Client/Server Nova Flavor
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+  key_name:
+    description: The public key to be pushed to instances
+    label: Key Name
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  client_server_sec_group:
+    description: Security group for client and server
+    label: Security Group
+    type: string
+    default: open
+  client_network:
+    description: Network for client traffic
+    label: Client Network
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  vs_vip:
+    description: Virtual IP Address for Virtual Server
+    label: VS VIP
+    type: string
+resources:
+  client_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: client_network }
+      security_groups:
+        - { get_param: client_server_sec_group }
+  client_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+  client_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: client_fip }
+      port_id: { get_resource: client_data_port }
+  client:
+    type: OS::Nova::Server
+    properties:
+      name: client1
+      image: { get_param: client_image }
+      flavor: { get_param: client_server_flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: client_data_port }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __vs_vip__: { get_param: vs_vip }
+            __wc_notify__: { get_attr: ['client_wait_handle', 'curl_cli'] }
+          template: |
+            #!/bin/bash -ex
+            curl -k https://__vs_vip__
+            __wc_notify__ --data-binary '{"status": "SUCCESS"}'
+  client_wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: client_wait_handle }
+      timeout: 1200
+      count: 1
+  client_wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+outputs:
+  client_curl_cli:
+    value: { get_attr: [client_wait_handle, curl_cli] }

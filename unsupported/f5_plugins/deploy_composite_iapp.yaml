@@ -1,0 +1,121 @@
+# Copyright 2015-2016 F5 Networks Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+heat_template_version: 2015-04-30
+
+description: Deploy composite iapp template and service
+
+parameters:
+  ve_instance1:
+    type: string
+    label: IP of Second VE Instance
+    default: 10.190.6.4
+  bigip_un:
+    type: string
+    label: Username of BigIP Login
+    default: admin
+  bigip_pw:
+    type: string
+    label: Password of BigIP Login
+    hidden: True
+  iapp_template_name:
+    type: string
+    label: Name of iApp Template
+    default: iapp_template_resource
+  iapp_service_name:
+    type: string
+    label: Name of iApp Service
+    default: iapp_service_resource
+
+parameter_groups:
+  - label: VE Parameters
+    parameters:
+      - ve_instance1
+      - bigip_un
+      - bigip_pw
+  - label: iApp Settings
+    parameters:
+      - iapp_template_name
+      - iapp_service_name
+
+resources:
+  bigip1:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: ve_instance1 }
+      username: { get_param: bigip_un }
+      password: { get_param: bigip_pw }
+  iapp_service:
+    type: F5::Sys::iAppService
+    depends_on: iapp_template
+    properties:
+      name: { get_param: iapp_service_name }
+      bigip_server: { get_resource: bigip1 }
+      partition: { get_resource: partition }
+      template_name: { get_param: iapp_template_name }
+  partition:
+    type: F5::Sys::Partition
+    depends_on: bigip1
+    properties:
+      name: Common
+      bigip_server: { get_resource: bigip1 }
+  iapp_template:
+    type: F5::Sys::iAppCompositeTemplate
+    depends_on: bigip1
+    properties:
+      name: { get_param: iapp_template_name }
+      bigip_server: { get_resource: bigip1 }
+      partition: { get_resource: partition }
+      requires_modules: [ ltm ]
+      implementation: |
+        #TMSH-VERSION: 11.6.0
+        iapp::template start
+        tmsh::create {
+          ltm pool http_pool
+          description "A pool of http servers"
+          load-balancing-mode least-connections-node
+          members replace-all-with {
+              129.0.0.1:8000 {
+                  address 129.0.0.1
+              }
+          }
+        }
+        tmsh::create {
+           ltm virtual http_vs
+           destination 10.15.15.30:80
+           ip-protocol tcp
+           mask 255.255.255.255
+           pool http_pool
+           profiles replace-all-with {
+               http { }
+               tcp { }
+           }
+           source 0.0.0.0/0
+           translate-address enabled
+           translate-port enabled
+        }
+        tmsh::create {
+           ltm virtual-address 10.4.4.115
+           address 10.4.4.115
+           arp enabled
+           icmp-echo enabled
+           mask 255.255.255.255
+           traffic-group traffic-group-1
+        }
+        iapp::template stop
+      presentation: |
+        section say_hello {
+          message intro "This template deploys a virtual server and a pool with several members."
+        }

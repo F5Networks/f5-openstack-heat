@@ -1,0 +1,19 @@
+[
+    {
+      "name": "some_variables__multi",
+      "encrypted": "no",
+      "value": [
+        "Option 1",
+        "Bonus Option",
+        "Yet Another Option"
+      ]
+    },
+    {
+      "name": "some_variables__multi_2",
+      "encrypted": "no",
+      "value": [
+        "Test A",
+        "Test B"
+      ]
+    }
+]
