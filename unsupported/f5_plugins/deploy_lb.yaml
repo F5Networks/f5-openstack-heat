@@ -1,0 +1,298 @@
+description: >
+  This heat template demonstrates a basic load-balancing scenario on an F5 Device.
+
+heat_template_version: 2015-04-30
+
+parameters:
+  external_network:
+    default: external_network
+    description: External network used for floating IPs
+    label: External network name or ID
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  client_image:
+    description: Image to serve as client
+    label: Client Glance Image
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+  server_image:
+    description: Image to serve as server
+    label: Server Glance Image
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+  client_server_flavor:
+    description: Flavor of client and server image
+    label: Client/Server Nova Flavor
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+  key_name:
+    description: The public key to be pushed to instances
+    label: Key Name
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  client_server_sec_group:
+    description: Security group for client and server
+    label: Security Group
+    type: string
+    default: open
+  client_network:
+    description: Network for client traffic
+    label: Client Network
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  server_network:
+    description: Network for server traffic
+    label: Server Network
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  bigip_un:
+    description: BigIP Username
+    label: BigIP Login Username
+    type: string
+    default: admin
+  bigip_pw:
+    description: BigIP Password
+    label: BigIP Login Password
+    type: string
+    hidden: True
+  vs_name:
+    description: Virtual Server Name
+    label: Virtual Server Name
+    type: string
+    default: virtual_server1
+  pool_name:
+    description: Pool Name
+    label: Pool Name
+    type: string
+    default: pool1
+  bigip_fip:
+    description: BigIP Floating IP
+    label: BigIP FIP
+    type: string
+    constraints:
+      - custom_constraint: neutron.floating_ip
+  vs_vip:
+    description: Virtual Server Virtual IP
+    label: Virtual Server VIP
+    type: string
+  vs_port:
+    description: Virtual Server Port
+    label: Virtual Server Port
+    type: number
+    default: 443
+  pool_member_port:
+    description: Pool Member Port
+    label: Pool Member Port
+    type: number
+    default: 8080
+
+parameter_groups:
+  - label: Client and Server Parameters
+    parameters:
+      - client_image
+      - server_image
+      - client_server_flavor
+      - key_name
+  - label: Network Parameters
+    parameters:
+      - external_network
+      - client_server_sec_group
+      - client_network
+      - server_network
+  - label: BigIP Parameters 
+    parameters:
+      - bigip_fip
+      - bigip_un
+      - bigip_pw
+  - label: Load Balancing Parameters
+    parameters:
+      - vs_name
+      - vs_vip
+      - vs_port
+      - pool_name
+      - pool_member_port
+
+resources:
+  client_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: client_network }
+      security_groups:
+        - { get_param: client_server_sec_group } 
+  client_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network } 
+  client_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: client_fip }
+      port_id: { get_resource: client_data_port }
+  client:
+    type: OS::Nova::Server
+    depends_on: server_wait_condition
+    properties:
+      name: client1
+      image: { get_param: client_image }
+      flavor: { get_param: client_server_flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: client_data_port }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __vs_vip__: { get_param: vs_vip }
+            __wc_notify__: { get_attr: ['client_wait_handle', 'curl_cli'] }
+          template: |
+            #!/bin/bash -ex
+            curl -k https://__vs_vip__
+            __wc_notify__ --data-binary '{"status": "SUCCESS"}'
+  client_wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: client_wait_handle }
+      timeout: 1200
+      count: 1
+  client_wait_handle:
+    type: OS::Heat::WaitConditionHandle
+  server_wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: server_wait_handle }
+      timeout: 1200
+      count: 1
+  server_wait_handle:
+    type: OS::Heat::WaitConditionHandle
+  server_data_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: server_network }
+      security_groups:
+        - { get_param: client_server_sec_group } 
+  server_fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network } 
+  server_fip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: server_fip }
+      port_id: { get_resource: server_data_port }
+  server:
+    type: OS::Nova::Server
+    properties:
+      name: server
+      image: { get_param: server_image }
+      flavor: { get_param: client_server_flavor }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: server_data_port }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __wc_notify__: { get_attr: ['server_wait_handle', 'curl_cli'] }
+            __rs_port__: { get_param: pool_member_port }
+          template: |
+            #!/bin/bash -ex
+            nohup http-server -p __rs_port__ &
+            __wc_notify__ --data-binary '{"status": "SUCCESS"}'
+  bigip:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: bigip_fip }
+      username: { get_param: bigip_un }
+      password: { get_param: bigip_pw }
+  partition:
+    type: F5::Sys::Partition
+    depends_on: bigip
+    properties:
+      name: Common
+      bigip_server: { get_resource: bigip }
+  iapp_service:
+    type: F5::Sys::iAppService
+    depends_on: iapp_template
+    properties:
+      name: lb_service
+      bigip_server: { get_resource: bigip }
+      partition: { get_resource: partition }
+      template_name: alb_templ
+      traffic_group: /Common/traffic-group-local-only
+  iapp_template:
+    type: F5::Sys::iAppCompositeTemplate
+    depends_on: partition
+    properties:
+      name: alb_templ
+      bigip_server: { get_resource: bigip }
+      partition: { get_resource: partition }
+      requires_modules: [ ltm ]
+      implementation:
+        str_replace:
+          params:
+            __partition__: Common
+            __pool_name__: { get_param: pool_name }
+            __vs_name__: { get_param: vs_name }
+            __vip__: { get_param: vs_vip }
+            __vs_port__: { get_param: vs_port }
+            __rs_port__: { get_param: pool_member_port }
+            __rs_ip__: { get_attr: [server, first_address] }
+          template: |
+            tmsh::create {
+                ltm pool /__partition__/__pool_name__
+                    load-balancing-mode least-connections-node
+                    members replace-all-with {
+                        __rs_ip__:__rs_port__ {
+                            address __rs_ip__
+                        }
+                    }
+            }
+
+            tmsh::create {
+                ltm virtual /__partition__/__vs_name__
+                    connection-limit 1
+                    destination /__partition__/__vip__:__vs_port__
+                    mask 255.255.255.255
+                    pool /__partition__/__pool_name__
+                    profiles replace-all-with {
+                        /Common/clientssl {
+                            context clientside
+                        }
+                    }
+                    source 0.0.0.0/0
+                    source-address-translation {
+                        type automap
+                    }
+                    translate-address enabled
+                    translate-port enabled
+                    vlans replace-all-with {
+                        /Common/network-1.1
+                    }
+                    vlans-enabled
+            }
+
+            tmsh::create {
+                ltm virtual-address /__partition__/__vip__
+                    address __vip__
+                    arp enabled
+                    icmp-echo enabled
+                    mask 255.255.255.255
+                    traffic-group traffic-group-1
+            }
+      presentation: |
+        section say_hello {
+            message intro "This template deploys a virtual server and a pool with two members."
+        }
+
+outputs:
+  client_curl_cli:
+    value: { get_attr: [client_wait_handle, curl_cli] }
+  server_curl_cli:
+    value: { get_attr: [server_wait_handle, curl_cli] }

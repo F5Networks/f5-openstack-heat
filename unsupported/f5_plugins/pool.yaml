@@ -1,0 +1,69 @@
+# Copyright 2015-2016 F5 Networks Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+heat_template_version: 2015-04-30
+
+description: Test of creating a pool on an existing VE server
+
+parameters:
+  pool_name:
+    type: string
+    label: Pool Name
+    default: test_pool
+  ve_instance:
+    type: string
+    label: VE Instance IP
+    description: IP of existing VE
+  bigip_un:
+    type: string
+    label: BigIP Login Username
+    default: admin
+  bigip_pw:
+    type: string
+    label: BigIP Login Password
+    hidden: true
+parameter_groups:
+  - label: VE Parameters
+    parameters:
+      - ve_instance
+      - bigip_un
+      - bigip_pw
+  - label: Pool Parameters
+    parameters:
+      - pool_name
+resources:
+  bigip_rsrc:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: ve_instance }
+      username: { get_param: bigip_un }
+      password: { get_param: bigip_pw }
+  partition:
+    type: F5::Sys::Partition
+    depends_on: bigip_rsrc
+    properties:
+      name: Common
+      bigip_server: { get_resource: bigip_rsrc }
+  ve_pool:
+    type: F5::LTM::Pool
+    properties:
+      name: { get_param: pool_name }
+      bigip_server: { get_resource: bigip_rsrc }
+      partition: { get_resource: partition }
+      members:
+        - member_ip: 129.0.0.2
+          member_port: 80
+        - member_ip: 130.0.0.2
+          member_port: 80
