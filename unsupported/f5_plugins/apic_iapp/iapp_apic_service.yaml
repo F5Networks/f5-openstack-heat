@@ -1,0 +1,337 @@
+# Copyright 2015-2016 F5 Networks Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+#
+
+heat_template_version: 2015-04-30
+
+description: Test creation of an iapp template and service.
+
+parameters:
+  iapp_template_name:
+    type: string
+    label: iApp Template Name
+    default: iapp_test_template
+  iapp_service_name:
+    type: string
+    label: iApp Service Name
+    default: iapp_test_service
+  ve_instance:
+    type: string
+    label: VE Instance IP
+    description: IP of existing VE
+    default: 10.190.6.9
+  bigip_un:
+    type: string
+    label: BigIP Login Username
+    default: admin
+  bigip_pw:
+    type: string
+    label: BigIP Login Password
+    default: admin
+parameter_groups:
+  - label: VE Parameters
+    parameters:
+      - ve_instance
+      - bigip_un
+      - bigip_pw
+  - label: Pool Parameters
+    parameters:
+      - iapp_template_name
+      - iapp_service_name
+resources:
+  bigip_rsrc:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: ve_instance }
+      username: { get_param: bigip_un }
+      password: { get_param: bigip_pw }
+  partition:
+    type: F5::Sys::Partition
+    depends_on: bigip_rsrc
+    properties:
+      name: Common
+      bigip_server: { get_resource: bigip_rsrc }
+  iapp_template:
+    type: F5::Sys::iAppFullTemplate
+    depends_on: [bigip_rsrc, partition]
+    properties:
+      bigip_server: { get_resource: bigip_rsrc }
+      partition: { get_resource: partition }
+      full_template:
+        { get_file: iapps/hitesh.tmpl }
+  iapp_service:
+    type: F5::Sys::iAppService
+    depends_on: iapp_template
+    properties:
+      bigip_server: { get_resource: bigip_rsrc }
+      partition: { get_resource: partition }
+      traffic_group: /Common/traffic-group-local-only
+      name: test_service
+      template_name: iapp_test_template
+      tables: |
+        [{
+                "name": "feature__easyL4FirewallBlacklist",
+                "columnNames": ["CIDRRange"],
+                "rows": [{
+                        "row": ["120.0.0.1/0"]
+                }]
+        }, {
+                "name": "feature__easyL4FirewallSourceList",
+                "columnNames": ["CIDRRange"],
+                "rows": [{
+                        "row": ["0.0.0.0/0"]
+                }]
+        }, {
+                "name": "pool__Members",
+                "columnNames": ["IPAddress", "Port", "ConnectionLimit", "Ratio", "State"],
+                "rows": [{
+                        "row": ["129.0.0.1", "80", "0", "1", "enabled"]
+                }]
+        }]
+      lists: |
+        [{
+                "name": "vs__BundledIrules",
+                "encrypted": "no"
+        }]
+      variables: |
+        [{
+                "name": "extensions__Field1",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "extensions__Field2",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "extensions__Field3",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "feature__easyASMPolicy",
+                "encrypted": "no",
+                "value": "disabled"
+        }, {
+                "name": "feature__easyL4Firewall",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "feature__insertXForwardedFor",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "feature__redirectToHTTPS",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "feature__securityEnableHSTS",
+                "encrypted": "no",
+                "value": "disabled"
+        }, {
+                "name": "feature__sslEasyCipher",
+                "encrypted": "no",
+                "value": "disabled"
+        }, {
+                "name": "feature__statsHTTP",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "feature__statsTLS",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "iapp__appStats",
+                "encrypted": "no",
+                "value": "enabled"
+        }, {
+                "name": "iapp__mode",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "iapp__routeDomain",
+                "encrypted": "no",
+                "value": "auto"
+        }, {
+                "name": "iapp__strictUpdates",
+                "encrypted": "no",
+                "value": "enabled"
+        }, {
+                "name": "pool__AdvOptions",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "pool__Description",
+                "encrypted": "no",
+                "value": "pooldescr"
+        }, {
+                "name": "pool__LbMethod",
+                "encrypted": "no",
+                "value": "round-robin"
+        }, {
+                "name": "pool__MemberDefaultPort",
+                "encrypted": "no",
+                "value": "80"
+        }, {
+                "name": "pool__Monitor",
+                "encrypted": "no",
+                "value": "/Common/http"
+        }, {
+                "name": "pool__Name",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "pool__addr",
+                "encrypted": "no",
+                "value": "10.15.15.214"
+        }, {
+                "name": "pool__mask",
+                "encrypted": "no",
+                "value": "255.255.255.255"
+        }, {
+                "name": "pool__port",
+                "encrypted": "no",
+                "value": "443"
+        }, {
+                "name": "vs__AdvOptions",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__AdvProfiles",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ConnectionLimit",
+                "encrypted": "no",
+                "value": "0"
+        }, {
+                "name": "vs__Description",
+                "encrypted": "no",
+                "value": "vsdescr"
+        }, {
+                "name": "vs__IpProtocol",
+                "encrypted": "no",
+                "value": "tcp"
+        }, {
+                "name": "vs__Irules",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__Name",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__OptionConnectionMirroring",
+                "encrypted": "no",
+                "value": "disabled"
+        }, {
+                "name": "vs__OptionSourcePort",
+                "encrypted": "no",
+                "value": "preserve"
+        }, {
+                "name": "vs__ProfileAccess",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileAnalytics",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileClientProtocol",
+                "encrypted": "no",
+                "value": "/Common/tcp-wan-optimized"
+        }, {
+                "name": "vs__ProfileClientSSL",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileClientSSLAdvOptions",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileClientSSLCert",
+                "encrypted": "no",
+                "value": "/Common/default.crt"
+        }, {
+                "name": "vs__ProfileClientSSLChain",
+                "encrypted": "no",
+                "value": "/Common/ca-bundle.crt"
+        }, {
+                "name": "vs__ProfileClientSSLCipherString",
+                "encrypted": "no",
+                "value": "DEFAULT"
+        }, {
+                "name": "vs__ProfileClientSSLKey",
+                "encrypted": "no",
+                "value": "/Common/default.key"
+        }, {
+                "name": "vs__ProfileCompression",
+                "encrypted": "no",
+                "value": "/Common/httpcompression"
+        }, {
+                "name": "vs__ProfileConnectivity",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileDefaultPersist",
+                "encrypted": "no",
+                "value": "/Common/cookie"
+        }, {
+                "name": "vs__ProfileFallbackPersist",
+                "encrypted": "no",
+                "value": "/Common/source_addr"
+        }, {
+                "name": "vs__ProfileHTTP",
+                "encrypted": "no",
+                "value": "/Common/http"
+        }, {
+                "name": "vs__ProfileOneConnect",
+                "encrypted": "no",
+                "value": "/Common/oneconnect"
+        }, {
+                "name": "vs__ProfilePerRequest",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileRequestLogging",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileSecurityDoS",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileSecurityIPBlacklist",
+                "encrypted": "no",
+                "value": "none"
+        }, {
+                "name": "vs__ProfileSecurityLogProfiles",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__ProfileServerProtocol",
+                "encrypted": "no",
+                "value": "/Common/tcp-lan-optimized"
+        }, {
+                "name": "vs__ProfileServerSSL",
+                "encrypted": "no",
+                "value": ""
+        }, {
+                "name": "vs__SNATConfig",
+                "encrypted": "no",
+                "value": "automap"
+        }, {
+                "name": "vs__SourceAddress",
+                "encrypted": "no",
+                "value": "0.0.0.0/0"
+        }] 
