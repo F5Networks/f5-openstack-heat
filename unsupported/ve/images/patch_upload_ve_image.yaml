@@ -22,40 +22,11 @@ parameters:
     default: private-net
     constraints:
       - custom_constraint: neutron.network    
-  package_proxy:
-    type: string
-    label: Package Install Proxy for APT
-    default: None
-  http_proxy_host:
-    type: string
-    label: HTTP Proxy Host to user to aquire resources
-    default: None
-  http_proxy_port:
-    type: number
-    label: HTTP Proxy Port to use to aquire resources
-    default: 8080
-    constraints:
-      - range: { min: 1024, max: 65534 }
-  f5_odk_package_url:
-    type: string
-    label: F5 OpenStack Deployment Kit URL
-    description: The URL to download the ODK debian package
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/odk.deb
-  f5_onboard_package_url:
-    type: string
-    label: F5 Virtual Edition Onboard Tools URL
-    description: The URL to download the ODK debian package
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/packages/f5_onboard.deb
-  f5_image_import_bookmark_file_url:
-    type: string
-    label: F5 Glance Image Bookmark Policy URL
-    description: The URL for the image bookmark policy file
-    default: https://raw.githubusercontent.com/f5openstackcommunity/f5veonboard/master/includes/bookmarks_small_and_tiny.json
   f5_image_import_auth_url:
     type: string
     label: Keystone Auth URL
     description: Keystone URL to perform import services
-    default: http://localhost:5000/v2.0
+    default: http://<keystone_host>:5000/v2.0
   f5_image_import_tenant:
     type: string
     label: Image Import Tenant
@@ -70,25 +41,42 @@ parameters:
     type: string
     label: Image Import User Password
     description: Password used to perform image import services
-    default: admin
     hidden: true
+  image_prep_url:
+    type: string
+    label: Image Prep URL
+    description: URL of repo with image prep tools
+    default: https://github.com/F5Networks/f5-openstack-image-prep.git
+  f5_ve_image_url:
+    type: string
+    label: F5 VE Image URL
+    description: URL of zipped qcow2 image
+  f5_ve_image_name:
+    type: string
+    label: F5 VE Image Name
+    description: Name of qcow2 image in zip file
+  image_prep_key:
+    type: string
+    label: SSH Key
+    description: SSH Key
+    constraints:
+      - custom_constraint: nova.keypair
+
 parameter_groups:
 - parameters:
   - flavor
   - use_config_drive
   - private_network
-  - package_proxy
-  - http_proxy_host
-  - http_proxy_port
+  - image_prep_key
 - parameters:
   - f5_image_import_auth_url
   - f5_image_import_tenant
   - f5_image_import_user
   - f5_image_import_password
 - parameters:
-  - f5_odk_package_url
-  - f5_onboard_package_url
-  - f5_image_import_bookmark_file_url
+  - image_prep_url
+  - f5_ve_image_url
+  - f5_ve_image_name
 
 resources:
   wait_condition:
@@ -131,12 +119,13 @@ resources:
         - protocol: udp
           direction: egress        
 
-  onboard_instance:
+  image_prep_instance:
     type: OS::Nova::Server
     depends_on: onboard_image
     properties:
       image: { get_resource: onboard_image }
       config_drive: { get_param: use_config_drive }
+      key_name: { get_param: image_prep_key }
       security_groups:
         - { get_resource: onboard_security_group }
       flavor: { get_param: flavor }
@@ -147,73 +136,52 @@ resources:
         str_replace:
           params:
             __stack_id__: { get_param: "OS::stack_id" }
-            __package_proxy__: { get_param: package_proxy }
-            __http_proxy_host__: { get_param: http_proxy_host }
-            __http_proxy_port__: { get_param: http_proxy_port }
-            __f5_odk_package_url__: { get_param: f5_odk_package_url }
-            __f5_onboard_package_url__: { get_param: f5_onboard_package_url }
-            __f5_image_import_bookmark_file_url__: { get_param: f5_image_import_bookmark_file_url }
             __f5_image_import_auth_url__: { get_param: f5_image_import_auth_url }
             __f5_image_import_tenant__: { get_param: f5_image_import_tenant }
             __f5_image_import_user__: { get_param: f5_image_import_user }
             __f5_image_import_password__: { get_param: f5_image_import_password }
+            __image_prep_url__: { get_param: image_prep_url }
+            __f5_ve_image_url__: { get_param: f5_ve_image_url }
+            __f5_ve_image_name__: { get_param: f5_ve_image_name }
             wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
           template: |
             #!/bin/bash -ex
 
             # create a onboard user
-            adduser onboard --disabled-login --gecos 'Onboard' --quiet --ingroup sudo
-            echo "onboard:onboard"|chpasswd
+            adduser imageprep --disabled-login --gecos 'Onboard' --quiet --ingroup sudo
+            echo "imageprep:imageprep"|chpasswd
             sed -i 's|[#]*PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
             sed -i 's|UsePAM no|UsePAM yes|g' /etc/ssh/sshd_config
             service ssh restart
             
-            # use http proxy if defined
-            if [[ "__http_proxy_host__" != "None" ]]
-            then
-                export http_proxy=http://__http_proxy_host__:__http_proxy_port__
-                export https_proxy=https://__http_proxy_host__:__http_proxy_port__
-            fi
-            
             # download f5 packages
-            cd /home/onboard
+            cd /home/imageprep
             
-            wget -q -c -nc -O /home/onboard/odk.deb __f5_odk_package_url__
-            wget -q -c -nc -O /home/onboard/f5_onboard.deb __f5_onboard_package_url__
-
-            if [[ "__package_proxy__" != "None" ]]
-            then
-                echo "Acquire::http::proxy \"__package_proxy__\";" > /etc/apt/apt.conf
-                echo "Acquire::https::proxy \"__package_proxy__\";" >> /etc/apt/apt.conf
-            fi
+            apt-get install -y git
+            git clone __image_prep_url__
 
             # install packages
             apt-get update
-            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-novaclient python-neutronclient python-cinderclient python-heatclient python-eventlet python-suds python-paramiko
-            dpkg -i /home/onboard/odk.deb
-            dpkg -i /home/onboard/f5_onboard.deb
+            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko
             
             # sync images
-            export HOME=/home/onboard
+            export HOME=/home/imageprep
             export OS_AUTH_URL=__f5_image_import_auth_url__
             export OS_USERNAME=__f5_image_import_user__
             export OS_PASSWORD=__f5_image_import_password__
             export OS_TENANT_NAME=__f5_image_import_tenant__
-            wget __f5_image_import_bookmark_file_url__ -N -O /home/onboard/image_bookmarks.json
+            export PYTHONPATH=/home/imageprep/f5-openstack-image-prep/
                         
-            f5-onboard-images --removefromglance --bookmarkfile /home/onboard/image_bookmarks.json
-            
-            # unset proxy if defined for local communications
-            unset http_proxy
-            unset https_proxy
-            
-            # delete this orchestration stack
-            heat stack-delete __stack_id__
+            cd /home/imageprep/f5-openstack-image-prep/f5_image_prep
+            wget __f5_ve_image_url__ -O f5_ve_image.zip
+            unzip f5_ve_image.zip __f5_ve_image_name__
+            python ve_image_sync.py -i __f5_ve_image_name__ 
+            wc_notify --data-binary '{"status": "SUCCESS"}'
 
 outputs:
   instance_name:
     description: Name of the instance
-    value: { get_attr: [onboard_instance, name] }
+    value: { get_attr: [image_prep_instance, name] }
   instance_ip:
     description: The IP address of the deployed instance
-    value: { get_attr: [onboard_instance, first_address] }
+    value: { get_attr: [image_prep_instance, first_address] }

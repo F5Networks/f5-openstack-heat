@@ -113,13 +113,13 @@ parameter_groups:
 resources:
 
    bigip_data_security_group:
-    type: https://raw.githubusercontent.com/F5Networks/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
 
    bigip_mgmt_security_group:
-    type: https://raw.githubusercontent.com/F5Networks/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
 
    f5_ve_instance:
-    type: https://raw.githubusercontent.com/F5Networks/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/f5_ve_standalone_2_nic.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/f5_ve_standalone_2_nic.yaml 
     properties:
       ve_image: { get_param: f5_ve_os_image }
       ve_flavor: { get_param: f5_ve_os_flavor }
