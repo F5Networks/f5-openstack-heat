@@ -80,9 +80,9 @@ people are using our code, and we like fixing them even more.
 <Describe the bug in detail and the steps taken prior to encountering the issue>
 
 #### Deployment
-<Explain in reasonable detail your OpenStack deployment, the F5 OpenStack agent, and BIG-IP(s)>
-<Example: Single OpenStack controller with one F5 agent managing a cluster of 4 BIG-IP VEs>
-<Example: Three OpenStack controllers in HA, each with one standalone F5 agent managing a single BIG-IP appliance>
+<Explain in reasonable detail your OpenStack deployment, the F5 OpenStack agent, and BIG-IP®(s)>
+<Example: Single OpenStack controller with one F5 agent managing a cluster of 4 BIG-IP® VEs>
+<Example: Three OpenStack controllers in HA, each with one standalone F5 agent managing a single BIG-IP® appliance>
 ```
 * Details: For enhancements, copy and paste the following template into your new issue and fill it out.
 
@@ -129,5 +129,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 ### Contributor License Agreement
-Individuals or business entities who contribute to this project must have completed and submitted the [F5 Contributor License Agreement](http://f5networks.github.io/f5-openstack-docs/cla_landing/index.html) to Openstack_CLA@f5.com prior to their
+Individuals or business entities who contribute to this project must have completed and submitted the [F5 Contributor License Agreement](http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html) to Openstack_CLA@f5.com prior to their
 code submission being included in this project.
