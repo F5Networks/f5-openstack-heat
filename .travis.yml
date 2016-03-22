@@ -8,5 +8,5 @@ before_install:
 install:
     - pip install -r requirements.test.txt
 script:
-    - flake8 ./
+    - flake8 --exclude=docs .
     - cd docs; make html
