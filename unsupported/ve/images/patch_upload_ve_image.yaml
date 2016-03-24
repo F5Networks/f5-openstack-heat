@@ -157,11 +157,11 @@ resources:
             # download f5 packages
             cd /home/imageprep
             
+            apt-get update
             apt-get install -y git
             git clone __image_prep_url__
 
             # install packages
-            apt-get update
             apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko
             
             # sync images
