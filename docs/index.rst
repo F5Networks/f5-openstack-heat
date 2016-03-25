@@ -1,5 +1,5 @@
-F5 Networks OpenStack Heat Template Library
-===========================================
+F5® Networks OpenStack Heat Template Library
+============================================
 
 .. toctree::
     :hidden:
@@ -11,11 +11,11 @@ F5 Networks OpenStack Heat Template Library
 
 Introduction
 ------------
-The F5 OpenStack Heat template library contains templates for applications stacks that include F5 BIG-IP® configurations and templates for deploying BIG-IP® VE in an OpenStack cloud.
+The F5® OpenStack Heat template library contains templates for applications stacks that include F5® BIG-IP® configurations and templates for deploying BIG-IP® VE in an OpenStack cloud.
 
 The library contains two groups of templates:
 
-* :ref:`F5 Supported <f5-supported_home>`
+* :ref:`F5® Supported <f5-supported_home>`
 * :ref:`Unsupported <unsupported_home>`
 
 
@@ -23,7 +23,7 @@ Releases and Versions
 ---------------------
 Release v |release| supports the OpenStack |openstack| release.
 
-For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
+For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`__.
 
 .. include:: ../f5_supported/README.rst
 
@@ -36,6 +36,7 @@ Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command lin
 .. note::
 
     Some templates require `F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`_ to be installed.
+
 
 Contact
 -------
@@ -71,7 +72,7 @@ Contributor License Agreement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Individuals or business entities who contribute to this project must
-have completed and submitted the `F5 Contributor License
+have completed and submitted the `F5® Contributor License
 Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`__
 to Openstack_CLA@f5.com prior to their code submission being included in this
 project.

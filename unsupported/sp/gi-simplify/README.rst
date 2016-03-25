@@ -7,9 +7,9 @@ Overview
 To respond to the growth and innovation in data networks, Cloud Service Providers (CSPs) have
 expanded existing legacy platforms and added new ones without a holistic view of the network architecture. In many cases, this results in needlessly complex networks that are not readily scalable; increase deployment and operating costs; and reduce the ability to add or adapt new services.
 
-Once established in a position to steer traffic to value-added service (VAS) platforms, BIG-IP® enables CSPs to consolidate several incremental network functions to increase network efficiency and ROI. F5 products provide a number of additional service functions, including security, translation, processing offloading, optimisation, and policy enforcement.
+Once established in a position to steer traffic to value-added service (VAS) platforms, BIG-IP® enables CSPs to consolidate several incremental network functions to increase network efficiency and ROI. F5® products provide a number of additional service functions, including security, translation, processing offloading, optimisation, and policy enforcement.
 
-The purpose of this solution is to research and demonstrate the use case scenarios for the F5® BIG-IP® `PEM™ <https://f5.com/products/service-provider-products/policy-enforcement-manager>`_ and `CGNAT <https://f5.com/products/service-provider-products/carrier-grade-nat>`_ modules to simplify the implementation of the Gi infrastructure used by ISPs. For more information, please see F5's `S/Gi Network Simplification <https://f5.com/solutions/service-provider/reference-architectures/s-gi-network-simplification>`_ reference architecture.
+The purpose of this solution is to research and demonstrate the use case scenarios for the F5® BIG-IP® `PEM™ <https://f5.com/products/service-provider-products/policy-enforcement-manager>`_ and `CGNAT <https://f5.com/products/service-provider-products/carrier-grade-nat>`_ modules to simplify the implementation of the Gi infrastructure used by ISPs. For more information, please see F5®'s `S/Gi Network Simplification <https://f5.com/solutions/service-provider/reference-architectures/s-gi-network-simplification>`_ reference architecture.
 
 Use cases
 ---------
@@ -27,7 +27,7 @@ This heat template can be deployed on OpenStack Kilo clouds, using Neutron confi
 
 OpenStack-ready BIG-IP® image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Use of this template requires an OpenStack-ready BIG-IP® image (version 12.0.0) with the appropriate OpenStack /config/startup script in place. For more information or to acquire an OpenStack-ready image, **please contact your F5 Support representative**.
+Use of this template requires an OpenStack-ready BIG-IP® image (version 12.0.0) with the appropriate OpenStack /config/startup script in place. For more information or to acquire an OpenStack-ready image, **please contact your F5® Support representative**.
 
 Notes
 -----

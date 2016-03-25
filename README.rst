@@ -3,7 +3,7 @@ f5-openstack-heat
 
 Introduction
 ------------
-OpenStack Heat templates for applications using F5 BigIP and F5 VE deployments.
+OpenStack Heat templates for applications using F5® BigIP and F5® VE deployments.
 
 Supported and Unsupported Templates
 -----------------------------------
@@ -13,23 +13,23 @@ templates are :code:`f5_supported` and :code:`unsupported`.
 f5_supported
 ~~~~~~~~~~~~
 The :code:`f5_supported` directory contains templates that are officially supported
-by F5 Networks for customers with a support contract.  Users who require
-support should contact F5 Support through usual means.
+by F5® Networks for customers with a support contract.  Users who require
+support should contact F5® Support through usual means.
 
 unsupported
 ~~~~~~~~~~~
 The :code:`unsupported` directory contains templates that are experimental and should
 be used **AT YOUR OWN RISK**.  These templates may have been contributed by
-other users or are under development by F5.  Regardless of a customer's status
-of a valid support contract, F5 will not support templates that are in this
+other users or are under development by F5®.  Regardless of a customer's status
+of a valid support contract, F5® will not support templates that are in this
 directory.
 
 Releases and Versions
 ---------------------
 This branch supports the OpenStack Kilo release.
 
-For more information about F5 Networks's OpenStack versioning and support
-matrix please see `F5 Networks OpenStack Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
+For more information about F5® Networks's OpenStack versioning and support
+matrix please see `F5® Networks OpenStack Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
 
 Installation & Configuration
 ----------------------------
@@ -90,7 +90,7 @@ Contributor License Agreement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Individuals or business entities who contribute to this project must
-have completed and submitted the `F5 Contributor License
+have completed and submitted the `F5® Contributor License
 Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`__
 to Openstack_CLA@f5.com prior to their code submission being included in this
 project.

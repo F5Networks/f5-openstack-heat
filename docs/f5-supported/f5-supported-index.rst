@@ -4,7 +4,7 @@
     :hidden:
     :maxdepth: 2
 
-F5-Supported Heat Templates
+F5®-Supported Heat Templates
 ===========================
 
 .. include:: ../../f5_supported/README.rst
