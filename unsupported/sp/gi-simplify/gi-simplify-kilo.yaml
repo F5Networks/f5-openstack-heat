@@ -25,12 +25,12 @@ description: >
 
     Once established in a position to steer traffic to VAS platforms, the BIG-IP®
     platform enables CSPs to consolidate several incremental network functions to
-    increase network efficiency and ROI. F5 products provide a number of additional
+    increase network efficiency and ROI. F5® products provide a number of additional
     service functions, including security, translation, processing offloading,
     optimisation, and policy enforcement.
 
     The purpose of this solution is to research and demonstrate the use case
-    scenarios for the F5 PEM, CGNAT modules to simplify the implementation of the
+    scenarios for the F5® PEM, CGNAT modules to simplify the implementation of the
     GI infrastructure that is used by ISP nowadays.
 
 parameters:

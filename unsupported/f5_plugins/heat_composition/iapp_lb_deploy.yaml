@@ -1,5 +1,5 @@
 description: >
-  This heat template demonstrates a basic load-balancing scenario on an F5 Device.
+  This heat template demonstrates a basic load-balancing scenario on an F5® Device.
 
 heat_template_version: 2015-04-30
 
