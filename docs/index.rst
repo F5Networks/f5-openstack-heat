@@ -1,5 +1,9 @@
-F5® Networks OpenStack Heat Template Library
+F5 Networks® OpenStack Heat Template Library
 ============================================
+
+.. raw:: html
+
+    <script async defer src="https://f5-openstack-slack.herokuapp.com/slackin.js"></script>
 
 .. toctree::
     :hidden:
@@ -8,22 +12,20 @@ F5® Networks OpenStack Heat Template Library
     f5-supported/f5-supported-index
     unsupported/unsupported-index
 
-
 Introduction
 ------------
-The F5® OpenStack Heat template library contains templates for applications stacks that include F5® BIG-IP® configurations and templates for deploying BIG-IP® VE in an OpenStack cloud.
+The F5® OpenStack Heat template library contains templates that can be used to deploy and/or configure F5® BIG-IP® in an OpenStack cloud.
 
 The library contains two groups of templates:
 
 * :ref:`F5® Supported <f5-supported_home>`
 * :ref:`Unsupported <unsupported_home>`
 
-
 Releases and Versions
 ---------------------
 Release v |release| supports the OpenStack |openstack| release.
 
-For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`__.
+For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`_.
 
 .. include:: ../f5_supported/README.rst
 
@@ -31,17 +33,15 @@ For more information regarding releases and versioning, please see the `Release,
 
 Installation & Configuration
 ----------------------------
-Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command line, or API.
+Any of F5®'s Heat templates can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack.
+
+Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for usage instructions.
 
 .. note::
 
-    Some templates require `F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`_ to be installed.
+    Many of the templates require the F5® Heat plugins to be installed.
+    Please see the `documentation <http://f5-openstack-heat-plugins.readthedocs.org/en/latest/>`_ for instructions.
 
-
-Contact
--------
-Have questions or like to see new templates?  We'd love to hear from you. You
-can email the team at f5_openstack_heat@f5.com, or visit us at `F5Networks/f5-openstack-heat <https://github.com/F5Networks/f5-openstack-heat>`__.
 
 Copyright
 ---------
@@ -71,8 +71,4 @@ under the License.
 Contributor License Agreement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Individuals or business entities who contribute to this project must
-have completed and submitted the `F5® Contributor License
-Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`__
-to Openstack_CLA@f5.com prior to their code submission being included in this
-project.
+Individuals or business entities who contribute to this project must have completed and submitted the `F5® Contributor License Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`_ to Openstack_CLA@f5.com prior to their code submission being included in this project.
