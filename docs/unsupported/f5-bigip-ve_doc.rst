@@ -13,7 +13,6 @@ We have four sets of Heat templates that can be used with BIG-IP® VE:
 
 .. toctree::
     :titlesonly:
-    :maxdepth: 1
 
     Image Templates <ve-images>
     Plugin Templates <f5-iapps-plugins_doc>
