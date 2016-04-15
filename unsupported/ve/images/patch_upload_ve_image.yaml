@@ -1,8 +1,14 @@
-heat_template_version: 2013-05-23
+heat_template_version: 2015-04-30
 
 description: This template deploys a Linux image as a TMOS VE image onboarding server.
 
 parameters:
+  onboard_image:
+    type: string
+    label: Onboard Ubuntu Image
+    description: The image used to patch the VE image
+    constraints:
+      - custom_constraint: glance.image
   flavor:
     type: string
     label: F5 Onboard Server Flavor
@@ -19,14 +25,13 @@ parameters:
     type: string
     label: F5 Onboard Server Management Network
     description: Private network to attach server to.
-    default: private-net
     constraints:
       - custom_constraint: neutron.network    
   f5_image_import_auth_url:
     type: string
     label: Keystone Auth URL
     description: Keystone URL to perform import services
-    default: http://<keystone_host>:5000/v2.0
+    default: http://<your_keystone_ip>:5000/v2.0
   f5_image_import_tenant:
     type: string
     label: Image Import Tenant
@@ -61,9 +66,15 @@ parameters:
     description: SSH Key
     constraints:
       - custom_constraint: nova.keypair
+  apt_cache_proxy_url:
+    type: string
+    label: Apt-cache URL
+    description: URL for local apt-cahce proxy
+    default: None
 
 parameter_groups:
 - parameters:
+  - onboard_image
   - flavor
   - use_config_drive
   - private_network
@@ -77,6 +88,7 @@ parameter_groups:
   - image_prep_url
   - f5_ve_image_url
   - f5_ve_image_name
+  - apt_cache_proxy_url
 
 resources:
   wait_condition:
@@ -88,18 +100,6 @@ resources:
 
   wait_handle:
     type: OS::Heat::WaitConditionHandle
-
-  onboard_image:
-    type: OS::Glance::Image
-    properties:
-      container_format: bare
-      disk_format: qcow2
-      is_public: False
-      location: http://uec-images.ubuntu.com/releases/14.04/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img
-      min_disk: 40
-      min_ram: 512
-      name: F5OnboardImage
-      protected: False
 
   onboard_security_group:
     type: OS::Neutron::SecurityGroup
@@ -121,9 +121,8 @@ resources:
 
   image_prep_instance:
     type: OS::Nova::Server
-    depends_on: onboard_image
     properties:
-      image: { get_resource: onboard_image }
+      image: { get_param: onboard_image }
       config_drive: { get_param: use_config_drive }
       key_name: { get_param: image_prep_key }
       security_groups:
@@ -143,6 +142,7 @@ resources:
             __image_prep_url__: { get_param: image_prep_url }
             __f5_ve_image_url__: { get_param: f5_ve_image_url }
             __f5_ve_image_name__: { get_param: f5_ve_image_name }
+            __apt_cache_proxy_url__: { get_param: apt_cache_proxy_url }
             wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
           template: |
             #!/bin/bash -ex
@@ -155,25 +155,31 @@ resources:
             service ssh restart
             
             # download f5 packages
-            cd /home/imageprep
             
+            # Setup apt-cache proxy (if included) and install packages
+            if [[ "__http_proxy_host__" != "None" ]]; then
+                echo 'Acquire::HTTP::Proxy "__apt_cache_proxy_url__";' > /etc/apt/apt.conf.d/01proxy
+                echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy
+            fi
             apt-get update
-            apt-get install -y git
+            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko git
+
+            cd /home/imageprep
             git clone __image_prep_url__
 
-            # install packages
-            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko
-            
             # sync images
-            export HOME=/home/imageprep
-            export OS_AUTH_URL=__f5_image_import_auth_url__
-            export OS_USERNAME=__f5_image_import_user__
-            export OS_PASSWORD=__f5_image_import_password__
-            export OS_TENANT_NAME=__f5_image_import_tenant__
-            export PYTHONPATH=/home/imageprep/f5-openstack-image-prep/
-                        
+            echo 'export HOME=/home/imageprep' > sync_source
+            echo 'export OS_AUTH_URL=__f5_image_import_auth_url__' >> sync_source
+            echo 'export OS_USERNAME=__f5_image_import_user__' >> sync_source
+            echo 'export OS_PASSWORD=__f5_image_import_password__' >> sync_source
+            echo 'export OS_TENANT_NAME=__f5_image_import_tenant__' >> sync_source
+            echo 'export PYTHONPATH=/home/imageprep/f5-openstack-image-prep/' >> sync_source
+            source sync_source            
+
             cd /home/imageprep/f5-openstack-image-prep/f5_image_prep
+
             wget __f5_ve_image_url__ -O f5_ve_image.zip
+
             unzip f5_ve_image.zip __f5_ve_image_name__
             python ve_image_sync.py -i __f5_ve_image_name__ 
             wc_notify --data-binary '{"status": "SUCCESS"}'

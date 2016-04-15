@@ -1,0 +1,5 @@
+python-heatclient
+python-glanceclient
+f5-openstack-heat-plugins
+hacking
+Sphinx==1.3.5
