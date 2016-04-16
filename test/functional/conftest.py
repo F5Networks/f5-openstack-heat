@@ -14,6 +14,7 @@
 #
 #
 
+import os
 import pytest
 
 
@@ -24,7 +25,8 @@ def pytest_addoption(parser):
                      help='Default BIGIP root password')
     parser.addoption('--license', action='store',
                      help='BIGIP license key')
-    parser.addoption('--no-teardown-glance-images', action='store_false',
+    parser.addoption('--no-teardown-glance-images', action='store_true',
+                     default=False,
                      help='Include if you do not wish to remove images '
                      'pushed into glance.')
 
@@ -46,3 +48,17 @@ def OSPassword(request):
 @pytest.fixture
 def AuthAddress(request):
     return request.config.getoption('--auth-netloc')
+
+
+@pytest.fixture
+def UnsupportedDir():
+    base_repo_dir = \
+        os.path.dirname(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.abspath(__file__)
+                )
+            )
+        )
+    unsupported_dir = os.path.join(base_repo_dir, 'unsupported')
+    return unsupported_dir

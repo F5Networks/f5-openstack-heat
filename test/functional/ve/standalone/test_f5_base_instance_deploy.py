@@ -16,10 +16,10 @@
 
 from f5.bigip import BigIP
 import os
+import pytest
 import time
 
 
-HEAT_DIR = '/root/heat/unsupported/ve/common'
 BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
 BIGIP_11_5_4_VERSION = '11.5.4'
 BIGIP_11_6_IMG = 'BIGIP-11.6.0.0.0.401'
@@ -53,12 +53,23 @@ def wait_for_active_licensed_bigip(
             continue
 
 
+@pytest.fixture
+def CommonTemplateDir(UnsupportedDir):
+    return os.path.join(
+        os.path.join(
+            UnsupportedDir, 've', 'common'
+        )
+    )
+
+
 # These tests require a patched VE instance in your stack
 
-def itest_f5_base_instance_deploy_3_nic_11_5_4(HeatStack, BigIPConfig):
+def itest_f5_base_instance_deploy_3_nic_11_5_4(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
     admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'f5_ve_standalone_3_nic.yaml'),
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_11_5_4_IMG,
@@ -79,10 +90,12 @@ def itest_f5_base_instance_deploy_3_nic_11_5_4(HeatStack, BigIPConfig):
     )
 
 
-def test_f5_base_instance_deploy_3_nic_11_6(HeatStack, BigIPConfig):
+def test_f5_base_instance_deploy_3_nic_11_6(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
     admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'f5_ve_standalone_3_nic.yaml'),
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_11_6_IMG,
@@ -103,10 +116,12 @@ def test_f5_base_instance_deploy_3_nic_11_6(HeatStack, BigIPConfig):
     )
 
 
-def test_f5_base_instance_deploy_3_nic_12_0(HeatStack, BigIPConfig):
+def test_f5_base_instance_deploy_3_nic_12_0(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
     admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'f5_ve_standalone_3_nic.yaml'),
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_12_0_IMG,

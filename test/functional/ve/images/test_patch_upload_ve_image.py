@@ -17,7 +17,7 @@
 import os
 import pytest
 
-HEAT_DIR = '/root/heat/unsupported/ve/images'
+
 BIGIP_12_0_IMG = 'BIGIP-12.0.0.0.0.606'
 BIGIP_11_6_IMG = 'BIGIP-11.6.0.0.0.401'
 BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
@@ -38,15 +38,25 @@ def GlanceImageCleanup(request, glanceclientmanager):
     return manage_glance
 
 
+@pytest.fixture
+def PatchTemplateLoc(UnsupportedDir):
+    return os.path.join(
+        os.path.join(
+            UnsupportedDir, 've', 'images', 'patch_upload_ve_image.yaml'
+        )
+    )
+
+
 def test_patched_image_upload_12_0(
         HeatStack,
         GlanceImageCleanup,
         OSPassword,
         AuthAddress,
-        glanceclientmanager
+        glanceclientmanager,
+        PatchTemplateLoc
 ):
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'patch_upload_ve_image.yaml'),
+        PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
             'onboard_image': 'ubuntu_14.04_lts',
@@ -56,7 +66,7 @@ def test_patched_image_upload_12_0(
             'f5_ve_image_url':
             'http://10.190.0.20/~breaux/BIGIP-12.0.0.0.0.606.LTM.qcow2.zip',
             'f5_ve_image_name': BIGIP_12_0_IMG + '.qcow2',
-            # 'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(AuthAddress)
         }
@@ -71,10 +81,11 @@ def test_patched_image_upload_11_6(
         GlanceImageCleanup,
         OSPassword,
         AuthAddress,
-        glanceclientmanager
+        glanceclientmanager,
+        PatchTemplateLoc
 ):
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'patch_upload_ve_image.yaml'),
+        PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
             'onboard_image': 'ubuntu_14.04_lts',
@@ -83,6 +94,7 @@ def test_patched_image_upload_11_6(
             'f5_image_import_password': OSPassword,
             'f5_ve_image_url':
             'http://10.190.0.20/~breaux/BIGIP-11.6.0.0.0.401.LTM.qcow2.zip',
+            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_ve_image_name': BIGIP_11_6_IMG + '.qcow2',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(AuthAddress)
@@ -98,10 +110,11 @@ def test_patched_image_upload_11_5(
         GlanceImageCleanup,
         OSPassword,
         AuthAddress,
-        glanceclientmanager
+        glanceclientmanager,
+        PatchTemplateLoc
 ):
     hc, stack = HeatStack(
-        os.path.join(HEAT_DIR, 'patch_upload_ve_image.yaml'),
+        PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
             'onboard_image': 'ubuntu_14.04_lts',
