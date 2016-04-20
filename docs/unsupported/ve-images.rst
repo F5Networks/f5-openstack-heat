@@ -7,5 +7,3 @@
 .. toctree::
     :maxdepth: 1
     :glob:
-
-    ../../unsupported/ve/images/*

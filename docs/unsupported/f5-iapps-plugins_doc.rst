@@ -10,5 +10,5 @@ F5® iApps® Plugins
     :titlesonly:
     :glob:
 
-    f5_plugins/*
+    *iapp
 

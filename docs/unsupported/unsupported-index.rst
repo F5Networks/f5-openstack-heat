@@ -15,11 +15,7 @@ Unsupported Heat Templates
 .. toctree::
 
     Learning Stacks <learning-stacks_doc>
-    F5® iApps® Plugins <f5-iapps-plugins_doc>
     F5® BIG-IP® VE <f5-bigip-ve_doc>
+    F5® iApps® Plugins <f5-iapps-plugins_doc>
     Service Providers <service-providers_doc>
-
-
-
-
 

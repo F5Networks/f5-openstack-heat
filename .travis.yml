@@ -9,4 +9,4 @@ install:
     - pip install -r requirements.unit.test.txt
 script:
     - flake8 --exclude=docs .
-    - cd docs; make html
+    - sphinx-build -W docs/ docs/_build/
