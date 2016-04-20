@@ -69,7 +69,7 @@ parameters:
   apt_cache_proxy_url:
     type: string
     label: Apt-cache URL
-    description: URL for local apt-cahce proxy
+    description: URL for local apt-cache proxy
     default: None
 
 parameter_groups:

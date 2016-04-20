@@ -8,5 +8,5 @@ Service Providers
 .. toctree::
     :titlesonly:
 
-    sp-gi-simplify
+    concept_sp-gi-simplify
 

@@ -7,6 +7,6 @@ Learning Stacks
 .. toctree::
     :titlesonly:
 
-    ubuntu-classic-stack
+    concept_ubuntu-classic-stack
 
 

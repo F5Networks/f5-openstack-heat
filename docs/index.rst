@@ -9,11 +9,13 @@ F5 Networks® OpenStack Heat Template Library
     :hidden:
     :maxdepth: 2
 
-    f5-supported/f5-supported-index
-    unsupported/unsupported-index
+    User Guide <map_heat-user-guide>
+    F5® Supported Templates <f5-supported-index>
+    Unsupported Templates <unsupported-index>
 
-Introduction
-------------
+Overview
+--------
+
 The F5® OpenStack Heat template library contains templates that can be used to deploy and/or configure F5® BIG-IP® in an OpenStack cloud.
 
 The library contains two groups of templates:
@@ -23,24 +25,25 @@ The library contains two groups of templates:
 
 Releases and Versions
 ---------------------
-Release v |release| supports the OpenStack |openstack| release.
+Release |release| supports the OpenStack |openstack| release.
 
 For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`_.
 
-.. include:: ../f5_supported/README.rst
-
-.. include:: ../unsupported/README.rst
-
 Installation & Configuration
 ----------------------------
+
 Any of F5®'s Heat templates can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack.
 
-Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for usage instructions.
+Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for instructions.
 
 .. note::
 
     Many of the templates require the F5® Heat plugins to be installed.
     Please see the `documentation <http://f5-openstack-heat-plugins.readthedocs.org/en/latest/>`_ for instructions.
+
+* :ref:`How To: Onboard a VE Image Using Heat <how-to_onboard-ve>`
+* :ref:`How To: Launch a 2-NIC, Standalone VE Using Heat <how-to_launch-standalone-bigip-2nic>`
+* :ref:`How To: Launch a 3-NIC, Standalone VE Using Heat <how-to_launch-standalone-bigip-3nic>`
 
 
 Copyright

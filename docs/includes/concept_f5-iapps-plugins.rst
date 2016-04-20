@@ -1,14 +1,15 @@
 .. _f5-plugins:
 
-F5® iApps® Plugins
-==================
+F5® Plugins
+===========
 
 .. include:: ../../unsupported/f5_plugins/README.rst
     :start-line: 3
 
 .. toctree::
     :titlesonly:
-    :glob:
 
-    f5_plugins/*
+
+
+
 

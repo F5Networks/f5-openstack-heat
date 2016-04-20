@@ -22,10 +22,6 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('.'))
 
-from version import OPENSTACK_RELEASE
-from version import VERSION
-
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -38,6 +34,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
+    'sphinx.ext.doctest',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -64,9 +61,9 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = '1.0'
+version = '7.0'
 # The full version, including alpha/beta/rc tags.
-release = '1.0.1'
+release = 'v7.0.1'
 
 # OpenStack release
 openstack_release = "Kilo"
@@ -302,4 +299,4 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+# intersphinx_mapping = {'https://docs.python.org/': None}
