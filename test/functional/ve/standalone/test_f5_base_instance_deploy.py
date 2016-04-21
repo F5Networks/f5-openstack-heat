@@ -58,8 +58,8 @@ def wait_for_active_licensed_bigip(
 
 def check_net_components(bigip):
     expected_ifc_names = ['1.1', '1.2', 'mgmt']
-    expected_selfip_names = ['selfip.network-1.1', 'selfip.network-1.2']
-    expected_vlan_names = ['network-1.1', 'network-1.2']
+    expected_selfip_names = [u'selfip.network-1.1', u'selfip.network-1.2']
+    expected_vlan_names = [u'network-1.1', u'network-1.2']
     ifcs = bigip.net.interfaces.get_collection()
     ifc_names = [ifc.name for ifc in ifcs]
     assert expected_ifc_names == ifc_names
