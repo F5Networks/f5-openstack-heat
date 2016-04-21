@@ -48,9 +48,24 @@ def wait_for_active_licensed_bigip(
         try:
             registration = bigip.shared.licensing.registration.load()
             assert registration.licensedVersion == bigip_version
-            return
+            return bigip
         except Exception:
             continue
+
+
+def check_net_components(bigip):
+    expected_ifc_names = ['1.1', '1.2', 'mgmt']
+    expected_selfip_names = ['selfip.network-1.1', 'selfip.network-1.2']
+    expected_vlan_names = ['network-1.1', 'network-1.2']
+    ifcs = bigip.net.interfaces.get_collection()
+    ifc_names = [ifc.name for ifc in ifcs]
+    assert expected_ifc_names == ifc_names
+    selfips = bigip.net.selfips.get_collection()
+    selfip_names = [selfip.name for selfip in selfips]
+    assert expected_selfip_names == selfip_names
+    vlans = bigip.net.vlans.get_collection()
+    vlan_names = [vlan.name for vlan in vlans]
+    assert expected_vlan_names == vlan_names
 
 
 @pytest.fixture
@@ -85,9 +100,10 @@ def itest_f5_base_instance_deploy_3_nic_11_5_4(
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
-    wait_for_active_licensed_bigip(
+    bigip = wait_for_active_licensed_bigip(
         floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION
     )
+    check_net_components(bigip)
 
 
 def test_f5_base_instance_deploy_3_nic_11_6(
@@ -111,9 +127,10 @@ def test_f5_base_instance_deploy_3_nic_11_6(
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
-    wait_for_active_licensed_bigip(
+    bigip = wait_for_active_licensed_bigip(
         floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION
     )
+    check_net_components(bigip)
 
 
 def test_f5_base_instance_deploy_3_nic_12_0(
@@ -137,6 +154,7 @@ def test_f5_base_instance_deploy_3_nic_12_0(
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
-    wait_for_active_licensed_bigip(
+    bigip = wait_for_active_licensed_bigip(
         floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION
     )
+    check_net_components(bigip)
