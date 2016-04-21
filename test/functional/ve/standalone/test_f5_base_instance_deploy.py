@@ -48,6 +48,9 @@ def wait_for_active_licensed_bigip(
         try:
             registration = bigip.shared.licensing.registration.load()
             assert registration.licensedVersion == bigip_version
+            assert len(bigip.net.vlans.get_collection()) == 2
+            assert len(bigip.net.interfaces.get_collection()) == 3
+            assert len(bigip.net.selfips.get_collection()) == 2
             return bigip
         except Exception:
             continue

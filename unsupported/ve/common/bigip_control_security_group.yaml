@@ -6,7 +6,6 @@ resources:
 
    bigip_control_security_group:
     type: OS::Neutron::SecurityGroup
-    deletion_policy: Retain
     properties:
       description: security group rules for ha and mirroring self ip address
       name: bigip_control_security_group

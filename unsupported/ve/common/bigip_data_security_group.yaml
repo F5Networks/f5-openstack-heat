@@ -6,7 +6,6 @@ resources:
 
    bigip_data_security_group:
     type: OS::Neutron::SecurityGroup
-    deletion_policy: Retain
     properties:
       description: security group rules for data interfaces
       name: bigip_data_security_group

@@ -6,7 +6,6 @@ resources:
 
    bigip_mgmt_security_group:
     type: OS::Neutron::SecurityGroup
-    deletion_policy: Retain
     properties:
       description: security group rules for bigip mgmt port
       name: bigip_mgmt_security_group
