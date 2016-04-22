@@ -37,35 +37,17 @@ parameters:
     label: F5 VE Root User Password
     description: Password used to perform image import services. Can be a hash for a salted password or password phrase.
     hidden: true
-  http_proxy_host:
-    type: string
-    label: HTTP Proxy Host to user to acquire resources
-    default: None
-  http_proxy_port:
-    type: number
-    label: HTTP Proxy Port to use to acquire resources
-    default: 8080
-    constraints:
-      - range: { min: 1024, max: 65534 }
-  http_proxy_script_url:
-    type: string
-    label: HTTP Proxy Script URL for F5 License Client
-    default: None
-  license_activation_host:
-    type: string
-    label: License Activation Host
-    default: None
-  license_activation_port:
-    type: number
-    label: License Activation Port
-    default: 443
-    constraints:
-      - range: { min: 1, max: 65534 }
   license:
     type: string
     label: Primary VE License Base Key
     description: F5 TMOS License Basekey
     hidden: true
+  external_network:
+    type: string
+    label: External Network Name
+    description: External network name where floating IP resides
+    constraints:
+      - custom_constraint: neutron.network
   mgmt_network:
     type: string
     label: VE Management Network
@@ -99,32 +81,35 @@ parameter_groups:
   - admin_password
   - root_password
 - parameters:
-  - http_proxy_host
-  - http_proxy_port
-  - http_proxy_script_url
-  - license_activation_host
-  - license_activation_port
   - license
 - parameters:
+  - external_network
   - mgmt_network
   - network_1
   - network_1_name
   - default_gateway  
 
 resources:
-   mgmt_port:
-     type: OS::Neutron::Port
-     properties:
-       network: {get_param: mgmt_network}
-       security_groups:
-         - bigip_mgmt_security_group
-   network_1_port:
+  mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: mgmt_network}
+      security_groups: [{ get_attr: [bigip_mgmt_security_group, mgmt_security_group_id] }]
+  network_1_port:
     type: OS::Neutron::Port
     properties:
       network: {get_param: network_1 }
-      security_groups:
-        - bigip_data_security_group
-   ve_instance:
+      security_groups: [{ get_attr: [bigip_data_security_group, data_security_group_id] }]
+  bigip_data_security_group:
+    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_data_security_group.yaml 
+  bigip_mgmt_security_group:
+    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_mgmt_security_group.yaml 
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+      port_id: { get_resource: mgmt_port }
+  ve_instance:
     type: OS::Nova::Server
     properties:
       image: { get_param: ve_image }
@@ -138,11 +123,6 @@ resources:
       user_data:
         str_replace:
           params:
-            __http_proxy_host__: { get_param: http_proxy_host }
-            __http_proxy_port__: { get_param: http_proxy_port }
-            __http_proxy_script_url__ : { get_param: http_proxy_script_url }
-            __license_activation_host__: { get_param: license_activation_host }
-            __license_activation_port__: { get_param: license_activation_port }
             __admin_password__: { get_param: admin_password }
             __root_password__: { get_param: root_password }
             __license__: { get_param: license }
@@ -158,11 +138,11 @@ resources:
                    "root_password": "__root_password__",
                    "license": {
                        "basekey": "__license__",
-                       "host": "__license_activation_host__",
-                       "port": "__license_activation_port__",
-                       "proxyhost": "__http_proxy_host__",
-                       "proxyport": "__http_proxy_port__",
-                       "proxyscripturl": "__http_proxy_script_url__"
+                       "host": "None",
+                       "port": "8080",
+                       "proxyhost": "None",
+                       "proxyport": "443",
+                       "proxyscripturl": "None"
                    },
                    "modules": {
                        "auto_provision": "false",
@@ -221,3 +201,6 @@ outputs:
   network_1_port:
     description: The 1.1 port id of f5 VE instance
     value: { get_resource: network_1_port }
+  floating_ip:
+    description: The Floating IP address of the VE
+    value: { get_attr: [floating_ip, floating_ip_address] }
