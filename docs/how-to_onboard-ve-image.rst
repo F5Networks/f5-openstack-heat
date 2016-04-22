@@ -62,7 +62,7 @@ Follow the steps below to launch a Heat stack to import the VE image. Once the V
         * - F5 VE Image URL
           - must be a publicly-accessible (i.e., ``http``) URL from which the F5 VE image can be downloaded
         * - F5 VE Image Name
-          - the VE file name (e.g., :file:`BIGIP-11.6.0.6.0.442.LTM.qcow2.zip`)
+          - the VE file name (e.g., :file:`BIGIP-11.6.0.6.0.442.qcow2`)
 
 5. Click :guilabel:`Launch`.
 
