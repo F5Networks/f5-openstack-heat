@@ -103,34 +103,31 @@ parameter_groups:
   - default_gateway  
 
 resources:
-   bigip_data_security_group:
-     type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
-   bigip_mgmt_security_group:
-     type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
-   floating_ip:
-     type: OS::Neutron::FloatingIP
-     properties:
-       floating_network: { get_param: external_network }
-       port_id: { get_resource: mgmt_port }
-   mgmt_port:
-     type: OS::Neutron::Port
-     properties:
-       network: {get_param: mgmt_network}
-       security_groups:
-         - { get_resource: bigip_mgmt_security_group }
-   network_1_port:
+  bigip_data_security_group:
+    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_data_security_group.yaml
+  bigip_mgmt_security_group:
+    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_mgmt_security_group.yaml
+  mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: mgmt_network}
+      security_groups: [{ get_attr: [bigip_mgmt_security_group, mgmt_security_group_id] }]
+  network_1_port:
     type: OS::Neutron::Port
     properties:
       network: {get_param: network_1 }
-      security_groups:
-        - { get_resource: bigip_data_security_group }
-   network_2_port:
+      security_groups: [{ get_attr: [bigip_data_security_group, data_security_group_id] }]
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: external_network }
+      port_id: { get_resource: mgmt_port }
+  network_2_port:
     type: OS::Neutron::Port
     properties:
       network: {get_param: network_2 }
-      security_groups:
-        - bigip_data_security_group
-   ve_instance:
+      security_groups: [{ get_attr: [bigip_data_security_group, data_security_group_id] }]
+  ve_instance:
     type: OS::Nova::Server
     properties:
       image: { get_param: ve_image }

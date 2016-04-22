@@ -59,17 +59,17 @@ def wait_for_active_licensed_bigip(
             return bigip
         except Exception:
             continue
+    pytest.fail('Too many attempts made to contact the BigIP. Failing...')
 
 
 def check_net_components(bigip, ifc_num):
+    expected_ifc_names = EXPECTED_IFC_NAMES[:]
+    expected_selfip_names = EXPECTED_SELFIP_NAMES[:]
+    expected_vlan_names = EXPECTED_VLAN_NAMES[:]
     for ifc in range(2, ifc_num):
-        expected_ifc_names = EXPECTED_IFC_NAMES.append('1.{}'.format(ifc))
-        expected_selfip_names = EXPECTED_SELFIP_NAMES.append(
-            u'selfip.network-1.{}'.format(ifc)
-        )
-        expected_vlan_names = EXPECTED_VLAN_NAMES.append(
-            u'network-1.{}'.format(ifc)
-        )
+        expected_ifc_names.append('1.{}'.format(ifc))
+        expected_selfip_names.append(u'selfip.network-1.{}'.format(ifc))
+        expected_vlan_names.append(u'network-1.{}'.format(ifc))
     ifcs = bigip.net.interfaces.get_collection()
     ifc_names = [ifc.name for ifc in ifcs]
     assert sorted(expected_ifc_names) == sorted(ifc_names)
