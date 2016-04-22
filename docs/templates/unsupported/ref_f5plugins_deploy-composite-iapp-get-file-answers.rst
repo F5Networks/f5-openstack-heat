@@ -1,4 +1,4 @@
-Deploy iAPP Using Answers File
+Deploy iApp Using Answers File
 ==============================
 
 Download the template via the link below, or copy and paste the text into a new file (must be saved as ``.yaml``.

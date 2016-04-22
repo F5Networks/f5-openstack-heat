@@ -1,15 +1,12 @@
+.. _ve_home:
+
 F5® BIG-IP® VE Templates
 ========================
 
 Overview
 --------
 
-We have four sets of Heat templates that can be used with BIG-IP® VE:
-
-  - OpenStack-Ready BIG-IP® VE Image templates: prepare a standard VE image for use in OpenStack.
-  - F5® Plugins templates: can be used with external resources (such as F5® iApps® templates) to deploy specific configurations.
-  - BIG-IP® VE Common templates: contain common configurations that can be used by other templates to compose customized stacks.
-  - BIG-IP® VE Standalone template:  deploy a single, or 'standalone', VE instance.
+The templates within the VE directory can be used to prepare BIG-IP® Virtual Edition (VE) images for use and to launch VE in OpenStack clouds.
 
 .. toctree::
     :titlesonly:

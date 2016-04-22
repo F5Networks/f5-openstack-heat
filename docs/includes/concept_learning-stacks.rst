@@ -1,12 +1,7 @@
 Learning Stacks
 ===============
 
-.. include:: ../../unsupported/learning_stacks/README.rst
-    :start-line: 3
+If you are just starting out with orchestration in OpenStack, you can use our Learning Stacks template(s) to get an idea of how a Heat stack manages resources.
 
-.. toctree::
-    :titlesonly:
-
-    concept_ubuntu-classic-stack
-
+.. include:: concept_ubuntu-classic-stack.rst
 

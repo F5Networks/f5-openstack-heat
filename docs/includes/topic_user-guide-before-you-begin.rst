@@ -27,9 +27,9 @@ You will need the following in order to use this guide:
 
     At minimum, you can download the templates used in this guide:
 
-    :download:`patch_upload_ve_image.yaml <../../unsupported/ve/images/patch_upload_ve_image.yaml>`
+    :download:`patch_upload_ve_image.yaml <../../f5_supported/ve/images/patch_upload_ve_image.yaml>`
 
-    :download:`f5_ve_standalone_3_nic.yaml <../../unsupported/ve/common/f5_ve_standalone_3_nic.yaml>`
+    :download:`f5_ve_standalone_3_nic.yaml <../../f5_supported/ve/standalone/f5_ve_standalone_3_nic.yaml>`
 
 
 
