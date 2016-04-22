@@ -82,17 +82,17 @@ def check_net_components(bigip, ifc_num):
 
 
 @pytest.fixture
-def CommonTemplateDir(UnsupportedDir):
+def CommonTemplateDir(SupportedDir):
     return os.path.join(
         os.path.join(
-            UnsupportedDir, 've', 'common'
+            SupportedDir, 've', 'standalone'
         )
     )
 
 
 # These tests require a patched VE instance in your stack
 
-def itest_f5_base_instance_deploy_2_nic_11_5_4(
+def test_f5_base_instance_deploy_2_nic_11_5_4(
         HeatStack, BigIPConfig, CommonTemplateDir
 ):
     admin_password, root_password, license = BigIPConfig
@@ -103,6 +103,7 @@ def itest_f5_base_instance_deploy_2_nic_11_5_4(
             've_image': BIGIP_11_5_4_IMG,
             'external_network': 'external_network',
             'mgmt_network': 'mgmt_net',
+            've_flavor': 'm1.xlarge',
             'network_1': 'data1_net',
             'f5_ve_os_ssh_key': 'testlab',
             'admin_password': admin_password,
@@ -170,7 +171,7 @@ def test_f5_base_instance_deploy_2_nic_12_0(
     check_net_components(bigip, 2)
 
 
-def itest_f5_base_instance_deploy_3_nic_11_5_4(
+def test_f5_base_instance_deploy_3_nic_11_5_4(
         HeatStack, BigIPConfig, CommonTemplateDir
 ):
     admin_password, root_password, license = BigIPConfig
@@ -179,6 +180,7 @@ def itest_f5_base_instance_deploy_3_nic_11_5_4(
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_11_5_4_IMG,
+            've_flavor': 'm1.xlarge',
             'external_network': 'external_network',
             'mgmt_network': 'mgmt_net',
             'network_1': 'data1_net',

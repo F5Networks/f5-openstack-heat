@@ -39,10 +39,10 @@ def GlanceImageCleanup(request, glanceclientmanager):
 
 
 @pytest.fixture
-def PatchTemplateLoc(UnsupportedDir):
+def PatchTemplateLoc(SupportedDir):
     return os.path.join(
         os.path.join(
-            UnsupportedDir, 've', 'images', 'patch_upload_ve_image.yaml'
+            SupportedDir, 've', 'images', 'patch_upload_ve_image.yaml'
         )
     )
 

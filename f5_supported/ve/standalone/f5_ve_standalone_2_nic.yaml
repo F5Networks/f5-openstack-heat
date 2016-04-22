@@ -1,4 +1,4 @@
-heat_template_version: 2015-04-30
+heat_template_version: 2014-10-16
 
 description: This template deploys a standard f5 standalone VE.
 
@@ -30,12 +30,12 @@ parameters:
   admin_password:
     type: string
     label: F5 VE Admin User Password
-    description: Password used to perform image import services
+    description: Password used to perform image import services. Can be a hash for a salted password or password phrase.
     hidden: true  
   root_password:
     type: string
     label: F5 VE Root User Password
-    description: Password used to perform image import services
+    description: Password used to perform image import services. Can be a hash for a salted password or password phrase.
     hidden: true
   license:
     type: string
@@ -65,17 +65,6 @@ parameters:
     label: VE Network Name for the 1.1 Interface
     description: TMM 1.1 network name.
     default: network-1.1
-  network_2:
-    type: string
-    label: VE Network for the 1.2 Interface
-    description: TMM 1.2 network.
-    constraints:
-      - custom_constraint: neutron.network
-  network_2_name:
-    type: string
-    label: VE Network Name for the 1.2 Interface
-    description: TMM 1.2 network name.
-    default: network-1.2
   default_gateway:
     type: string
     label: Default Gateway IP
@@ -98,15 +87,9 @@ parameter_groups:
   - mgmt_network
   - network_1
   - network_1_name
-  - network_2
-  - network_2_name
   - default_gateway  
 
 resources:
-  bigip_data_security_group:
-    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_data_security_group.yaml
-  bigip_mgmt_security_group:
-    type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/bugfix.teardown_glance_images/unsupported/ve/common/bigip_mgmt_security_group.yaml
   mgmt_port:
     type: OS::Neutron::Port
     properties:
@@ -117,16 +100,15 @@ resources:
     properties:
       network: {get_param: network_1 }
       security_groups: [{ get_attr: [bigip_data_security_group, data_security_group_id] }]
+  bigip_data_security_group:
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
+  bigip_mgmt_security_group:
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
   floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: external_network }
       port_id: { get_resource: mgmt_port }
-  network_2_port:
-    type: OS::Neutron::Port
-    properties:
-      network: {get_param: network_2 }
-      security_groups: [{ get_attr: [bigip_data_security_group, data_security_group_id] }]
   ve_instance:
     type: OS::Nova::Server
     properties:
@@ -137,7 +119,6 @@ resources:
       networks:
         - port: {get_resource: mgmt_port}
         - port: {get_resource: network_1_port}
-        - port: {get_resource: network_2_port}
       user_data_format: RAW
       user_data:
         str_replace:
@@ -148,8 +129,6 @@ resources:
             __default_gateway__: { get_param: default_gateway }
             __network_1__: { get_param: network_1 }
             __network_1_name__: { get_param: network_1_name }
-            __network_2__: { get_param: network_2 }
-            __network_2_name__: { get_param: network_2_name }
           template: |
             {
                "bigip": {
@@ -191,18 +170,6 @@ resources:
                                "is_sync": "false",
                                "is_mirror_primary": "false",
                                "is_mirror_secondary": "false"
-                           },
-                           "1.2": {
-                               "dhcp": "true",
-                               "selfip_allow_service": "default",
-                               "selfip_name": "selfip.__network_2_name__",
-                               "selfip_description": "Self IP address for BIG-IP __network_2_name__ network",
-                               "vlan_name": "__network_2_name__",
-                               "vlan_description": "VLAN for BIG-IP __network_2_name__ network traffic",
-                               "is_failover": "false",
-                               "is_sync": "false",
-                               "is_mirror_primary": "false",
-                               "is_mirror_secondary": "false"
                            }
                        }
                    }
@@ -216,9 +183,6 @@ outputs:
   ve_instance_id:
     description: ID of the instance
     value: { get_resource: ve_instance }
-  floating_ip:
-    description: The Floating IP address of the VE
-    value: { get_attr: [floating_ip, floating_ip_address] }
   mgmt_ip:
     description: The mgmt IP address of f5 ve instance
     value: { get_attr: [mgmt_port, fixed_ips, 0, ip_address] }
@@ -237,12 +201,6 @@ outputs:
   network_1_port:
     description: The 1.1 port id of f5 VE instance
     value: { get_resource: network_1_port }
-  network_2_ip:
-    description: The 1.2 Nonfloating SelfIP address of f5 ve instance
-    value: { get_attr: [network_2_port, fixed_ips, 0, ip_address] }
-  network_2_mac:
-    description: The 1.2 MAC address of f5 VE instance
-    value: { get_attr: [network_2_port, mac_address] }
-  network_2_port:
-    description: The 1.2 port id of f5 VE instance
-    value: { get_resource: network_2_port }
+  floating_ip:
+    description: The Floating IP address of the VE
+    value: { get_attr: [floating_ip, floating_ip_address] }

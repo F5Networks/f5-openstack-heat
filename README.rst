@@ -47,6 +47,29 @@ Contributing
 ------------
 See `Contributing <CONTRIBUTING.md>`_.
 
+Test
+----
+To run the functional tests here, please follow the guidelines below. `pytest <http://pytest.org>` is used for all functional testing in this repo.
+
+Functional Tests
+~~~~~~~~~~~~~~~~
+Each Heat template makes different assumptions about what is available in the Openstack environment and what the template itself needs to create/manage. We have erred on the side of flexibility and customization because we realize your stack may be unique to you. The functionally tested templates may draw upon resources that already exist in Openstack and may manage its own resources when it makes sense. To understand what is needed to test a certain template, one has to merely look at the 'paramaters' input. This gives a clean indication of what is assumed to exist before launching the stack.
+
+#.  Install the required functional testing packages.
+
+    .. code:: shell
+
+        $ pip install -r requirements.func.test.txt
+
+#. The pytest config options give below may not all be needed for a specific test. For example, if the test is not booting an F5® BIG-IP® via Heat then the '--license' option may not be required.
+
+    .. code:: shell
+
+        $ py.test <test_suite_file> --auth-netloc=<ip_address_of_keystone_host> --os-username=<openstack_username> \
+            --os-password=<openstack_password> --os-tenant-id=<id_of_tenant> --os-tenant-name=<openstack_tenant_name> \
+            --bigip-root-password=<password_for_root_username> --bigip-admin-password=<password_for_admin_username> \
+            --license=<license_key_for_ve_image>
+
 
 Copyright
 ---------

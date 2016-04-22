@@ -51,7 +51,7 @@ def AuthAddress(request):
 
 
 @pytest.fixture
-def UnsupportedDir():
+def BaseRepoDir():
     base_repo_dir = \
         os.path.dirname(
             os.path.dirname(
@@ -60,5 +60,14 @@ def UnsupportedDir():
                 )
             )
         )
-    unsupported_dir = os.path.join(base_repo_dir, 'unsupported')
-    return unsupported_dir
+    return base_repo_dir
+
+
+@pytest.fixture
+def UnsupportedDir(BaseRepoDir):
+    return os.path.join(BaseRepoDir, 'unsupported')
+
+
+@pytest.fixture
+def SupportedDir(BaseRepoDir):
+    return os.path.join(BaseRepoDir, 'f5_supported')
