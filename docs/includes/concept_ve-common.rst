@@ -1,3 +1,5 @@
+.. _ve-common:
+
 BIG-IP® VE Common Template Resources
 ====================================
 
@@ -33,3 +35,5 @@ The templates here named :file:`f5_ve_standalone_*_nic.yaml` contain the ``OS::N
 .. warning::
 
     Do not modify these templates unless you've had experience both with Heat and complex network configurations.
+
+

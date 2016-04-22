@@ -1,9 +1,8 @@
 Learning Stacks
 ===============
 
-Overview
---------
-If you are just starting out with orchestration in OpenStack, you can use our Learning Stacks template(s) to get an idea of how a Heat stack manages resources.
+If you are just starting out with orchestration in OpenStack, you can use our Learning Stacks template(s) to get an idea of how a Heat stack manages resources. See the `project documentation <http://f5-openstack-heat.readthedocs.org/en/>`_ for more information.
+
 
 
 

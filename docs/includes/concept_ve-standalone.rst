@@ -1,3 +1,5 @@
+.. _ve-standalone:
+
 BIG-IP® VE Standalone Templates
 ===============================
 
@@ -20,6 +22,5 @@ The standalone templates utilize the same configuration settings as those in the
     * The license key is a required input parameter if you wish to boot up a licensed VE. The license must include the VE modules you wish to provision.
 
     * The outputs of these templates give you a programmatic way to retrieve details about the VE.
-
 
 
