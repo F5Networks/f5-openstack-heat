@@ -1,0 +1,193 @@
+heat_template_version: 2015-04-30
+
+description: This template deploys a Linux image as a TMOS VE image onboarding server.
+
+parameters:
+  onboard_image:
+    type: string
+    label: Onboard Ubuntu Image
+    description: The image used to patch the VE image
+    constraints:
+      - custom_constraint: glance.image
+  flavor:
+    type: string
+    label: F5 Onboard Server Flavor
+    description: Type of instance (flavor) to be used on the compute instance.
+    default: m1.medium
+    constraints:
+      - custom_constraint: nova.flavor 
+  use_config_drive:
+    type: boolean
+    label: F5 Onboard Server Use Config Drive
+    description: Use config drive to provider meta and user data to the orchestration instance.
+    default: false
+  private_network:
+    type: string
+    label: F5 Onboard Server Management Network
+    description: Private network to attach server to.
+    constraints:
+      - custom_constraint: neutron.network    
+  f5_image_import_auth_url:
+    type: string
+    label: Keystone Auth URL
+    description: Keystone URL to perform import services
+    default: http://<your_keystone_ip>:5000/v2.0
+  f5_image_import_tenant:
+    type: string
+    label: Image Import Tenant
+    description: Tenant to perform image import services
+    default: admin
+  f5_image_import_user:
+    type: string
+    label: Image Import User
+    description: User to perform image import services
+    default: admin
+  f5_image_import_password:
+    type: string
+    label: Image Import User Password
+    description: Password used to perform image import services
+    hidden: true
+  image_prep_url:
+    type: string
+    label: Image Prep URL
+    description: URL of repo with image prep tools
+    default: https://github.com/F5Networks/f5-openstack-image-prep.git
+  f5_ve_image_url:
+    type: string
+    label: F5 VE Image URL
+    description: URL of zipped qcow2 image
+  f5_ve_image_name:
+    type: string
+    label: F5 VE Image Name
+    description: Name of qcow2 image in zip file
+  image_prep_key:
+    type: string
+    label: SSH Key
+    description: SSH Key
+    constraints:
+      - custom_constraint: nova.keypair
+  apt_cache_proxy_url:
+    type: string
+    label: Apt-cache URL
+    description: URL for local apt-cahce proxy
+    default: None
+
+parameter_groups:
+- parameters:
+  - onboard_image
+  - flavor
+  - use_config_drive
+  - private_network
+  - image_prep_key
+- parameters:
+  - f5_image_import_auth_url
+  - f5_image_import_tenant
+  - f5_image_import_user
+  - f5_image_import_password
+- parameters:
+  - image_prep_url
+  - f5_ve_image_url
+  - f5_ve_image_name
+  - apt_cache_proxy_url
+
+resources:
+  wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: wait_handle }
+      count: 1
+      timeout: 3600
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+  onboard_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: onboard_security_group
+      rules: 
+        - protocol: icmp
+          direction: ingress
+        - protocol: icmp
+          direction: egress
+        - protocol: tcp
+          direction: ingress
+        - protocol: tcp
+          direction: egress
+        - protocol: udp
+          direction: ingress
+        - protocol: udp
+          direction: egress        
+
+  image_prep_instance:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: onboard_image }
+      config_drive: { get_param: use_config_drive }
+      key_name: { get_param: image_prep_key }
+      security_groups:
+        - { get_resource: onboard_security_group }
+      flavor: { get_param: flavor }
+      networks:
+        - network: { get_param: private_network }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __stack_id__: { get_param: "OS::stack_id" }
+            __f5_image_import_auth_url__: { get_param: f5_image_import_auth_url }
+            __f5_image_import_tenant__: { get_param: f5_image_import_tenant }
+            __f5_image_import_user__: { get_param: f5_image_import_user }
+            __f5_image_import_password__: { get_param: f5_image_import_password }
+            __image_prep_url__: { get_param: image_prep_url }
+            __f5_ve_image_url__: { get_param: f5_ve_image_url }
+            __f5_ve_image_name__: { get_param: f5_ve_image_name }
+            __apt_cache_proxy_url__: { get_param: apt_cache_proxy_url }
+            wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
+          template: |
+            #!/bin/bash -ex
+
+            # create a onboard user
+            adduser imageprep --disabled-login --gecos 'Onboard' --quiet --ingroup sudo
+            echo "imageprep:imageprep"|chpasswd
+            sed -i 's|[#]*PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
+            sed -i 's|UsePAM no|UsePAM yes|g' /etc/ssh/sshd_config
+            service ssh restart
+            
+            # download f5 packages
+            
+            # Setup apt-cache proxy (if included) and install packages
+            if [[ "__http_proxy_host__" != "None" ]]; then
+                echo 'Acquire::HTTP::Proxy "__apt_cache_proxy_url__";' > /etc/apt/apt.conf.d/01proxy
+                echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy
+            fi
+            apt-get update
+            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko git
+
+            cd /home/imageprep
+            git clone __image_prep_url__
+
+            # sync images
+            echo 'export HOME=/home/imageprep' > sync_source
+            echo 'export OS_AUTH_URL=__f5_image_import_auth_url__' >> sync_source
+            echo 'export OS_USERNAME=__f5_image_import_user__' >> sync_source
+            echo 'export OS_PASSWORD=__f5_image_import_password__' >> sync_source
+            echo 'export OS_TENANT_NAME=__f5_image_import_tenant__' >> sync_source
+            echo 'export PYTHONPATH=/home/imageprep/f5-openstack-image-prep/' >> sync_source
+            source sync_source            
+
+            cd /home/imageprep/f5-openstack-image-prep/f5_image_prep
+
+            wget __f5_ve_image_url__ -O f5_ve_image.zip
+
+            unzip f5_ve_image.zip __f5_ve_image_name__
+            python ve_image_sync.py -i __f5_ve_image_name__ 
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+
+outputs:
+  instance_name:
+    description: Name of the instance
+    value: { get_attr: [image_prep_instance, name] }
+  instance_ip:
+    description: The IP address of the deployed instance
+    value: { get_attr: [image_prep_instance, first_address] }
