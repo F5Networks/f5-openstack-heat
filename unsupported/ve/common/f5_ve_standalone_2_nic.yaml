@@ -94,7 +94,7 @@ resources:
      type: OS::Neutron::Port
      properties:
        network: {get_param: mgmt_network}
-       security_groups: [{ get_attr: mgmt_security_group_id }]
+       security_groups: [{ get_attr: [bigip_mgmt_security_group, mgmt_security_group_id] }]
    network_1_port:
     type: OS::Neutron::Port
     properties:
