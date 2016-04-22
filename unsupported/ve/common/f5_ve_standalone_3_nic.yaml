@@ -103,6 +103,10 @@ parameter_groups:
   - default_gateway  
 
 resources:
+   bigip_data_security_group:
+     type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
+   bigip_mgmt_security_group:
+     type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
    floating_ip:
      type: OS::Neutron::FloatingIP
      properties:
@@ -113,13 +117,13 @@ resources:
      properties:
        network: {get_param: mgmt_network}
        security_groups:
-         - bigip_mgmt_security_group
+         - { get_resource: bigip_mgmt_security_group }
    network_1_port:
     type: OS::Neutron::Port
     properties:
       network: {get_param: network_1 }
       security_groups:
-        - bigip_data_security_group
+        - { get_resource: bigip_data_security_group }
    network_2_port:
     type: OS::Neutron::Port
     properties:

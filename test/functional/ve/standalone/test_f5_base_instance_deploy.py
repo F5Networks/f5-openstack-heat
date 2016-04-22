@@ -27,6 +27,11 @@ BIGIP_11_6_VERSION = '11.6.0'
 BIGIP_12_0_IMG = 'BIGIP-12.0.0.0.0.606'
 BIGIP_12_0_VERSION = '12.0.0'
 
+# At the very minimum, these should be created
+EXPECTED_IFC_NAMES = ['1.1', 'mgmt']
+EXPECTED_SELFIP_NAMES = [u'selfip.network-1.1']
+EXPECTED_VLAN_NAMES = [u'network-1.1']
+
 
 def get_floating_ip_output(stack):
     for output in stack.outputs:
@@ -35,7 +40,7 @@ def get_floating_ip_output(stack):
 
 
 def wait_for_active_licensed_bigip(
-        bigip_ip, username, password, bigip_version
+        bigip_ip, username, password, bigip_version, ifc_num
 ):
     # We can hide this later and refine the values
     max_attempts = 50
@@ -48,27 +53,32 @@ def wait_for_active_licensed_bigip(
         try:
             registration = bigip.shared.licensing.registration.load()
             assert registration.licensedVersion == bigip_version
-            assert len(bigip.net.vlans.get_collection()) == 2
-            assert len(bigip.net.interfaces.get_collection()) == 3
-            assert len(bigip.net.selfips.get_collection()) == 2
+            assert len(bigip.net.vlans.get_collection()) == ifc_num - 1
+            assert len(bigip.net.interfaces.get_collection()) == ifc_num
+            assert len(bigip.net.selfips.get_collection()) == ifc_num - 1
             return bigip
         except Exception:
             continue
 
 
-def check_net_components(bigip):
-    expected_ifc_names = ['1.1', '1.2', 'mgmt']
-    expected_selfip_names = [u'selfip.network-1.1', u'selfip.network-1.2']
-    expected_vlan_names = [u'network-1.1', u'network-1.2']
+def check_net_components(bigip, ifc_num):
+    for ifc in range(2, ifc_num):
+        expected_ifc_names = EXPECTED_IFC_NAMES.append('1.{}'.format(ifc))
+        expected_selfip_names = EXPECTED_SELFIP_NAMES.append(
+            u'selfip.network-1.{}'.format(ifc)
+        )
+        expected_vlan_names = EXPECTED_VLAN_NAMES.append(
+            u'network-1.{}'.format(ifc)
+        )
     ifcs = bigip.net.interfaces.get_collection()
     ifc_names = [ifc.name for ifc in ifcs]
-    assert expected_ifc_names == ifc_names
+    assert sorted(expected_ifc_names) == sorted(ifc_names)
     selfips = bigip.net.selfips.get_collection()
     selfip_names = [selfip.name for selfip in selfips]
-    assert expected_selfip_names == selfip_names
+    assert sorted(expected_selfip_names) == sorted(selfip_names)
     vlans = bigip.net.vlans.get_collection()
     vlan_names = [vlan.name for vlan in vlans]
-    assert expected_vlan_names == vlan_names
+    assert sorted(expected_vlan_names) == sorted(vlan_names)
 
 
 @pytest.fixture
@@ -81,6 +91,84 @@ def CommonTemplateDir(UnsupportedDir):
 
 
 # These tests require a patched VE instance in your stack
+
+def itest_f5_base_instance_deploy_2_nic_11_5_4(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
+    admin_password, root_password, license = BigIPConfig
+    hc, stack = HeatStack(
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
+        'func_test_standalone_2_nic',
+        parameters={
+            've_image': BIGIP_11_5_4_IMG,
+            'external_network': 'external_network',
+            'mgmt_network': 'mgmt_net',
+            'network_1': 'data1_net',
+            'f5_ve_os_ssh_key': 'testlab',
+            'admin_password': admin_password,
+            'root_password': root_password,
+            'license': license
+        }
+    )
+    updated_stack = hc.stacks.get(stack.id)
+    floating_ip = get_floating_ip_output(updated_stack)
+    bigip = wait_for_active_licensed_bigip(
+        floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION, 2
+    )
+    check_net_components(bigip, 2)
+
+
+def test_f5_base_instance_deploy_2_nic_11_6(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
+    admin_password, root_password, license = BigIPConfig
+    hc, stack = HeatStack(
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
+        'func_test_standalone_2_nic',
+        parameters={
+            've_image': BIGIP_11_6_IMG,
+            'external_network': 'external_network',
+            'mgmt_network': 'mgmt_net',
+            'network_1': 'data1_net',
+            'f5_ve_os_ssh_key': 'testlab',
+            'admin_password': admin_password,
+            'root_password': root_password,
+            'license': license
+        }
+    )
+    updated_stack = hc.stacks.get(stack.id)
+    floating_ip = get_floating_ip_output(updated_stack)
+    bigip = wait_for_active_licensed_bigip(
+        floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION, 2
+    )
+    check_net_components(bigip, 2)
+
+
+def test_f5_base_instance_deploy_2_nic_12_0(
+        HeatStack, BigIPConfig, CommonTemplateDir
+):
+    admin_password, root_password, license = BigIPConfig
+    hc, stack = HeatStack(
+        os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
+        'func_test_standalone_2_nic',
+        parameters={
+            've_image': BIGIP_12_0_IMG,
+            'external_network': 'external_network',
+            'mgmt_network': 'mgmt_net',
+            'network_1': 'data1_net',
+            'f5_ve_os_ssh_key': 'testlab',
+            'admin_password': admin_password,
+            'root_password': root_password,
+            'license': license
+        }
+    )
+    updated_stack = hc.stacks.get(stack.id)
+    floating_ip = get_floating_ip_output(updated_stack)
+    bigip = wait_for_active_licensed_bigip(
+        floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION, 2
+    )
+    check_net_components(bigip, 2)
+
 
 def itest_f5_base_instance_deploy_3_nic_11_5_4(
         HeatStack, BigIPConfig, CommonTemplateDir
@@ -104,9 +192,9 @@ def itest_f5_base_instance_deploy_3_nic_11_5_4(
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION
+        floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION, 3
     )
-    check_net_components(bigip)
+    check_net_components(bigip, 3)
 
 
 def test_f5_base_instance_deploy_3_nic_11_6(
@@ -131,9 +219,9 @@ def test_f5_base_instance_deploy_3_nic_11_6(
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION
+        floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION, 3
     )
-    check_net_components(bigip)
+    check_net_components(bigip, 3)
 
 
 def test_f5_base_instance_deploy_3_nic_12_0(
@@ -158,6 +246,6 @@ def test_f5_base_instance_deploy_3_nic_12_0(
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION
+        floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION, 3
     )
-    check_net_components(bigip)
+    check_net_components(bigip, 3)
