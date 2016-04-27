@@ -23,6 +23,10 @@ def pytest_addoption(parser):
                      default=False,
                      help='Include if you do not wish to remove images '
                      'pushed into glance.')
+    parser.addoption('--bigip-fip', action='store',
+                     help='The Floating IP for the BigIP.')
+    parser.addoption('--vs-vip', action='store',
+                     help='The Virtual IP for the virtual server.')
 
 
 @pytest.fixture
