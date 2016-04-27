@@ -29,6 +29,10 @@ def pytest_addoption(parser):
                      default=False,
                      help='Include if you do not wish to remove images '
                      'pushed into glance.')
+    parser.addoption('--bigip-fip', action='store',
+                     help='The Floating IP for the BigIP.')
+    parser.addoption('--vs-vip', action='store',
+                     help='The Virtual IP for the virtual server.')
 
 
 @pytest.fixture
@@ -38,6 +42,20 @@ def BigIPConfig(request, scope='module'):
     root_password = request.config.getoption('--bigip-root-password')
     license = request.config.getoption('license')
     return admin_password, root_password, license
+
+
+# The BigIPFip is the floating ip address of the BigIP that exists already
+@pytest.fixture
+def BigIPFip(request):
+    return request.config.getoption('--bigip-fip')
+
+
+# The VSVip is the address of the virtual server. Effectively, it can be
+# the same as the IP address of the VE on the client's network. And it can
+# also be the same as the selfip address on that network
+@pytest.fixture
+def VSVip(request):
+    return request.config.getoption('--vs-vip')
 
 
 @pytest.fixture
