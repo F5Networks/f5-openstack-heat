@@ -4,22 +4,9 @@ description: >
 heat_template_version: 2015-04-30
 
 parameters:
-  external_network:
-    default: external_network
-    description: External network used for floating IPs
-    label: External network name or ID
-    type: string
-    constraints:
-      - custom_constraint: neutron.network
-  client_image:
-    description: Image to serve as client
-    label: Client Glance Image
-    type: string
-    constraints:
-      - custom_constraint: glance.image
-  server_image:
-    description: Image to serve as server
-    label: Server Glance Image
+  client_server_image:
+    description: Image to serve as client and server image
+    label: Client/Server Glance Image
     type: string
     constraints:
       - custom_constraint: glance.image
@@ -76,8 +63,6 @@ parameters:
     description: BigIP Floating IP
     label: BigIP FIP
     type: string
-    constraints:
-      - custom_constraint: neutron.floating_ip
   vs_vip:
     description: Virtual Server Virtual IP
     label: Virtual Server VIP
@@ -96,13 +81,11 @@ parameters:
 parameter_groups:
   - label: Client and Server Parameters
     parameters:
-      - client_image
-      - server_image
+      - client_server_image
       - client_server_flavor
       - key_name
   - label: Network Parameters
     parameters:
-      - external_network
       - client_server_sec_group
       - client_network
       - server_network
@@ -126,21 +109,12 @@ resources:
       network: { get_param: client_network }
       security_groups:
         - { get_param: client_server_sec_group } 
-  client_fip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network: { get_param: external_network } 
-  client_fip_association:
-    type: OS::Neutron::FloatingIPAssociation
-    properties:
-      floatingip_id: { get_resource: client_fip }
-      port_id: { get_resource: client_data_port }
   client:
     type: OS::Nova::Server
     depends_on: server_wait_condition
     properties:
       name: client1
-      image: { get_param: client_image }
+      image: { get_param: client_server_image }
       flavor: { get_param: client_server_flavor }
       key_name: { get_param: key_name }
       networks:
@@ -177,20 +151,11 @@ resources:
       network: { get_param: server_network }
       security_groups:
         - { get_param: client_server_sec_group } 
-  server_fip:
-    type: OS::Neutron::FloatingIP
-    properties:
-      floating_network: { get_param: external_network } 
-  server_fip_association:
-    type: OS::Neutron::FloatingIPAssociation
-    properties:
-      floatingip_id: { get_resource: server_fip }
-      port_id: { get_resource: server_data_port }
   server:
     type: OS::Nova::Server
     properties:
       name: server
-      image: { get_param: server_image }
+      image: { get_param: client_server_image }
       flavor: { get_param: client_server_flavor }
       key_name: { get_param: key_name }
       networks:
@@ -203,7 +168,7 @@ resources:
             __rs_port__: { get_param: pool_member_port }
           template: |
             #!/bin/bash -ex
-            nohup http-server -p __rs_port__ &
+            nohup python -m SimpleHTTPServer __rs_port__ &
             __wc_notify__ --data-binary '{"status": "SUCCESS"}'
   bigip:
     type: F5::BigIP::Device
