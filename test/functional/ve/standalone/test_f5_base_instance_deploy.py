@@ -93,9 +93,8 @@ def CommonTemplateDir(SupportedDir):
 # These tests require a patched VE instance in your stack
 
 def test_f5_base_instance_deploy_2_nic_11_5_4(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
@@ -106,23 +105,23 @@ def test_f5_base_instance_deploy_2_nic_11_5_4(
             've_flavor': 'm1.xlarge',
             'network_1': 'data1_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION, 2
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_11_5_4_VERSION, 2
     )
     check_net_components(bigip, 2)
 
 
 def test_f5_base_instance_deploy_2_nic_11_6(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
@@ -132,23 +131,23 @@ def test_f5_base_instance_deploy_2_nic_11_6(
             'mgmt_network': 'mgmt_net',
             'network_1': 'data1_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION, 2
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_11_6_VERSION, 2
     )
     check_net_components(bigip, 2)
 
 
 def test_f5_base_instance_deploy_2_nic_12_0(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
@@ -158,23 +157,23 @@ def test_f5_base_instance_deploy_2_nic_12_0(
             'mgmt_network': 'mgmt_net',
             'network_1': 'data1_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION, 2
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_12_0_VERSION, 2
     )
     check_net_components(bigip, 2)
 
 
 def test_f5_base_instance_deploy_3_nic_11_5_4(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
@@ -186,23 +185,23 @@ def test_f5_base_instance_deploy_3_nic_11_5_4(
             'network_1': 'data1_net',
             'network_2': 'data2_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_5_4_VERSION, 3
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_11_5_4_VERSION, 3
     )
     check_net_components(bigip, 3)
 
 
 def test_f5_base_instance_deploy_3_nic_11_6(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
@@ -213,23 +212,23 @@ def test_f5_base_instance_deploy_3_nic_11_6(
             'network_1': 'data1_net',
             'network_2': 'data2_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_11_6_VERSION, 3
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_11_6_VERSION, 3
     )
     check_net_components(bigip, 3)
 
 
 def test_f5_base_instance_deploy_3_nic_12_0(
-        HeatStack, BigIPConfig, CommonTemplateDir
+        HeatStack, symbols, CommonTemplateDir
 ):
-    admin_password, root_password, license = BigIPConfig
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
@@ -240,14 +239,15 @@ def test_f5_base_instance_deploy_3_nic_12_0(
             'network_1': 'data1_net',
             'network_2': 'data2_net',
             'f5_ve_os_ssh_key': 'testlab',
-            'admin_password': admin_password,
-            'root_password': root_password,
-            'license': license
+            'admin_password': symbols.bigip_admin_password,
+            'root_password': symbols.bigip_root_password,
+            'license': symbols.license
         }
     )
     updated_stack = hc.stacks.get(stack.id)
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = wait_for_active_licensed_bigip(
-        floating_ip, 'admin', admin_password, BIGIP_12_0_VERSION, 3
+        floating_ip, 'admin', symbols.bigip_admin_password,
+        BIGIP_12_0_VERSION, 3
     )
     check_net_components(bigip, 3)
