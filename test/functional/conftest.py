@@ -19,35 +19,14 @@ import pytest
 
 
 def pytest_addoption(parser):
-    parser.addoption('--bigip-admin-password', action='store',
-                     help='Default BIGIP admin password')
-    parser.addoption('--bigip-root-password', action='store',
-                     help='Default BIGIP root password')
-    parser.addoption('--license', action='store',
-                     help='BIGIP license key')
     parser.addoption('--no-teardown-glance-images', action='store_true',
                      default=False,
                      help='Include if you do not wish to remove images '
                      'pushed into glance.')
-
-
-@pytest.fixture
-def BigIPConfig(request, scope='module'):
-    '''Provides BIGIP password and license configuration.'''
-    admin_password = request.config.getoption('--bigip-admin-password')
-    root_password = request.config.getoption('--bigip-root-password')
-    license = request.config.getoption('license')
-    return admin_password, root_password, license
-
-
-@pytest.fixture
-def OSPassword(request):
-    return request.config.getoption('--os-password')
-
-
-@pytest.fixture
-def AuthAddress(request):
-    return request.config.getoption('--auth-netloc')
+    parser.addoption('--bigip-fip', action='store',
+                     help='The Floating IP for the BigIP.')
+    parser.addoption('--vs-vip', action='store',
+                     help='The Virtual IP for the virtual server.')
 
 
 @pytest.fixture

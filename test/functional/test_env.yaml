@@ -1,0 +1,15 @@
+---
+bigip_ip: <bigip_ip_address>
+os_tenant_name: <os_tenant_name>
+bigip_admin_password: <bigip_admin_password>
+bigip_root_password: <bigip_root_password>
+os_username: <openstack username>
+os_password: <openstack password>
+os_tenant_id: <openstack_tenant_id>
+auth_netloc: <keystone_ip_address>
+license: <bigip_license>
+auth_url: http://<keystone_ip_address>:5000/v2.0
+heatclient_url: http://<heat_endpoint_ip>:8004/v1/<openstack_tenant_id>
+glanceclient_url: http://<glance_endpoint_ip>:9292
+vs_vip: <virtual_server_vip>
+bigip_fip: <bigip_floating_ip>
