@@ -62,8 +62,7 @@ def test_patched_image_upload_12_0(
             'image_prep_key': 'testlab',
             'private_network': 'mgmt_net',
             'f5_image_import_password': symbols.os_password,
-            'f5_ve_image_url':
-            'http://10.190.0.20/~breaux/BIGIP-12.0.0.0.0.606.LTM.qcow2.zip',
+            'f5_ve_image_url': symbols.ve_12_0_image_path,
             'f5_ve_image_name': BIGIP_12_0_IMG + '.qcow2',
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_image_import_auth_url':
@@ -90,8 +89,7 @@ def test_patched_image_upload_11_6(
             'image_prep_key': 'testlab',
             'private_network': 'mgmt_net',
             'f5_image_import_password': symbols.os_password,
-            'f5_ve_image_url':
-            'http://10.190.0.20/~breaux/BIGIP-11.6.0.0.0.401.LTM.qcow2.zip',
+            'f5_ve_image_url': symbols.ve_11_6_image_path,
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_ve_image_name': BIGIP_11_6_IMG + '.qcow2',
             'f5_image_import_auth_url':
@@ -118,8 +116,7 @@ def test_patched_image_upload_11_5(
             'image_prep_key': 'testlab',
             'private_network': 'mgmt_net',
             'f5_image_import_password': symbols.os_password,
-            'f5_ve_image_url':
-            'http://10.190.0.20/~breaux/BIGIP-11.5.4.0.0.256.ALL.qcow2.zip',
+            'f5_ve_image_url': symbols.ve_11_5_4_image_path,
             'f5_ve_image_name': BIGIP_11_5_4_IMG + '.qcow2',
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_image_import_auth_url':
