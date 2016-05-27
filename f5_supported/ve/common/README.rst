@@ -1,0 +1,3 @@
+cluster_ready_ve_4_nic.yaml
+###########################
+This template describes a pair of BIG-IP® devices that are ready for clustering. This template can be used to create an Active/Standby cluster of devices using the templates in f5_supported/ve/cluster. Specifically, the template here configures each device with four network infterfaces: management, HA, and two data interfaces. The data interfaces are similar, but the HA interface is configured to allow for connection failover traffic, configuration synchronization, and connection mirroring. It is convenient to have the HA interface to appropriate control traffic on a separate network from where client/user data travels.
