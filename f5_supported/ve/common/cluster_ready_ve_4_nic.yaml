@@ -161,6 +161,8 @@ resources:
             __root_password__: { get_param: root_password }
             __license__: { get_param: license }
             __default_gateway__: { get_param: default_gateway }
+            __network_1_name__: { get_param: network_1_name }
+            __network_2_name__: { get_param: network_2_name }
           template: |
             {
                "bigip": {
