@@ -3,8 +3,9 @@
 Unsupported Heat Templates
 ==========================
 
-.. include:: ../unsupported/README.rst
+.. include:: ../../../unsupported/README.rst
     :start-line: 3
+
 
 The following templates are currently unsupported:
 
@@ -12,6 +13,6 @@ The following templates are currently unsupported:
     :titlesonly:
     :glob:
 
-    templates/unsupported/*
+    ./*
 
 

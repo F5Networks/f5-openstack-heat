@@ -9,11 +9,11 @@ F5 Networks® OpenStack Heat Template Library
 
 .. toctree::
     :hidden:
-    :maxdepth: 2
 
     User Guide <map_heat-user-guide>
-    F5® Supported Templates <f5-supported-index>
-    Unsupported Templates <unsupported-index>
+    Templates <templates/templates_index>
+    F5® Supported <templates/supported/f5-supported-index>
+    Unsupported <templates/unsupported/unsupported-index>
 
 Overview
 --------
@@ -36,44 +36,15 @@ Installation & Configuration
 
 Any of F5®'s Heat templates can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack.
 
-Heat templates can be loaded via the OpenStack Horizon GUI, the Heat command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for instructions.
+Heat templates can be loaded via the OpenStack GUI, command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for instructions.
 
 .. note::
 
     Many of the templates require the F5® Heat plugins to be installed.
-    Please see the `documentation <http://f5-openstack-heat-plugins.readthedocs.org/en/latest/>`_ for instructions.
+    Please see the `project documentation <http://f5-openstack-heat-plugins.readthedocs.org/en/latest/>`_ for instructions.
 
-* :ref:`How To: Onboard a VE Image Using Heat <how-to_onboard-ve>`
-* :ref:`How To: Launch a 2-NIC, Standalone VE Using Heat <how-to_launch-standalone-bigip-2nic>`
-* :ref:`How To: Launch a 3-NIC, Standalone VE Using Heat <how-to_launch-standalone-bigip-3nic>`
-
-
-Copyright
----------
-Copyright 2013-2016 F5 Networks Inc.
 
 Support
 -------
 .. include:: ../SUPPORT.md
 
-License
--------
-Apache V2.0
-~~~~~~~~~~~
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
-the License for the specific language governing permissions and limitations
-under the License.
-
-Contributor License Agreement
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Individuals or business entities who contribute to this project must have completed and submitted the `F5® Contributor License Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`_ to Openstack_CLA@f5.com prior to their code submission being included in this project.

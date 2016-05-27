@@ -5,4 +5,4 @@ Download the template via the link below, or copy and paste the text into a new 
 
 :download:`Download <../../../unsupported/f5_plugins/deploy_lb.yaml>`
 
-.. literalinclude:: ../../../unsupported/f5_plugins/deploy_lb.yaml
+.. literalinclude:: ../../../f5_supported/f5_plugins/deploy_lb.yaml
