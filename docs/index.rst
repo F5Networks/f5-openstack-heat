@@ -1,3 +1,5 @@
+.. _home:
+
 F5 Networks® OpenStack Heat Template Library
 ============================================
 
