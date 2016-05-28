@@ -21,7 +21,7 @@ parameters:
   bigip1_pw:
     type: string
     description: Login password for first device
-    label: Username for first device
+    label: Password for first device
   bigip2_un:
     type: string
     description: Login username for second device
@@ -29,10 +29,10 @@ parameters:
   bigip2_pw:
     type: string
     description: Login password for second device
-    label: Username for second device
+    label: Password for second device
   cluster_name:
     type: string
-    description: Device Group Name on clustered devices
+    description: Device Group Name for clustered devices
     label: Cluster Name
 
 resources:

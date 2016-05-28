@@ -185,7 +185,6 @@ resources:
                    "network": {
                        "dhcp": "true",
                        "selfip_prefix": "selfip-",
-                       "vlan_prefix": "network-",
                        "routes": [
                           {
                             "destination": "0.0.0.0/0.0.0.0",
