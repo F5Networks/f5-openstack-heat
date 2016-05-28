@@ -24,7 +24,7 @@ BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
 
 
 @pytest.fixture
-def GlanceImageCleanup(request, glanceclientmanager):
+def GlanceImageCleanup(request, glanceclientmanager, symbols):
     def manage_glance(ve_image_name):
         def teardown_glance_image():
             images = [image for image in glanceclientmanager.images.list()]
@@ -33,7 +33,7 @@ def GlanceImageCleanup(request, glanceclientmanager):
                     glanceclientmanager.images.delete(image.id)
         # You can run these tests and not teardown the glance images.
         # They can then be used for booting a VE
-        if not request.config.getoption('--no-teardown-glance-images'):
+        if symbols.teardown_glance_images:
             request.addfinalizer(teardown_glance_image)
     return manage_glance
 
