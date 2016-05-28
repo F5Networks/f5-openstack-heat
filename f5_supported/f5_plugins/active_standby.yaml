@@ -1,0 +1,58 @@
+heat_template_version: 2015-04-30
+
+description: >
+  This template creates a sync-failover active/standby cluster of two
+  pre-existing devices. Feel free to use our
+  ve_three_nic_cluster_template.yaml to do this.
+
+parameters:
+  bigip1_ip:
+    type: string
+    description: Floating IP address of first device
+    label: FIP for first device
+  bigip2_ip:
+    type: string
+    description: Floating IP address of second device
+    label: FIP for second device
+  bigip1_un:
+    type: string
+    description: Login username for first device
+    label: Username for first device
+  bigip1_pw:
+    type: string
+    description: Login password for first device
+    label: Password for first device
+  bigip2_un:
+    type: string
+    description: Login username for second device
+    label: Username for second device
+  bigip2_pw:
+    type: string
+    description: Login password for second device
+    label: Password for second device
+  cluster_name:
+    type: string
+    description: Device Group Name for clustered devices
+    label: Cluster Name
+
+resources:
+  bigip1:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: bigip1_ip }
+      username: { get_param: bigip1_un }
+      password: { get_param: bigip1_pw }
+  bigip2:
+    type: F5::BigIP::Device
+    properties:
+      ip: { get_param: bigip2_ip }
+      username: { get_param: bigip2_un }
+      password: { get_param: bigip2_pw }
+  cluster:
+    type: F5::Cm::Cluster
+    depends_on: [bigip1, bigip2]
+    properties:
+      devices: [{ get_resource: bigip1 }, { get_resource: bigip2 }]
+      device_group_type: sync-failover
+      device_group_partition: Common
+      device_group_name: { get_param: cluster_name }
