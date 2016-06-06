@@ -19,8 +19,8 @@ This security group contains the necessary configurations for passing traffic to
 :download:`Download <../../unsupported/ve/common/bigip_data_security_group.yaml>`
 
 
-Managment Security Group
-------------------------
+Management Security Group
+-------------------------
 
 This security group sets up the necessary configurations to allow incoming and outgoing traffic on the BIG-IP® management interface, which is dedicated to performing a specific set of system management functions.
 

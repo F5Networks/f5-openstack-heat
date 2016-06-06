@@ -10,17 +10,19 @@ This template deploys a 'cluster-ready' pair of BIG-IP® VEs. Each device has fo
 Prerequisites
 -------------
 
-- Basic understanding of BIG-IP® `device service clustering <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-device-service-clustering-admin-12-0-0.html>`_.
+- Basic understanding of `BIG-IP® device service clustering <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-device-service-clustering-admin-12-0-0.html>`_.
 
-- `License base key <https://support.f5.com/kb/en-us/solutions/public/7000/700/sol7752.html>`_ for BIG-IP® VE.
+- :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
 
 - :ref:`BIG-IP® Security Groups` configured in OpenStack.
 
+- :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP® VE instances launched by this template.
+
 - :ref:`BIG-IP® VE image <F5 VE Image Patch Upload>` uploaded to Glance.
 
-- Three (3) VLANs :ref:`configured in Neutron <docs:os-neutron-network-setup>`: control, data, and management.
+- BIG-IP® `License base key <https://support.f5.com/kb/en-us/solutions/public/7000/700/sol7752.html>`_.
 
-- :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP® VE instances launched by this template.
+- Three (3) VLANs :ref:`configured in Neutron <docs:os-neutron-network-setup>`-- 'mgmt', 'control', and 'data' -- to be used for system management, high availability, and data traffic, respectively.
 
 
 Caveats
@@ -53,7 +55,7 @@ Deployment
       - Enter the password for your user account
     * - F5 VE Image
       - string
-      - Select a VE image from the dropdown list [#]_
+      - Select a VE image from the dropdown list
     * - F5 VE Flavor
       - string
       - Select a flavor to be used for the VE
@@ -71,7 +73,7 @@ Deployment
       - create a password for the VE 'root' user account
     * - Security Group for the data network
       - string
-      - Enter the name of an existing security group [#]_
+      - Enter the name of an existing security group
     * - Security Group for the control network
       - string
       - Enter the name of an existing security group
@@ -116,7 +118,4 @@ Click the download link below to save a copy of the template.
 :download:`Download <../../../f5_supported/ve/common/cluster_ready_ve_4_nic.yaml>`
 
 
-.. rubric:: Footnotes
 
-.. [#] You must already have at least one VE image :ref:`onboarded <how-to_onboard-ve>` to Glance.
-.. [#] See :ref:`BIG-IP® Security Groups` for more information.
