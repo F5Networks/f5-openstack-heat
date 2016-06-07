@@ -1,3 +1,5 @@
+:orphan: true
+
 How to Deploy
 =============
 

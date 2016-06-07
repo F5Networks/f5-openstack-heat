@@ -1,7 +1,7 @@
 .. _heat-user-guide:
 
-User Guide: Deploying BIG-IP® VE using Heat
-===========================================
+User Guide: Provisioning F5 Services with Heat
+##############################################
 
 .. include:: includes/topic_overview-full.rst
     :start-line: 3
@@ -10,6 +10,8 @@ User Guide: Deploying BIG-IP® VE using Heat
     :titlesonly:
 
     includes/topic_user-guide-before-you-begin
-    how-to_onboard-ve-image
-    how-to_launch-bigip-standalone-3nic
+    includes/how-to_onboard-ve-image
+    includes/how-to_launch-bigip-standalone-3nic
+    includes/how-to_deploy-lb
+    
 

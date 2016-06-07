@@ -1,3 +1,5 @@
+:orphan: true
+
 F5-Supported Heat Template Prerequisites
 ========================================
 
@@ -10,7 +12,7 @@ F5-Supported Heat Template Prerequisites
 - Basic understanding of `BIG-IP® device service clustering <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-device-service-clustering-admin-12-0-0.html>`_.
 
 
-- :ref:`BIG-IP® VE image <F5 VE Image Patch Upload>` uploaded to Glance.
+- :ref:`BIG-IP® VE image <F5® BIG-IP® VE: Image Patch & Upload>` uploaded to Glance.
 
 
 - :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
@@ -52,4 +54,8 @@ F5-Supported Heat Template Prerequisites
 - BIG-IP® `License base key <https://support.f5.com/kb/en-us/solutions/public/7000/700/sol7752.html>`_.
 
 
+- BIG-IP® LTM® Virtual Edition image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT). [#]_
 
+:rubric: Footnotes:
+.. [#] :ref:`Adding a Ubuntu Image to Glance <add-ubuntu-image-glance>` contains instructions for uploading an image to Glance via the OpenStack dashboard. You may use the OS of your choice; Ubuntu is not a requirement for this template.
+.. [#] `How to Buy <https://f5.com/products/how-to-buy>`_

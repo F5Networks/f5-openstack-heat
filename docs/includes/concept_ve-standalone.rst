@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _ve-standalone:
 
 BIG-IP® VE Standalone Templates

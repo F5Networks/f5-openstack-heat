@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _ve_home:
 
 F5® BIG-IP® VE Templates

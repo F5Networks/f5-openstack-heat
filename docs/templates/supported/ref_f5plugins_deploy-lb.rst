@@ -1,5 +1,5 @@
-Deploy Load Balancing
-=====================
+Deploy Basic Load Balancer
+==========================
 
 Overview
 --------

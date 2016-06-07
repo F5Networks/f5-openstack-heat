@@ -1,5 +1,5 @@
-F5 VE Image Patch Upload
-========================
+F5® BIG-IP® VE: Image Patch & Upload
+====================================
 
 Overview
 --------
@@ -14,7 +14,7 @@ Prerequisites
 
 - Basic understanding of `BIG-IP® system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html#conceptid>`_.
 
-- `BIG-IP® LTM® Virtual Edition <https://downloads.f5.com/esd/product.jsp?sw=BIG-IP&pro=big-ip_v12.x>`_ image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT).
+- BIG-IP® LTM® Virtual Edition image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT). [#]_
 
 - :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
 
@@ -27,6 +27,8 @@ Caveats
 -------
 
 - The BIG-IP® image must be hosted in a location accessible to the Heat engine via 'http'. This template does not currently support retrieval of files via 'https' or file uploads.
+
+- VE images come in 3 different sizes: LTM, ALL, and LTM-1SLOT. Each has its own size requirements, which  determine what Nova flavor you should select. See the F5® OpenStack `BIG-IP® flavor matrix <http://f5-openstack-docs.readthedocs.org/en/latest/guides/openstack_big-ip_flavors.html>`_ for more information.
 
 - There is a `known issue <https://bugs.launchpad.net/glance/+bug/1476770>`_ with ``python-glanceclient`` that returns in an unspecified error after you click :guilabel:`Launch`. You may need to upgrade in order to resolve this issue.
 
@@ -90,3 +92,4 @@ Click the download link below to save a copy of the template.
 :download:`Download <../../../f5_supported/ve/images/patch_upload_ve_image.yaml>`
 
 
+.. [#] `How to Buy <https://f5.com/products/how-to-buy>`_

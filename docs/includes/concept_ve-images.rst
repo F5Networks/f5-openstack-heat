@@ -1,3 +1,5 @@
+:orphan: true
+
 OpenStack-Ready BIG-IP® VE Images
 =================================
 

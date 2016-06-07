@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _f5-heat-plugins:
 
 F5® Heat Plugin Example Templates
@@ -6,7 +8,7 @@ F5® Heat Plugin Example Templates
 Before You Start
 ----------------
 
-The ``f5_plugins`` templates require the F5® Heat plugins found in `F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`_. See the `project documentation <http://f5-openstack-heat-plugins.readthedocs.org/en/>`_ for installation instructions.
+The ``f5_plugins`` templates require the F5® Heat plugins found in `F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`_. See the :ref:`project documentation <heatplugins:home>` for installation instructions.
 
 Overview
 --------
@@ -16,7 +18,7 @@ There are two ways to use F5®'s Heat plugins to deploy iApps® templates. The f
 
 The second method is a simple dump of the iApp®'s full TCL file into the Heat template, as we've done in :file:`F5::Sys::iAppFullTemplate`. Once the template has been created on the BIG-IP®, it can be executed to create the iApp® Service (``F5::Sys::iAppService``).
 
-We've provided example templates for each supported F5® plugin. Feel free to browse around the repo (`F5Networks/f5-openstack-heat/unsupported/f5_plugins <https://github.com/F5Networks/f5-openstack-heat/tree/develop/unsupported/f5_plugins>`_); you can fork the project and tweak the parameters and resources to suit your needs.
+We've provided example templates for each supported F5® plugin. Feel free to browse around the repo (`F5Networks/f5-openstack-heat/unsupported/f5_plugins <https://github.com/F5Networks/f5-openstack-heat/tree/kilo/unsupported/f5_plugins>`_); you can fork the project and tweak the parameters and resources to suit your needs.
 
 
 iApps® APIC Integration Template

@@ -17,7 +17,7 @@ Prerequisites
 
 - :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP® VE instances launched by this template.
 
-- :ref:`BIG-IP® VE image <F5 VE Image Patch Upload>` uploaded to Glance.
+- :ref:`BIG-IP® VE image <F5® BIG-IP® VE: Image Patch & Upload>` uploaded to Glance.
 
 - Three (3) VLANs :ref:`configured in Neutron <docs:os-neutron-network-setup>` -- 'mgmt', 'control', and 'data' -- to be used for system management, high availability (if desired), and data traffic, respectively.
 
@@ -28,6 +28,9 @@ Caveats
 - This template requires internet access; it needs to be able to access GitHub to fetch dependent Heat templates that configure the necessary :ref:`security groups <BIG-IP® Security Groups>`.
 
 - This template deploys an unlicensed BIG-IP® VE. You will need to add your `F5 TMOS License Basekey <https://support.f5.com/kb/en-us/solutions/public/7000/700/sol7752.html>`_ manually.
+
+- VE images come in 3 different sizes: LTM, ALL, and LTM-1SLOT. Each has its own size requirements, which  determine what Nova flavor you should select. See the F5® OpenStack `BIG-IP® flavor matrix <http://f5-openstack-docs.readthedocs.org/en/latest/guides/openstack_big-ip_flavors.html>`_ for more information.
+
 
 Deployment
 ----------

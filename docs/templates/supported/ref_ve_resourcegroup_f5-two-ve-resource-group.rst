@@ -1,5 +1,5 @@
-Deploy Two F5® BIG-IP® VEs for Clustering
-=========================================
+F5® BIG-IP® VE: 2-Device Clustering Prep
+========================================
 
 Overview
 --------
@@ -17,7 +17,7 @@ Prerequisites
 
 - :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP® VE instances launched by this template.
 
-- :ref:`BIG-IP® VE image <F5 VE Image Patch Upload>` uploaded to Glance.
+- :ref:`BIG-IP® VE image <F5® BIG-IP® VE: Image Patch & Upload>` uploaded to Glance.
 
 - BIG-IP® `License base key <https://support.f5.com/kb/en-us/solutions/public/7000/700/sol7752.html>`_.
 
@@ -29,7 +29,7 @@ Prerequisites
 Caveats
 -------
 
-None.
+- VE images come in 3 different sizes: LTM, ALL, and LTM-1SLOT. Each has its own size requirements, which  determine what Nova flavor you should select. See the F5® OpenStack `BIG-IP® flavor matrix <http://f5-openstack-docs.readthedocs.org/en/latest/guides/openstack_big-ip_flavors.html>`_ for more information.
 
 
 Deployment

@@ -1,3 +1,5 @@
+:orphan: true
+
 .. Internal use only:
     Use the following template to create a corresponding doc for each new Heat template added to the f5-supported directory.
 

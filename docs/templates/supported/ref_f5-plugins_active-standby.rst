@@ -1,5 +1,5 @@
-F5® BIG-IP® Active-Standby Cluster
-==================================
+F5® BIG-IP®: Active-Standby Cluster
+===================================
 
 Overview
 --------
@@ -22,7 +22,7 @@ Prerequisites
 
 .. seealso::
 
-    * :ref:`F5® VE Cluster-Ready 4-nic` Heat template: deploys a pair of BIG-IP® VE devices that are ready for clustering.
+    * :ref:`F5® BIG-IP® VE: Cluster-Ready, 4-nic` Heat template: deploys a pair of BIG-IP® VE devices that are ready for clustering.
 
 
 Caveats

@@ -1,10 +1,10 @@
-F5 Networks® Heat Templates
-===========================
+Heat Templates
+##############
 
-F5® provides two categories of Heat templates that can be used to deploy F5® services in Openstack: F5® Supported and unsupported.
+F5® provides two categories of Heat templates that can be used to deploy F5® services in Openstack: 'F5-Supported' and 'unsupported'.
 
-F5® Supported
--------------
+F5-Supported
+************
 
 .. include:: ../../f5_supported/README.rst
     :start-line: 3
@@ -13,11 +13,11 @@ F5® Supported
     :titlesonly:
     :glob:
 
-    supported/f5-supported-index
+    supported/*
 
 
 Unsupported
------------
+***********
 
 .. include:: ../../unsupported/README.rst
     :start-line: 3
@@ -26,5 +26,5 @@ Unsupported
     :titlesonly:
     :glob:
 
-    unsupported/unsupported-index
+    unsupported/*
 
