@@ -1,5 +1,4 @@
-Babel==2.2.0
-git+https://github.com/F5Networks/f5-openstack-test.git@master
+git+https://github.com/F5Networks/f5-openstack-test.git@kilo
 git+https://github.com/F5Networks/pytest-symbols.git@master
 hacking
 f5-openstack-heat-plugins

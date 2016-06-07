@@ -47,13 +47,13 @@ def get_floating_ip_output(hc, stack):
 
 
 def check_net_components(bigip, ifc_num):
-    ifcs = bigip.net.interfaces.get_collection()
+    ifcs = bigip.tm.net.interfaces.get_collection()
     ifc_names = [ifc.name for ifc in ifcs]
     assert sorted(EXPECTED_IFC_NAMES) == sorted(ifc_names)
-    selfips = bigip.net.selfips.get_collection()
+    selfips = bigip.tm.net.selfips.get_collection()
     selfip_names = [selfip.name for selfip in selfips]
     assert sorted(EXPECTED_SELFIP_NAMES) == sorted(selfip_names)
-    vlans = bigip.net.vlans.get_collection()
+    vlans = bigip.tm.net.vlans.get_collection()
     vlan_names = [vlan.name for vlan in vlans]
     assert sorted(EXPECTED_VLAN_NAMES) == sorted(vlan_names)
 

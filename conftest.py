@@ -20,15 +20,7 @@ import pytest
 
 @pytest.fixture
 def BaseRepoDir():
-    base_repo_dir = \
-        os.path.dirname(
-            os.path.dirname(
-                os.path.dirname(
-                    os.path.abspath(__file__)
-                )
-            )
-        )
-    return base_repo_dir
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.fixture

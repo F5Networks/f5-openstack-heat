@@ -14,7 +14,7 @@
 #
 #
 
-from f5.bigip import BigIP
+from f5.bigip import ManagementRoot
 
 import pytest
 import time
@@ -27,15 +27,16 @@ def WaitForLicensedBigIP():
             ifc_num, attempts=50, interval=10
     ):
         '''Poll the device until it is licensed and has a config.'''
-        bigip = BigIP(bigip_ip, username, password)
         for attempt in range(attempts):
             time.sleep(interval)
             try:
-                registration = bigip.shared.licensing.registration.load()
+                bigip = ManagementRoot(bigip_ip, username, password)
+                registration = bigip.tm.shared.licensing.registration.load()
                 assert registration.licensedVersion == bigip_ver
-                assert len(bigip.net.vlans.get_collection()) == ifc_num - 1
-                assert len(bigip.net.interfaces.get_collection()) == ifc_num
-                assert len(bigip.net.selfips.get_collection()) == ifc_num - 1
+                assert len(bigip.tm.net.vlans.get_collection()) == ifc_num - 1
+                assert len(bigip.tm.net.interfaces.get_collection()) == ifc_num
+                assert len(bigip.tm.net.selfips.get_collection()) == \
+                    ifc_num - 1
                 return bigip
             except Exception as ex:
                 if attempt == (attempts - 1):

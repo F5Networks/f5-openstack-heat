@@ -34,11 +34,11 @@ def test_deploy_lb(
         F5PluginTemplateLoc,
         'func_test_deploy_lb',
         parameters={
-            'client_server_image': 'ubuntu_14.04_lts',
-            'client_server_flavor': 'm1.small',
-            'key_name': 'testlab',
-            'client_network': 'data1_net',
-            'server_network': 'data2_net',
+            'client_server_image': symbols.ubuntu_image,
+            'client_server_flavor': symbols.ubuntu_flavor,
+            'key_name': symbols.ssh_key,
+            'client_network': symbols.client_net,
+            'server_network': symbols.server_net,
             'bigip_pw': symbols.bigip_admin_password,
             'bigip_fip': symbols.bigip_fip,
             'vs_vip': symbols.vs_vip

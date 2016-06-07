@@ -1,2 +1,5 @@
+pytest
+pytest-cov
+mock
 hacking
 Sphinx==1.3.5

@@ -31,8 +31,8 @@ parameters:
     default: false
   ssh_key:
     type: string
-    label: F5 FW Root SSH Key Name
-    description: Name of key-pair to be installed on the FW instances.
+    label: SSH Key Name
+    description: Name of key-pair to be installed on the instances.
     constraints:
       - custom_constraint: nova.keypair
   admin_password:

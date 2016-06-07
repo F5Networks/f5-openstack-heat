@@ -14,6 +14,8 @@
 #
 #
 
+from f5.sdk_exception import F5SDKError
+
 import os
 import pytest
 
@@ -45,13 +47,22 @@ def check_net_components(bigip, ifc_num):
         expected_ifc_names.append('1.{}'.format(ifc))
         expected_selfip_names.append(u'selfip.network-1.{}'.format(ifc))
         expected_vlan_names.append(u'network-1.{}'.format(ifc))
-    ifcs = bigip.net.interfaces.get_collection()
+    params = {}
+    try:
+        # Since 11.5.0 is not a default supported version in f5-sdk we must
+        # handle it with requests_params and setting the version in query
+        # args
+        bigip.tm.net.interfaces.get_collection()
+    except F5SDKError as ex:
+        if '11.5.4' in ex.value.message:
+            params = {'params': {'ver': ['11.5.0']}}
+    ifcs = bigip.tm.net.interfaces.get_collection(requests_params=params)
     ifc_names = [ifc.name for ifc in ifcs]
     assert sorted(expected_ifc_names) == sorted(ifc_names)
-    selfips = bigip.net.selfips.get_collection()
+    selfips = bigip.tm.net.selfips.get_collection(requests_params=params)
     selfip_names = [selfip.name for selfip in selfips]
     assert sorted(expected_selfip_names) == sorted(selfip_names)
-    vlans = bigip.net.vlans.get_collection()
+    vlans = bigip.tm.net.vlans.get_collection(requests_params=params)
     vlan_names = [vlan.name for vlan in vlans]
     assert sorted(expected_vlan_names) == sorted(vlan_names)
 
@@ -75,11 +86,11 @@ def test_f5_base_instance_deploy_2_nic_11_5_4(
         'func_test_standalone_2_nic',
         parameters={
             've_image': BIGIP_11_5_4_IMG,
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            've_flavor': 'm1.xlarge',
-            'network_1': 'data1_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            've_flavor': symbols.ve_flavor,
+            'network_1': symbols.data1_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
@@ -102,10 +113,11 @@ def test_f5_base_instance_deploy_2_nic_11_6(
         'func_test_standalone_2_nic',
         parameters={
             've_image': BIGIP_11_6_IMG,
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            'network_1': 'data1_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            've_flavor': symbols.ve_flavor,
+            'network_1': symbols.data1_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
@@ -128,10 +140,11 @@ def test_f5_base_instance_deploy_2_nic_12_0(
         'func_test_standalone_2_nic',
         parameters={
             've_image': BIGIP_12_0_IMG,
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            'network_1': 'data1_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            've_flavor': symbols.ve_flavor,
+            'network_1': symbols.data1_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
@@ -154,12 +167,12 @@ def test_f5_base_instance_deploy_3_nic_11_5_4(
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_11_5_4_IMG,
-            've_flavor': 'm1.xlarge',
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            'network_1': 'data1_net',
-            'network_2': 'data2_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            've_flavor': symbols.ve_flavor,
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            'network_1': symbols.data1_net,
+            'network_2': symbols.data2_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
@@ -182,11 +195,12 @@ def test_f5_base_instance_deploy_3_nic_11_6(
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_11_6_IMG,
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            'network_1': 'data1_net',
-            'network_2': 'data2_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            've_flavor': symbols.ve_flavor,
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            'network_1': symbols.data1_net,
+            'network_2': symbols.data2_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
@@ -209,11 +223,12 @@ def test_f5_base_instance_deploy_3_nic_12_0(
         'func_test_standalone_3_nic',
         parameters={
             've_image': BIGIP_12_0_IMG,
-            'external_network': 'external_network',
-            'mgmt_network': 'mgmt_net',
-            'network_1': 'data1_net',
-            'network_2': 'data2_net',
-            'f5_ve_os_ssh_key': 'testlab',
+            've_flavor': symbols.ve_flavor,
+            'external_network': symbols.external_network,
+            'mgmt_network': symbols.mgmt_net,
+            'network_1': symbols.data1_net,
+            'network_2': symbols.data2_net,
+            'f5_ve_os_ssh_key': symbols.ssh_key,
             'admin_password': symbols.bigip_admin_password,
             'root_password': symbols.bigip_root_password,
             'license': symbols.license
