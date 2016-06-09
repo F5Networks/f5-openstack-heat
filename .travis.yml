@@ -7,6 +7,7 @@ before_install:
     - git config --global user.name "Travis F5 Openstack"
 install:
     - pip install -r requirements.unit.test.txt
+    - pip install -r requirements.docs.txt
 script:
     - flake8 --exclude=docs .
     - cd docs; make html
