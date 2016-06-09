@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _add-ubuntu-image-glance:
 
 Add a Ubuntu image to Glance
