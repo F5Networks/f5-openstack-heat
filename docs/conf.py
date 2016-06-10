@@ -62,9 +62,9 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = "7.0.1"
+version = "7.0.2"
 # The full version, including alpha/beta/rc tags.
-release = "7.0.1"
+release = "7.0.2"
 
 # OpenStack release
 openstack_release = "Kilo"
