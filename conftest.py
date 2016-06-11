@@ -18,28 +18,9 @@ import os
 import pytest
 
 
-def pytest_addoption(parser):
-    parser.addoption('--no-teardown-glance-images', action='store_true',
-                     default=False,
-                     help='Include if you do not wish to remove images '
-                     'pushed into glance.')
-    parser.addoption('--bigip-fip', action='store',
-                     help='The Floating IP for the BigIP.')
-    parser.addoption('--vs-vip', action='store',
-                     help='The Virtual IP for the virtual server.')
-
-
 @pytest.fixture
 def BaseRepoDir():
-    base_repo_dir = \
-        os.path.dirname(
-            os.path.dirname(
-                os.path.dirname(
-                    os.path.abspath(__file__)
-                )
-            )
-        )
-    return base_repo_dir
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.fixture

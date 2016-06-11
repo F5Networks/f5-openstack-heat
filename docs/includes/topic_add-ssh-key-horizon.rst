@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _add-ssh-key-horizon:
 
 Add an SSH key to Horizon

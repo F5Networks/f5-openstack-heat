@@ -1,7 +1,9 @@
+
+
 .. _topic_release-info:
 
-Release
--------
+Release Notes
+=============
 
 The current release of the F5® Heat templates, |release|, is compatible with OpenStack |openstack|. See the `F5® OpenStack Releases, Versioning, and Support matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`_ for more information, including BIG-IP® version compatibility.
 
