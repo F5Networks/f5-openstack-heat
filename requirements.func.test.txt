@@ -2,5 +2,5 @@ Babel==2.2.0
 git+https://github.com/F5Networks/f5-openstack-test.git@master
 git+ssh://git@bldr-git.int.lineratesystems.com/tools/pytest-symbols.git
 hacking
-f5-openstack-heat-plugins
+f5-openstack-heat-plugins==8.0.2
 Sphinx==1.3.5
