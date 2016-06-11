@@ -1,5 +1,5 @@
-git+https://github.com/F5Networks/f5-openstack-test.git@kilo
-git+https://github.com/F5Networks/pytest-symbols.git@master
+git+https://github.com/F5Networks/f5-openstack-test.git@master
+git+https://github.com/F5Networks/pytest-symbols.git
 hacking
 f5-openstack-heat-plugins==8.0.2
 Sphinx==1.3.5

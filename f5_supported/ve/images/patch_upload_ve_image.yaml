@@ -25,6 +25,7 @@ parameters:
     type: string
     label: F5 Onboard Server Management Network
     description: Private network to attach server to.
+    default: mgmt_net
     constraints:
       - custom_constraint: neutron.network    
   f5_image_import_auth_url:
