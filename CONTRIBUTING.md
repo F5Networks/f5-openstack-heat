@@ -1,17 +1,13 @@
-# Contributing guide for  f5-openstack-Heat
+# Contributing guide for f5-openstack-Heat
 If you have found this that means you you want to help us out.  Thanks in
 advance for lending a hand! This guide should get you up and running quickly
-and make it easy for you to contribute.  If we don't answer your questions here
-and you need help or just want to say hi shoot us an email at
-<f5_openstack_heat@f5.com>.
+and make it easy for you to contribute.  
 
 ## Branches
 
-The f5-openstack-heat repository contains a `develop` and `master` branch. The
-`develop` branch is used for ongoing development of heat templates. These
-templates may be highly active, undergoing many iterations, as they are
-refined. Criteria for promoting a develop template to a master template will be
-established by testing guidelines.
+The f5-openstack-heat repository contains branches which correspond to the 
+OpenStack versions they support. The 'master' branch is the basis for all 
+current development. 
 
 The master branch is considered *golden* as it offers some assurance of
 adequate and sufficient testing as defined by the creators of this repository.
@@ -36,9 +32,7 @@ vetted by F5® Networks, thus falling under the support of F5® Networks.
 ### Unsupported Templates
 The `unsupported` top-level directory contains templates that are not
 officially supported by F5® Networks. These templates have not undergone
-unit/functional/integration testing, and can be considered experimental. With
-that, if you are unsure where to put your template, this is a good place to
-start.
+unit/functional/integration testing and should be considered experimental. 
 
 ### Template Types
 Within each of the above directories, sub-directories exist to describe the
@@ -61,9 +55,6 @@ what to fix when and how it impacts our users.  We like bugs because it means
 people are using our code, and we like fixing them even more.
 
 * Title: A short but descriptive summary of the issue, whether it be a bug or enhancement.
-* Labels: Click on the gear icon and give us some direction on the type of issue you are filing.
-* Milestone: Leave this field empty.
-* Assignee: If you're not fixing the issue, leave this field empty.
 * Details: For bugs, copy and paste the following template into your new issue and fill it out.
 
 ```
@@ -129,5 +120,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 ### Contributor License Agreement
-Individuals or business entities who contribute to this project must have completed and submitted the [F5® Contributor License Agreement](http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html) to Openstack_CLA@f5.com prior to their
-code submission being included in this project.
+Individuals or business entities who contribute to this project must have completed and submitted the [F5® Contributor License Agreement](http://f5-openstack-docs.readthedocs.io/en/latest/cla_landing.html) to Openstack_CLA@f5.com prior to their code submission being included in this project.
