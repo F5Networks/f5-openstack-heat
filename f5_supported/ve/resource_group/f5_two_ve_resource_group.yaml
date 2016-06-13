@@ -121,7 +121,7 @@ resources:
     properties:
       count: 2
       resource_def:
-        type: https://raw.githubusercontent.com/pjbreaux/f5-openstack-heat-1/feature.cluster/f5_supported/ve/common/cluster_ready_ve_4_nic.yaml
+        type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/kilo/f5_supported/ve/common/cluster_ready_ve_4_nic.yaml
         properties:
           ve_image: { get_param: ve_image }
           ve_flavor: { get_param: ve_flavor }
