@@ -108,9 +108,9 @@ parameter_groups:
 
 resources:
   bigip_data_security_group:
-    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/liberty/unsupported/ve/common/bigip_data_security_group.yaml
   bigip_mgmt_security_group:
-    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_mgmt_security_group.yaml
+    type: https://raw.githubusercontent.com/F5Networks/f5-openstack-heat/liberty/unsupported/ve/common/bigip_mgmt_security_group.yaml
   mgmt_port:
     type: OS::Neutron::Port
     properties:
