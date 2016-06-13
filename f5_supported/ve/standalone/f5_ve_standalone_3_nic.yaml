@@ -46,18 +46,21 @@ parameters:
     type: string
     label: External Network Name
     description: External network name where floating IP resides
+    default: test
     constraints:
       - custom_constraint: neutron.network
   mgmt_network:
     type: string
     label: VE Management Network
     description: Management Interface Network.
+    default: test
     constraints:
       - custom_constraint: neutron.network
   network_1:
     type: string
     label: VE Network for the 1.1 Interface
     description: TMM 1.1 network.
+    default: test
     constraints:
       - custom_constraint: neutron.network
   network_1_name:
@@ -69,6 +72,7 @@ parameters:
     type: string
     label: VE Network for the 1.2 Interface
     description: TMM 1.2 network.
+    default: test
     constraints:
       - custom_constraint: neutron.network
   network_2_name:
