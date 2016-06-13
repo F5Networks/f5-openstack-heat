@@ -24,7 +24,7 @@ BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
 
 
 @pytest.fixture
-def GlanceImageCleanup(request, glanceclientmanager):
+def GlanceImageCleanup(request, glanceclientmanager, symbols):
     def manage_glance(ve_image_name):
         def teardown_glance_image():
             images = [image for image in glanceclientmanager.images.list()]
@@ -33,7 +33,8 @@ def GlanceImageCleanup(request, glanceclientmanager):
                     glanceclientmanager.images.delete(image.id)
         # You can run these tests and not teardown the glance images.
         # They can then be used for booting a VE
-        if not request.config.getoption('--no-teardown-glance-images'):
+        if hasattr(symbols, 'teardown_glance_images') and \
+                symbols.teardown_glance_images:
             request.addfinalizer(teardown_glance_image)
     return manage_glance
 
@@ -58,9 +59,9 @@ def test_patched_image_upload_12_0(
         PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
-            'onboard_image': 'ubuntu_14.04_lts',
-            'image_prep_key': 'testlab',
-            'private_network': 'mgmt_net',
+            'onboard_image': symbols.ubuntu_image,
+            'image_prep_key': symbols.ssh_key,
+            'private_network': symbols.mgmt_net,
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_12_0_image_path,
             'f5_ve_image_name': BIGIP_12_0_IMG + '.qcow2',
@@ -85,9 +86,9 @@ def test_patched_image_upload_11_6(
         PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
-            'onboard_image': 'ubuntu_14.04_lts',
-            'image_prep_key': 'testlab',
-            'private_network': 'mgmt_net',
+            'onboard_image': symbols.ubuntu_image,
+            'image_prep_key': symbols.ssh_key,
+            'private_network': symbols.mgmt_net,
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_11_6_image_path,
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
@@ -112,9 +113,9 @@ def test_patched_image_upload_11_5(
         PatchTemplateLoc,
         'func_test_patch_ve_image',
         parameters={
-            'onboard_image': 'ubuntu_14.04_lts',
-            'image_prep_key': 'testlab',
-            'private_network': 'mgmt_net',
+            'onboard_image': symbols.ubuntu_image,
+            'image_prep_key': symbols.ssh_key,
+            'private_network': symbols.mgmt_net,
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_11_5_4_image_path,
             'f5_ve_image_name': BIGIP_11_5_4_IMG + '.qcow2',

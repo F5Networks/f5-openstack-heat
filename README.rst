@@ -5,8 +5,7 @@ f5-openstack-heat
 
 Introduction
 ------------
-This repo contains OpenStack `Heat <https://wiki.openstack.org/wiki/Heat>`_ templates that can be used to deploy and/or configure F5® BIG-IP® in an
-OpenStack cloud.
+This repo contains OpenStack `Heat <https://wiki.openstack.org/wiki/Heat>`_ templates that can be used to deploy and/or configure F5® BIG-IP® in an OpenStack cloud.
 
 Supported and Unsupported Templates
 -----------------------------------
@@ -22,17 +21,17 @@ The :code:`unsupported` directory contains templates that are experimental and s
 
 Documentation
 -------------
-Documentation for this project is on `Read The Docs <https://f5-openstack-heat.rtfd.org/en>`_.
+Documentation for this project is on `Read The Docs <https://f5-openstack-heat.readthedocs.io>`_.
 
 Releases and Versions
 ---------------------
 This branch supports the OpenStack Kilo release.
 
-For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`_.
+For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.io/en/latest/releases_and_versioning.html>`_.
 
 Installation & Configuration
 ----------------------------
-Any of the templates in this repo can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack. Please see the `documentation <https://f5-openstack-heat.rtfd.org/en>`_ for installation, configuration, and usage instructions.
+Any of the templates in this repo can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack. Please see the `documentation <https://f5-openstack-heat.readthedocs.io>`_ for installation, configuration, and usage instructions.
 
 Filing Issues
 -------------
@@ -101,7 +100,7 @@ Contributor License Agreement
 Individuals or business entities who contribute to this project must have completed and submitted the `F5® Contributor License Agreement <http://f5-openstack-docs.readthedocs.org/en/latest/cla_landing.html>`_ to Openstack_CLA@f5.com prior to their code submission being included in this project.
 
 .. |Docs build| image:: http://readthedocs.org/projects/f5-openstack-heat/badge/?version=latest
-    :target: http://f5-openstack-heat.readthedocs.org/en/latest/?badge=latest
+    :target: http://f5-openstack-heat.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. |slack badge| image:: https://f5-openstack-slack.herokuapp.com/badge.svg

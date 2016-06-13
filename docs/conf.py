@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-# needs_sphinx = '1.0'
+needs_sphinx = '1.4.1'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.doctest',
+    'sphinx.ext.autosectionlabel'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -61,12 +62,12 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = '7.0'
+version = "8.0.1"
 # The full version, including alpha/beta/rc tags.
-release = 'v7.0.1'
+release = "8.0.1"
 
 # OpenStack release
-openstack_release = "Kilo"
+openstack_release = "Liberty"
 
 rst_epilog = """
 .. |openstack| replace:: {0}
@@ -183,13 +184,13 @@ html_static_path = ['_static']
 # html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-# html_show_sourcelink = True
+html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
+html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-# html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -298,5 +299,9 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
-# intersphinx_mapping = {'https://docs.python.org/': None}
+# intersphinx mapping to other F5 openstack docs
+intersphinx_mapping = {'docs': (
+    'http://f5-openstack-docs.readthedocs.io/en/1.0', None),
+    'heatplugins': (
+    'http://f5-openstack-heat-plugins.readthedocs.io/en/kilo', None),
+    }

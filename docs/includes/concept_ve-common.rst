@@ -1,3 +1,5 @@
+:orphan: true
+
 .. _ve-common:
 
 BIG-IP® VE Common Template Resources
