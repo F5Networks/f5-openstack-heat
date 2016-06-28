@@ -1,0 +1,84 @@
+parameters:
+    public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDcPpmjMCjkZ246Sv37NVWwGGnI1RxneWAApoIm+YvdzJnlfzXOpXW1UgiVyq5yLrr3IqT7zoVAZW91TZyR04qb/Vdia8O8ATiVZcy2co/PqPPyDlzqIc9cSwnpvnMQRINYh+6slCQEVYhZVDb9YbmPIeOxvgC2DXOlRWPp7w3caLy0HxEvVv8sVBd0annzseLs9Snz+ZgNmGrpddWzCN3RQ/hmSDNYwXcbtPUmZtAO0XMAZIlq6ARK4R7oqeK0zn/pjpnytlSqNEkiNNCCHQN9M65k6xyTB16lREpTjOK5s9E+OjMcr2W1VMw9pKDrfUHv1+taX2WQRZXvZP7jRyal local@hype"
+    public_network: external_net
+    f5_license_key: XXXXX-XXXXX-XXXXX-XXXXX-XXXXXXX
+    dns_nameservers: 172.27.1.1,172.27.2.1
+
+    cl1_name: cl1.boulder.os.f5net.com
+    cl1_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    cl1_flavor: m1.small
+    cl1_subscriber_ip: 10.0.0.10
+
+    cl2_name: cl2.boulder.os.f5net.com
+    cl2_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    cl2_flavor: m1.small
+    cl2_subscriber_ip: 10.0.0.20
+
+    cl3_name: cl3.boulder.os.f5net.com
+    cl3_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    cl3_flavor: m1.small
+    cl3_subscriber_ip: 10.0.0.30
+
+    cl4_name: cl4.boulder.os.f5net.com
+    cl4_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    cl4_flavor: m1.small
+    cl4_subscriber_ip: 10.0.0.40
+
+    cpe_name: cpe.boulder.os.f5net.com
+    cpe_image: debian-8.2.0-openstack-amd64
+    cpe_flavor: m1.small
+    cpe_subscriber_ip: 10.0.0.1
+    cpe_subs_pem_ip: 10.0.24.1
+    cpe_control_ip: 10.0.16.2
+
+    vas1_name: vas1.boulder.os.f5net.com
+    vas1_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    vas1_flavor: m1.small
+    vas1_to_vas_ip: 192.168.1.1
+    vas1_from_vas_ip: 192.168.2.1
+    vas1_control_ip: 10.0.16.200
+
+    vas2_name: vas2.boulder.os.f5net.com
+    vas2_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    vas2_flavor: m1.small
+    vas2_to_vas_ip: 192.168.3.1
+    vas2_from_vas_ip: 192.168.4.1
+    vas2_control_ip: 10.0.16.20
+
+    vas3_name: vas3.boulder.os.f5net.com
+    vas3_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    vas3_flavor: m1.small
+    vas3_to_vas_ip: 192.168.5.1
+    vas3_from_vas_ip: 192.168.6.1
+    vas3_control_ip: 10.0.16.30
+
+    pe_name: pe.boulder.os.f5net.com
+    pe_image: debian-8.2.0-openstack-amd64
+    pe_flavor: m1.small
+    pe_internet_pem_ip: 10.0.32.2
+    pe_internet_ip: 10.0.8.2
+    pe_control_ip: 10.0.16.42
+
+    server_name: server.boulder.os.f5net.com
+    server_image: ubuntu-14.04-server-cloudimg-amd64-disk1
+    server_flavor: m1.small
+    server_internet_ip: 10.0.8.1
+    server_control_ip: 10.0.16.77
+
+    log_name: log.boulder.os.f5net.com
+    log_image: CentOS-7-x86_64-GenericCloud
+    log_flavor: m1.small
+    log_control_ip: 10.0.16.66
+
+    bigip_name: pem.boulder.os.f5net.com
+    bigip_image: BIGIP-12.0.0.0.0.606-OpenStack
+    bigip_flavor: f5.medium
+    bigip_control_ip: 10.0.16.1
+    bigip_subs_pem_ip: 10.0.24.2
+    bigip_to_vas1_ip: 192.168.1.2
+    bigip_from_vas1_ip: 192.168.2.2
+    bigip_to_vas2_ip: 192.168.3.2
+    bigip_from_vas2_ip: 192.168.4.2
+    bigip_to_vas3_ip: 192.168.5.2
+    bigip_from_vas3_ip: 192.168.6.2
+    bigip_internet_pem_ip: 10.0.32.1

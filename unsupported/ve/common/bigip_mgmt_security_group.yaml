@@ -6,7 +6,6 @@ resources:
 
    bigip_mgmt_security_group:
     type: OS::Neutron::SecurityGroup
-    deletion_policy: Retain
     properties:
       description: security group rules for bigip mgmt port
       name: bigip_mgmt_security_group
@@ -22,5 +21,7 @@ resources:
           port_range_min: 443
           port_range_max: 443
 
-
-
+outputs:
+   mgmt_security_group_id:
+     description: Get resource id of this security group
+     value: { get_resource: bigip_mgmt_security_group }

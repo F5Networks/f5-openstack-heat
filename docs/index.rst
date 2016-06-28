@@ -1,94 +1,55 @@
-F5 Networks OpenStack Heat Template Library
-===========================================
+.. _home:
 
-Introduction
-------------
-OpenStack Heat templates for applications stacks that include F5 BigIP
-configurations and templates for deploying F5 VE in an OpenStack cloud.
+F5 Networks® OpenStack Heat Template Library
+############################################
 
-The two top level directories that exist in this repo which contain Heat
-templates are :code:`f5_supported` and :code:`unsupported`.
+.. raw:: html
 
-F5 Supported Templates
-~~~~~~~~~~~~~~~~~~~~~~
-The :code:`f5_supported` directory contains templates that are officially supported
-by F5 Networks for customers with a support contract.  Users who require
-support should contact F5 Support through usual means.
+    <script async defer src="https://f5-openstack-slack.herokuapp.com/slackin.js"></script>
 
-.. toctree::
-   :maxdepth: 1
+Overview
+********
 
-   templates/f5_supported/templates
+The F5® OpenStack Heat template library contains templates that can be used to deploy and/or configure BIG-IP® from within an OpenStack cloud.
 
-Unsupported Templates
-~~~~~~~~~~~~~~~~~~~~~
-The :code:`unsupported` directory contains templates that are experimental and should
-be used **AT YOUR OWN RISK**.  These templates may have been contributed by
-other users or are under development by F5.  Regardless of a customer's status
-of a valid support contract, F5 will not support templates that are in this
-directory.
+The library contains two groups of templates:
 
-.. toctree::
-   :maxdepth: 1
-
-   templates/unsupported/templates
+* :ref:`F5-supported <f5-supported_home>`
+* :ref:`Unsupported <unsupported_home>`
 
 Releases and Versions
----------------------
-|release| supports the OpenStack |openstack_release| release.
+*********************
 
-For more information about F5 Networks's OpenStack versioning and support
-matrix please see `F5 Networks OpenStack Support Matrix <https://F5Networks.github.io/f5-openstack-docs>`__.
+Release |release| supports the OpenStack |openstack| release.
 
-Installation & Configuration
-----------------------------
-Heat templates can be loaded via the OpenStack Horizon GUI or using the Heat
-command line or API.
+For more information regarding releases and versioning, please see the `Release, Versioning, and Support Matrix <http://f5-openstack-docs.readthedocs.org/en/latest/releases_and_versioning.html>`_.
 
-Some templates may require
-`F5Networks/f5-openstack-heat-plugins <https://github.com/F5Networks/f5-openstack-heat-plugins>`__
-to be installed.
+Use
+****
 
-Contact
--------
-Have questions or like to see new templates?  We'd love to hear from you.  You
-can email the team at f5_openstack_heat@f5.com, or visit us at
-`F5Networks/f5-openstack-heat <https://github.com/F5Networks/f5-openstack-heat>`__.
+Any of F5®'s Heat templates can be downloaded, copied, and/or modified as needed to deploy resources in OpenStack.
 
-Copyright
----------
-Copyright 2013-2016 F5 Networks Inc.
+Heat templates can be loaded via the OpenStack GUI, command line, or API. Please see the `OpenStack Heat documentation <http://docs.openstack.org/developer/heat/#using-heat>`_ for instructions.
+
+.. note::
+
+    Many of the templates require the F5® Heat plugins to be installed.
+    Please see the :ref:`project documentation <heatplugins:home>` for instructions.
+
 
 Support
--------
-Maintenance and support of the unmodified F5 code is provided only to customers
-who have an existing support contract, purchased separately subject to F5’s
-support policies available at http://www.f5.com/about/guidelines-policies/ and
-http://askf5.com.  F5 will not provide maintenance and support services of
-modified F5 code or code that does not have an existing support contract.
+*******
 
-License
--------
-Apache V2.0
-~~~~~~~~~~~
+.. include:: ../SUPPORT.md
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+Contents
+********
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
-the License for the specific language governing permissions and limitations
-under the License.
+.. toctree::
+    :maxdepth: 2
+    :glob:
 
-Contributor License Agreement
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Individuals or business entities who contribute to this project must
-have completed and submitted the `F5 Contributor License
-Agreement <http://f5networks.github.io/f5-openstack-docs/cla_landing/index.html>`__
-to Openstack_CLA@f5.com prior to their code submission being included in this
-project.
+    User Guide <map_heat-user-guide>
+    Release Notes <release-notes>
+    templates/templates_index

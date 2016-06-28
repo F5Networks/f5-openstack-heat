@@ -1,0 +1,1759 @@
+---
+
+# Copyright 2015 F5 Networks
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+heat_template_version: 2014-10-16
+
+description: >
+    To respond to the growth and innovation in data networks, CSPs have expanded
+    existing legacy platforms and added new ones without a holistic view of the
+    network architecture. In many cases, this has resulted in needlessly complex
+    networks that cannot readily be scaled, increase deployment and operating costs,
+    and reduces the ability to add or adapt new services.
+
+    Once established in a position to steer traffic to VAS platforms, the BIG-IP®
+    platform enables CSPs to consolidate several incremental network functions to
+    increase network efficiency and ROI. F5® products provide a number of additional
+    service functions, including security, translation, processing offloading,
+    optimisation, and policy enforcement.
+
+    The purpose of this solution is to research and demonstrate the use case
+    scenarios for the F5® PEM, CGNAT modules to simplify the implementation of the
+    GI infrastructure that is used by ISP nowadays.
+
+parameters:
+    public_key:
+        type: string
+        description: The public key to place in the device's authorized_keys file
+    public_network:
+        type: string
+        description: Public external network
+        default: ext_net
+    f5_license_key:
+        type: string
+        default: XXXXX-XXXXX-XXXXX-XXXXX-XXXXXXX
+    dns_nameservers:
+        type: comma_delimited_list
+        description: DNS servers the server needs so it can install software
+        default: 172.27.1.1,172.27.2.1
+
+    mgmt_subnet_cidr:
+        type: string
+        description: Private subnet of mgmt interface
+        default: 10.2.1.0/24
+    subscriber_subnet_cidr:
+        type: string
+        description: Private subnet subscribers are attached to
+        default: 10.0.0.0/24
+    control_subnet_cidr:
+        type: string
+        description: Private subnet control interfaces are attached to
+        default: 10.0.16.0/24
+    subs_pem_subnet_cidr:
+        type: string
+        description: Private subnet subs_pem interfaces are attached to
+        default: 10.0.24.0/24
+    to_vas1_subnet_cidr:
+        type: string
+        description: Private subnet to_vas1 interfaces are attached to
+        default: 192.168.1.0/24
+    from_vas1_subnet_cidr:
+        type: string
+        description: Private subnet from_vas1 interfaces are attached to
+        default: 192.168.2.0/24
+    to_vas2_subnet_cidr:
+        type: string
+        description: Private subnet to_vas2 interfaces are attached to
+        default: 192.168.3.0/24
+    from_vas2_subnet_cidr:
+        type: string
+        description: Private subnet from_vas2 interfaces are attached to
+        default: 192.168.4.0/24
+    to_vas3_subnet_cidr:
+        type: string
+        description: Private subnet to_vas3 interfaces are attached to
+        default: 192.168.5.0/24
+    from_vas3_subnet_cidr:
+        type: string
+        description: Private subnet from_vas3 interfaces are attached to
+        default: 192.168.6.0/24
+    internet_pem_subnet_cidr:
+        type: string
+        description: Private subnet internet_pem interfaces are attached to
+        default: 10.0.32.0/24
+    internet_subnet_cidr:
+        type: string
+        description: Private subnet internet interfaces are attached to
+        default: 10.0.8.0/24
+
+    cl1_name:
+        type: string
+        description: The hostname of the first subscriber device
+        default: cl1.os.hype.f5net.com
+    cl1_image:
+        type: string
+        description: Image used by the first subscriber device
+        default: ubuntu-14.04-server-amd64
+    cl1_flavor:
+        type: string
+        description: Nova flavor used by the first subscriber device
+        default: m1.small
+    cl1_subscriber_ip:
+        type: string
+        description: IP address of the first subscriber on the subscriber network
+        default: 10.0.0.10
+
+    cl2_name:
+        type: string
+        description: The hostname of the second subscriber device
+        default: cl2.os.hype.f5net.com
+    cl2_image:
+        type: string
+        description: Image used by the second subscriber device
+        default: ubuntu-14.04-server-amd64
+    cl2_flavor:
+        type: string
+        description: Nova flavor used by the second subscriber device
+        default: m1.small
+    cl2_subscriber_ip:
+        type: string
+        description: IP address of the second subscriber on the subscriber network
+        default: 10.0.0.20
+
+    cl3_name:
+        type: string
+        description: The hostname of the third subscriber device
+        default: cl3.os.hype.f5net.com
+    cl3_image:
+        type: string
+        description: Image used by the third subscriber device
+        default: ubuntu-14.04-server-amd64
+    cl3_flavor:
+        type: string
+        description: Nova flavor used by the third subscriber device
+        default: m1.small
+    cl3_subscriber_ip:
+        type: string
+        description: IP address of the third subscriber on the subscriber network
+        default: 10.0.0.30
+
+    cl4_name:
+        type: string
+        description: The hostname of the fourth subscriber device
+        default: cl4.os.hype.f5net.com
+    cl4_image:
+        type: string
+        description: Image used by the fourth subscriber device
+        default: ubuntu-14.04-server-amd64
+    cl4_flavor:
+        type: string
+        description: Nova flavor used by the fourth subscriber device
+        default: m1.small
+    cl4_subscriber_ip:
+        type: string
+        description: IP address of the fourth subscriber on the subscriber network
+        default: 10.0.0.40
+
+    cpe_name:
+        type: string
+        description: The hostname of the CPE device
+        default: cpe.os.hype.f5net.com
+    cpe_image:
+        type: string
+        description: Image used by the CPE device
+        default: debian-8.2.0-openstack-amd64
+    cpe_flavor:
+        type: string
+        description: Nova flavor used by the CPE device
+        default: m1.small
+    cpe_subscriber_ip:
+        type: string
+        description: IP address of the CPE on the subscriber network
+        default: 10.0.0.1
+    cpe_subs_pem_ip:
+        type: string
+        description: IP address of the CPE on the subs_pem network
+        default: 10.0.24.1
+    cpe_control_ip:
+        type: string
+        description: IP address of the CPE on the control network
+        default: 10.0.16.2
+
+    vas1_name:
+        type: string
+        description: The hostname of the first VAS device
+        default: vas1.os.hype.f5net.com
+    vas1_image:
+        type: string
+        description: Image used by the first VAS device
+        default: ubuntu-14.04-server-amd64
+    vas1_flavor:
+        type: string
+        description: Nova flavor used by the first VAS device
+        default: m1.small
+    vas1_to_vas_ip:
+        type: string
+        description: IP address of the first VAS device on the to_vas network
+        default: 192.168.1.1
+    vas1_from_vas_ip:
+        type: string
+        description: IP address of the first VAS device on the from_vas network
+        default: 192.168.2.1
+    vas1_control_ip:
+        type: string
+        description: IP address of the first VAS device on the from_vas network
+        default: 10.0.16.200
+
+    vas2_name:
+        type: string
+        description: The hostname of the second VAS device
+        default: vas2.os.hype.f5net.com
+    vas2_image:
+        type: string
+        description: Image used by the second VAS device
+        default: ubuntu-14.04-server-amd64
+    vas2_flavor:
+        type: string
+        description: Nova flavor used by the second VAS device
+        default: m1.small
+    vas2_to_vas_ip:
+        type: string
+        description: IP address of the second VAS device on the to_vas network
+        default: 192.168.3.1
+    vas2_from_vas_ip:
+        type: string
+        description: IP address of the second VAS device on the from_vas network
+        default: 192.168.4.1
+    vas2_control_ip:
+        type: string
+        description: IP address of the second VAS device on the from_vas network
+        default: 10.0.16.20
+
+    vas3_name:
+        type: string
+        description: The hostname of the third VAS device
+        default: vas3.os.hype.f5net.com
+    vas3_image:
+        type: string
+        description: Image used by the third VAS device
+        default: ubuntu-14.04-server-amd64
+    vas3_flavor:
+        type: string
+        description: Nova flavor used by the third VAS device
+        default: m1.small
+    vas3_to_vas_ip:
+        type: string
+        description: IP address of the third VAS device on the to_vas network
+        default: 192.168.5.1
+    vas3_from_vas_ip:
+        type: string
+        description: IP address of the third VAS device on the from_vas network
+        default: 192.168.6.1
+    vas3_control_ip:
+        type: string
+        description: IP address of the third VAS device on the from_vas network
+        default: 10.0.16.30
+
+    pe_name:
+        type: string
+        description: The hostname of the PE device
+        default: pe.os.hype.f5net.com
+    pe_image:
+        type: string
+        description: Image used by the PE device
+        default: debian-8.2.0-openstack-amd64
+    pe_flavor:
+        type: string
+        description: Nova flavor used by the PE device
+        default: m1.small
+    pe_internet_pem_ip:
+        type: string
+        description: IP address of the PE device on the internet_pem network
+        default: 10.0.32.2
+    pe_internet_ip:
+        type: string
+        description: IP address of the PE device on the internet network
+        default: 10.0.8.2
+    pe_control_ip:
+        type: string
+        description: IP address of the PE device on the control network
+        default: 10.0.16.42
+
+    server_name:
+        type: string
+        description: The hostname of the server device
+        default: server.os.hype.f5net.com
+    server_image:
+        type: string
+        description: Image used by the server device
+        default: ubuntu-14.04-server-amd64
+    server_flavor:
+        type: string
+        description: Nova flavor used by the server device
+        default: m1.small
+    server_internet_ip:
+        type: string
+        description: IP address of the server device on the internet network
+        default: 10.0.8.1
+    server_control_ip:
+        type: string
+        description: IP address of the server device on the control network
+        default: 10.0.16.77
+
+    log_name:
+        type: string
+        description: The hostname of the logging device
+        default: log.os.hype.f5net.com
+    log_image:
+        type: string
+        description: Image used by the logging device
+        default: CentOS-7-x86_64-GenericCloud
+    log_flavor:
+        type: string
+        description: Nova flavor used by the logging device
+        default: m1.small
+    log_control_ip:
+        type: string
+        description: IP address of the log device on the control network
+        default: 10.0.16.66
+
+    bigip_name:
+        type: string
+        description: The hostname of the BIG-IP® device
+        default: pem.os.hype.f5net.com
+    bigip_image:
+        type: string
+        description: BIG-IP® image used
+        default: BIGIP-12.0.0.0.0.606-OpenStack
+    bigip_flavor:
+        type: string
+        description: BIG-IP® flavor used
+        default: m1.xlarge
+    bigip_control_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the control network
+        default: 10.0.16.1
+    bigip_subs_pem_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the subs_pem network
+        default: 10.0.24.2
+    bigip_to_vas1_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the to_vas1 network
+        default: 192.168.1.2
+    bigip_from_vas1_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the from_vas1 network
+        default: 192.168.2.2
+    bigip_to_vas2_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the to_vas2 network
+        default: 192.168.3.2
+    bigip_from_vas2_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the from_vas2 network
+        default: 192.168.4.2
+    bigip_to_vas3_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the to_vas3 network
+        default: 192.168.5.2
+    bigip_from_vas3_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the from_vas3 network
+        default: 192.168.6.2
+    bigip_internet_pem_ip:
+        type: string
+        description: IP address of the BIG-IP® device on the internet_pem network
+        default: 10.0.32.1
+
+resources:
+    cloud_user_data:
+        type: OS::Heat::CloudConfig
+        properties:
+            cloud_config:
+                package_update: false
+                users:
+                    - default
+    cloud_interfaces_2:
+        type: OS::Heat::CloudConfig
+        properties:
+            cloud_config:
+                bootcmd:
+                    - dhclient eth1
+                    - dhclient eth0
+    cloud_interfaces_3:
+        type: OS::Heat::CloudConfig
+        properties:
+            cloud_config:
+                bootcmd:
+                    - dhclient eth2
+                    - dhclient eth1
+                    - dhclient eth0
+    cloud_interfaces_4:
+        type: OS::Heat::CloudConfig
+        properties:
+            cloud_config:
+                bootcmd:
+                    - dhclient eth3
+                    - dhclient eth2
+                    - dhclient eth1
+                    - dhclient eth0
+
+    cloud_config_subscriber:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_2 }
+    cloud_config_cpe:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_4 }
+    cloud_config_vas:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_4 }
+    cloud_config_pe:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_4 }
+    cloud_config_log:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_2 }
+    cloud_config_server:
+        type: OS::Heat::MultipartMime
+        properties:
+            parts:
+                - config: { get_resource: cloud_user_data }
+                - config: { get_resource: cloud_interfaces_3 }
+
+    mgmt_keypair:
+        type: OS::Nova::KeyPair
+        properties:
+            name: gi-simplify-mgmt-keypair
+            public_key: { get_param: public_key }
+    mgmt_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: mgmt-network
+    mgmt_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: mgmt-subnet
+            cidr: { get_param: mgmt_subnet_cidr }
+            network: { get_resource: mgmt_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.2.1.2
+                  end: 10.2.1.254
+    mgmt_router:
+        type: OS::Neutron::Router
+        properties:
+            name: router
+            external_gateway_info:
+                network: { get_param: public_network }
+    mgmt_router_interface:
+        type: OS::Neutron::RouterInterface
+        properties:
+            router_id: { get_resource: mgmt_router }
+            subnet_id: { get_resource: mgmt_subnet }
+
+    subscriber_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: subscriber-network
+    subscriber_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: subscriber-subnet
+            cidr: { get_param: subscriber_subnet_cidr }
+            network: { get_resource: subscriber_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.0.0.254
+                  end: 10.0.0.254
+            gateway_ip: ""
+
+    control_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: control-network
+    control_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: control-subnet
+            cidr: { get_param: control_subnet_cidr }
+            network: { get_resource: control_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.0.16.254
+                  end: 10.0.16.254
+            gateway_ip: ""
+
+    subs_pem_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: subs-pem-network
+    subs_pem_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: subs-pem-subnet
+            cidr: { get_param: subs_pem_subnet_cidr }
+            network: { get_resource: subs_pem_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.0.24.254
+                  end: 10.0.24.254
+            gateway_ip: ""
+
+    to_vas1_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: to-vas1-network
+    to_vas1_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: to-vas1-subnet
+            cidr: { get_param: to_vas1_subnet_cidr }
+            network: { get_resource: to_vas1_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.1.254
+                  end: 192.168.1.254
+            gateway_ip: ""
+
+    from_vas1_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: from-vas1-network
+    from_vas1_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: from-vas1-subnet
+            cidr: { get_param: from_vas1_subnet_cidr }
+            network: { get_resource: from_vas1_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.2.254
+                  end: 192.168.2.254
+            gateway_ip: ""
+
+    to_vas2_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: to-vas2-network
+    to_vas2_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: to-vas2-subnet
+            cidr: { get_param: to_vas2_subnet_cidr }
+            network: { get_resource: to_vas2_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.3.254
+                  end: 192.168.3.254
+            gateway_ip: ""
+
+    from_vas2_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: from-vas2-network
+    from_vas2_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: from-vas2-subnet
+            cidr: { get_param: from_vas2_subnet_cidr }
+            network: { get_resource: from_vas2_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.4.254
+                  end: 192.168.4.254
+            gateway_ip: ""
+
+    to_vas3_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: to-vas3-network
+    to_vas3_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: to-vas3-subnet
+            cidr: { get_param: to_vas3_subnet_cidr }
+            network: { get_resource: to_vas3_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.5.254
+                  end: 192.168.5.254
+            gateway_ip: ""
+
+    from_vas3_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: from-vas3-network
+    from_vas3_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: from-vas3-subnet
+            cidr: { get_param: from_vas3_subnet_cidr }
+            network: { get_resource: from_vas3_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 192.168.6.254
+                  end: 192.168.6.254
+            gateway_ip: ""
+
+    internet_pem_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: internet-pem-network
+    internet_pem_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: internet-pem-subnet
+            cidr: { get_param: internet_pem_subnet_cidr }
+            network: { get_resource: internet_pem_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.0.32.254
+                  end: 10.0.32.254
+            gateway_ip: ""
+
+    internet_network:
+        type: OS::Neutron::Net
+        properties:
+            admin_state_up: true
+            name: internet-network
+    internet_subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: internet-subnet
+            cidr: { get_param: internet_subnet_cidr }
+            network: { get_resource: internet_network }
+            dns_nameservers: { get_param: dns_nameservers }
+            enable_dhcp: true
+            allocation_pools:
+                - start: 10.0.8.254
+                  end: 10.0.8.254
+            gateway_ip: ""
+
+    security_group_common:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: common-sec-group
+            rules:
+                - protocol: tcp
+                  direction: ingress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_ip_prefix: 0.0.0.0/0
+                - protocol: tcp
+                  direction: egress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_ip_prefix: 0.0.0.0/0
+
+                - protocol: udp
+                  direction: ingress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_ip_prefix: 0.0.0.0/0
+                - protocol: udp
+                  direction: egress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_ip_prefix: 0.0.0.0/0
+
+                - protocol: icmp
+                  direction: ingress
+                - protocol: icmp
+                  direction: egress
+
+                - protocol: tcp
+                  direction: ingress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_mode: remote_group_id
+                - protocol: tcp
+                  direction: egress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_mode: remote_group_id
+
+                - protocol: udp
+                  direction: ingress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_mode: remote_group_id
+                - protocol: udp
+                  direction: egress
+                  port_range_min: 1
+                  port_range_max: 65535
+                  remote_mode: remote_group_id
+
+                - protocol: icmp
+                  direction: ingress
+                  remote_mode: remote_group_id
+                - protocol: icmp
+                  direction: egress
+                  remote_mode: remote_group_id
+
+    cl1:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: cl1_name }
+            image: { get_param: cl1_image }
+            flavor: { get_param: cl1_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: cl1_mgmt_port }
+                - port: { get_resource: cl1_subscriber_port }
+            metadata:
+                groups: client
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_subscriber
+    cl1_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cl1_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    cl1_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: cl1_floating_ip }
+            port_id: { get_resource: cl1_mgmt_port }
+    cl1_subscriber_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cl1-subscriber-port
+            network: { get_resource: subscriber_network }
+            fixed_ips:
+                - subnet: { get_resource: subscriber_subnet }
+                  ip_address: { get_param: cl1_subscriber_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    cl2:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: cl2_name }
+            image: { get_param: cl2_image }
+            flavor: { get_param: cl2_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: cl2_mgmt_port }
+                - port: { get_resource: cl2_subscriber_port }
+            metadata:
+                groups: client
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_subscriber
+    cl2_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cl2_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    cl2_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: cl2_floating_ip }
+            port_id: { get_resource: cl2_mgmt_port }
+    cl2_subscriber_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cl2-subscriber-port
+            network: { get_resource: subscriber_network }
+            fixed_ips:
+                - subnet: { get_resource: subscriber_subnet }
+                  ip_address: { get_param: cl2_subscriber_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    cl3:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: cl3_name }
+            image: { get_param: cl3_image }
+            flavor: { get_param: cl3_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: cl3_mgmt_port }
+                - port: { get_resource: cl3_subscriber_port }
+            metadata:
+                groups: client
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_subscriber
+    cl3_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cl3_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    cl3_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: cl3_floating_ip }
+            port_id: { get_resource: cl3_mgmt_port }
+    cl3_subscriber_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cl3-subscriber-port
+            network: { get_resource: subscriber_network }
+            fixed_ips:
+                - subnet: { get_resource: subscriber_subnet }
+                  ip_address: { get_param: cl3_subscriber_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    cl4:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: cl4_name }
+            image: { get_param: cl4_image }
+            flavor: { get_param: cl4_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: cl4_mgmt_port }
+                - port: { get_resource: cl4_subscriber_port }
+            metadata:
+                groups: client
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_subscriber
+    cl4_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cl4_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    cl4_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: cl4_floating_ip }
+            port_id: { get_resource: cl4_mgmt_port }
+    cl4_subscriber_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cl4-subscriber-port
+            network: { get_resource: subscriber_network }
+            fixed_ips:
+                - subnet: { get_resource: subscriber_subnet }
+                  ip_address: { get_param: cl4_subscriber_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    cpe:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: cpe_name }
+            image: { get_param: cpe_image }
+            flavor: { get_param: cpe_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: cpe_mgmt_port }
+                - port: { get_resource: cpe_subscriber_port }
+                - port: { get_resource: cpe_subs_pem_port }
+                - port: { get_resource: cpe_control_port }
+            metadata:
+                groups: cpe
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_cpe
+    cpe_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    cpe_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: cpe_floating_ip }
+            port_id: { get_resource: cpe_mgmt_port }
+    cpe_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cpe_subscriber_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cpe-subscriber-port
+            network: { get_resource: subscriber_network }
+            fixed_ips:
+                - subnet: { get_resource: subscriber_subnet }
+                  ip_address: { get_param: cpe_subscriber_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cpe_subs_pem_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cpe-subs-pem-port
+            network: { get_resource: subs_pem_network }
+            fixed_ips:
+                - subnet: { get_resource: subs_pem_subnet }
+                  ip_address: { get_param: cpe_subs_pem_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    cpe_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: cpe-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: cpe_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    vas1:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: vas1_name }
+            image: { get_param: vas1_image }
+            flavor: { get_param: vas1_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: vas1_mgmt_port }
+                - port: { get_resource: vas1_control_port }
+                - port: { get_resource: vas1_to_vas_port }
+                - port: { get_resource: vas1_from_vas_port }
+            metadata:
+                groups: vas
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_vas
+    vas1_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas1_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    vas1_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: vas1_floating_ip }
+            port_id: { get_resource: vas1_mgmt_port }
+    vas1_to_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas1-to-vas-port
+            network: { get_resource: to_vas1_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas1_subnet }
+                  ip_address: { get_param: vas1_to_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas1_from_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas1-from-vas-port
+            network: { get_resource: from_vas1_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas1_subnet }
+                  ip_address: { get_param: vas1_from_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas1_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas1-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: vas1_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    vas2:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: vas2_name }
+            image: { get_param: vas2_image }
+            flavor: { get_param: vas2_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: vas2_mgmt_port }
+                - port: { get_resource: vas2_from_vas_port }
+                - port: { get_resource: vas2_control_port }
+                - port: { get_resource: vas2_to_vas_port }
+            metadata:
+                groups: vas
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_vas
+    vas2_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas2_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    vas2_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: vas2_floating_ip }
+            port_id: { get_resource: vas2_mgmt_port }
+    vas2_to_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas2-to-vas-port
+            network: { get_resource: to_vas2_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas2_subnet }
+                  ip_address: { get_param: vas2_to_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas2_from_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas2-from-vas-port
+            network: { get_resource: from_vas2_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas2_subnet }
+                  ip_address: { get_param: vas2_from_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas2_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas2-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: vas2_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    vas3:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: vas3_name }
+            image: { get_param: vas3_image }
+            flavor: { get_param: vas3_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: vas3_mgmt_port }
+                - port: { get_resource: vas3_from_vas_port }
+                - port: { get_resource: vas3_control_port }
+                - port: { get_resource: vas3_to_vas_port }
+            metadata:
+                groups: vas
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_vas
+    vas3_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas3_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    vas3_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: vas3_floating_ip }
+            port_id: { get_resource: vas3_mgmt_port }
+    vas3_to_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas3-to-vas-port
+            network: { get_resource: to_vas3_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas3_subnet }
+                  ip_address: { get_param: vas3_to_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas3_from_vas_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas3-from-vas-port
+            network: { get_resource: from_vas3_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas3_subnet }
+                  ip_address: { get_param: vas3_from_vas_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    vas3_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: vas3-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: vas3_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    pe:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: pe_name }
+            image: { get_param: pe_image }
+            flavor: { get_param: pe_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: pe_mgmt_port }
+                - port: { get_resource: pe_internet_pem_port }
+                - port: { get_resource: pe_internet_port }
+                - port: { get_resource: pe_control_port }
+            metadata:
+                groups: pe
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_pe
+    pe_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    pe_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+    pe_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: pe_floating_ip }
+            port_id: { get_resource: pe_mgmt_port }
+    pe_internet_pem_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: pe-internet-pem-port
+            network: { get_resource: internet_pem_network }
+            fixed_ips:
+                - subnet: { get_resource: internet_pem_subnet }
+                  ip_address: { get_param: pe_internet_pem_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    pe_internet_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: pe-internet-port
+            network: { get_resource: internet_network }
+            fixed_ips:
+                - subnet: { get_resource: internet_subnet }
+                  ip_address: { get_param: pe_internet_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    pe_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: pe-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: pe_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    server:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: server_name }
+            image: { get_param: server_image }
+            flavor: { get_param: server_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: server_mgmt_port }
+                - port: { get_resource: server_internet_port }
+                - port: { get_resource: server_control_port }
+            metadata:
+                groups: server
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_server
+    server_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    server_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: server_floating_ip }
+            port_id: { get_resource: server_mgmt_port }
+    server_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    server_internet_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: server-internet-port
+            network: { get_resource: internet_network }
+            fixed_ips:
+                - subnet: { get_resource: internet_subnet }
+                  ip_address: { get_param: server_internet_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    server_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: server-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: server_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    log:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: log_name }
+            image: { get_param: log_image }
+            flavor: { get_param: log_flavor }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: log_mgmt_port }
+                - port: { get_resource: log_control_port }
+            metadata:
+                groups: log
+            user_data_format: RAW
+            user_data:
+                get_resource: cloud_config_log
+    log_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    log_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: log_floating_ip }
+            port_id: { get_resource: log_mgmt_port }
+    log_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    log_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: log-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: log_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+
+    bigip:
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: bigip_name }
+            flavor: { get_param: bigip_flavor }
+            image: { get_param: bigip_image }
+            key_name: { get_resource: mgmt_keypair }
+            networks:
+                - port: { get_resource: bigip_mgmt_port }
+                - port: { get_resource: bigip_subs_pem_port }
+                - port: { get_resource: bigip_control_port }
+                - port: { get_resource: bigip_to_vas1_port }
+                - port: { get_resource: bigip_from_vas1_port }
+                - port: { get_resource: bigip_to_vas2_port }
+                - port: { get_resource: bigip_from_vas2_port }
+                - port: { get_resource: bigip_to_vas3_port }
+                - port: { get_resource: bigip_from_vas3_port }
+                - port: { get_resource: bigip_internet_pem_port }
+            metadata:
+                groups: bigip
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    params:
+                        f5_license_key: { get_param: f5_license_key }
+                        control_ip: { get_attr: [ bigip_control_port, fixed_ips, 0, ip_address ] }
+                        subs_pem_ip: { get_attr: [ bigip_subs_pem_port, fixed_ips, 0, ip_address ] }
+                        to_vas1_ip: { get_attr: [ bigip_to_vas1_port, fixed_ips, 0, ip_address ] }
+                        from_vas1_ip: { get_attr: [ bigip_from_vas1_port, fixed_ips, 0, ip_address ] }
+                        to_vas2_ip: { get_attr: [ bigip_to_vas2_port, fixed_ips, 0, ip_address ] }
+                        from_vas2_ip: { get_attr: [ bigip_from_vas2_port, fixed_ips, 0, ip_address ] }
+                        to_vas3_ip: { get_attr: [ bigip_to_vas3_port, fixed_ips, 0, ip_address ] }
+                        from_vas3_ip: { get_attr: [ bigip_from_vas3_port, fixed_ips, 0, ip_address ] }
+                        internet_pem_ip: { get_attr: [ bigip_internet_pem_port, fixed_ips, 0, ip_address ] }
+                    template: |
+                        {
+                            "bigip": {
+                                "ssh_key_inject": "true",
+                                "admin_password": "admin",
+                                "change_passwords": "true",
+                                "root_password": "default",
+                                "license": {
+                                    "basekey": "f5_license_key"
+                                },
+                                "modules": {
+                                    "auto_provision": "false",
+                                    "ltm": "nominal",
+                                    "gtm": "none",
+                                    "avr": "none",
+                                    "apm": "none",
+                                    "afm": "none",
+                                    "asm": "none"
+                                },
+                                "network": {
+                                    "dhcp": "true",
+                                    "selfip_prefix": "selfip-dhcp-abc-",
+                                    "vlan_prefix": "network-abc-",
+                                    "interfaces": {
+                                        "1.1": {
+                                            "dhcp": "false",
+                                            "address": "subs_pem_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.subs_pem",
+                                            "selfip_description": "Self IP address for BIG-IP subs_pem subnet",
+                                            "vlan_name": "vlan.control",
+                                            "vlan_description": "VLAN for BIG-IP Subscriber PEM traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.2": {
+                                            "dhcp": "false",
+                                            "address": "control_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.control",
+                                            "selfip_description": "Self IP address for BIG-IP control subnet",
+                                            "vlan_name": "vlan.subs_pem",
+                                            "vlan_description": "VLAN for BIG-IP Control traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.3": {
+                                            "dhcp": "false",
+                                            "address": "to_vas1_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.to_vas1",
+                                            "selfip_description": "Self IP address for BIG-IP to_vas1 subnet",
+                                            "vlan_name": "vlan.to_vas1",
+                                            "vlan_description": "VLAN for BIG-IP VAS1 egress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.4": {
+                                            "dhcp": "false",
+                                            "address": "from_vas1_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.from_vas1",
+                                            "selfip_description": "Self IP address for BIG-IP from_vas1 subnet",
+                                            "vlan_name": "vlan.from_vas1",
+                                            "vlan_description": "VLAN for BIG-IP VAS1 ingress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.5": {
+                                            "dhcp": "false",
+                                            "address": "to_vas2_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.to_vas2",
+                                            "selfip_description": "Self IP address for BIG-IP to_vas2 subnet",
+                                            "vlan_name": "vlan.to_vas2",
+                                            "vlan_description": "VLAN for BIG-IP VAS2 egress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.6": {
+                                            "dhcp": "false",
+                                            "address": "from_vas2_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.from_vas2",
+                                            "selfip_description": "Self IP address for BIG-IP from_vas2 subnet",
+                                            "vlan_name": "vlan.from_vas2",
+                                            "vlan_description": "VLAN for BIG-IP VAS2 ingress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.7": {
+                                            "dhcp": "false",
+                                            "address": "to_vas3_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.to_vas3",
+                                            "selfip_description": "Self IP address for BIG-IP to_vas3 subnet",
+                                            "vlan_name": "vlan.to_vas3",
+                                            "vlan_description": "VLAN for BIG-IP VAS3 egress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.8": {
+                                            "dhcp": "false",
+                                            "address": "from_vas3_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.from_vas3",
+                                            "selfip_description": "Self IP address for BIG-IP from_vas3 subnet",
+                                            "vlan_name": "vlan.from_vas3",
+                                            "vlan_description": "VLAN for BIG-IP VAS3 ingress traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        },
+                                        "1.9": {
+                                            "dhcp": "false",
+                                            "address": "internet_pem_ip",
+                                            "netmask": "255.255.255.0",
+                                            "selfip_allow_service": "default",
+                                            "selfip_name": "selfip.internet_pem",
+                                            "selfip_description": "Self IP address for BIG-IP internet_pem subnet",
+                                            "vlan_name": "vlan.internet_pem",
+                                            "vlan_description": "VLAN for BIG-IP Internet PEM traffic",
+                                            "is_sync": "false",
+                                            "is_failover": "false",
+                                            "is_mirror_primary": "false",
+                                            "is_mirror_secondary": "false"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+    bigip_mgmt_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-mgmt-port
+            network: { get_resource: mgmt_network }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_param: public_network }
+        depends_on:
+            - mgmt_router_interface
+    bigip_floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: bigip_floating_ip }
+            port_id: { get_resource: bigip_mgmt_port }
+    bigip_control_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-control-port
+            network: { get_resource: control_network }
+            fixed_ips:
+                - subnet: { get_resource: control_subnet }
+                  ip_address: { get_param: bigip_control_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_subs_pem_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-subs-pem-port
+            network: { get_resource: subs_pem_network }
+            fixed_ips:
+                - subnet: { get_resource: subs_pem_subnet }
+                  ip_address: { get_param: bigip_subs_pem_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_to_vas1_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-to-vas1-port
+            network: { get_resource: to_vas1_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas1_subnet }
+                  ip_address: { get_param: bigip_to_vas1_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_from_vas1_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-from-vas1-port
+            network: { get_resource: from_vas1_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas1_subnet }
+                  ip_address: { get_param: bigip_from_vas1_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_to_vas2_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-to-vas2-port
+            network: { get_resource: to_vas2_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas2_subnet }
+                  ip_address: { get_param: bigip_to_vas2_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_from_vas2_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-from-vas2-port
+            network: { get_resource: from_vas2_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas2_subnet }
+                  ip_address: { get_param: bigip_from_vas2_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_to_vas3_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-to-vas3-port
+            network: { get_resource: to_vas3_network }
+            fixed_ips:
+                - subnet: { get_resource: to_vas3_subnet }
+                  ip_address: { get_param: bigip_to_vas3_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_from_vas3_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-from-vas3-port
+            network: { get_resource: from_vas3_network }
+            fixed_ips:
+                - subnet: { get_resource: from_vas3_subnet }
+                  ip_address: { get_param: bigip_from_vas3_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0
+    bigip_internet_pem_port:
+        type: OS::Neutron::Port
+        properties:
+            admin_state_up: true
+            name: bigip-internet-pem-port
+            network: { get_resource: internet_pem_network }
+            fixed_ips:
+                - subnet: { get_resource: internet_pem_subnet }
+                  ip_address: { get_param: bigip_internet_pem_ip }
+            security_groups:
+                - { get_resource: security_group_common }
+            allowed_address_pairs:
+                - ip_address: 0.0.0.0/0

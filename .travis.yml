@@ -1,12 +1,17 @@
 sudo: false
 language: python
 python:
-    - "2.7"
+- '2.7'
 before_install:
-    - git config --global user.email "OpenStack_TravisCI@f5.com"
-    - git config --global user.name "Travis F5 Openstack"
+- git config --global user.email "OpenStack_TravisCI@f5.com"
+- git config --global user.name "Travis F5 Openstack"
 install:
-    - pip install -r requirements.test.txt
+    - pip install -r requirements.unit.test.txt
+    - pip install -r requirements.docs.txt
 script:
-    - flake8 ./
-    - cd docs; make html
+- flake8 --exclude=docs .
+- py.test test/test_templates_parsable_as_yaml.py
+- cd docs; make html
+notifications:
+  slack:
+    secure: oDm67Pkxd+8GGvOIVQ723DUwxSfKcmOyrMcM5UFKC4KNCl3gl2X2U9h0xlUyaouDxdGLcnq1vLRI8CTwq1XN6FiEE09waBe7SbG5BZkr14wQJPuDBDuKYxuVZ1xFdNm2mmAXTWrMzcZEo8vliMdsSmFLS2OVFdvv30607OusaVOJWMuhmx35IKLt2UYvgBmPLth/LDFS1uc6Maz6teuXqRN+FlLSzGyVpqFcklM/jGjm3U4IvjkwqQI3cwpQH4NF1ISKo5z0I/u4wAifx/v9m+kFd0D87TvgfygC8uKiOICsyushPxJMRnLfxDfBp9o+Pjg6dXHRaZIKhT/FhOv02j4CSfX2za3DTMc0lnwCoW/ZYB456prWhS96J55jFGXzldWIeyk3GN955ASrrGI6rz0ToG6DsfgDnNycmq7VXGYRAe6T/a+w307sGLT+xd5/tQV3Kh7SdzFLt+kD+hbps5JtJbXqU7vgF2FX+1fp4i+PA8ArXSvIU/H2C5YRVbbFPGE40O8radOS1PP7CJCZGqQ4GuxKKnNmfB3czBuoa8lJHBBFvkp3hKua4PemFEZ41FgXV1NTIpVKCjmEJkuVyylixcRAllP04NWxnncTVfOF9wNs2zeFpg6EaKBylwlepDLvG4SlFsfzpIbkjrVOQgfY/v7tDQx9MI1Nsoh7vNg=
