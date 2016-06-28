@@ -1,11 +1,5 @@
 ---
-# BIG-IP specific variables
-bigip_ip: <bigip_ip_address>
-bigip_admin_password: <bigip_admin_password>
-bigip_root_password: <bigip_root_password>
-license: <bigip_license>
 # OS Auth usernames and passwords
-os_tenant_name: <os_tenant_name>
 os_username: <openstack username>
 os_password: <openstack password>
 os_tenant_id: <openstack_tenant_id>
@@ -15,48 +9,43 @@ auth_url: http://<keystone_ip_address>:5000/v2.0
 heatclient_url: http://<heat_endpoint_ip>:8004/v1/<openstack_tenant_id>
 glanceclient_url: http://<glance_endpoint_ip>:9292
 
-# Test specific variables
-
-# To run the functional tests, there are some gritty details we must get
-# past. Here they are:
-#   1. The zipped qcow images must be available from a public HTTP location
-#   2. To run the clustering test, you must first have booted two bigips
-#      that are ready for clustering, meaning you should have a single
-#      patch image in Glance. To do this, I suggest you launch the 
-#      f5_ve_two_resource_group.yaml template from f5_supported/ve/cluster
-#      before running the functional tests
-#   3. The above could all be orchestrated, but the stack create time would be
-#      approximately 20 minutes long.
-#   4. Booting standalone bigip images requires images to be accessible
-#      in Glance. This means that order matters in running the tests.
-#      You can get these to run by including the 'teardown_glance_images'
-#      key in your test environment file (this file) and set its value to
-#      True.
-#   5. To launch the f5_supported/f5_plugins/deploy_lb.yaml template, you
-#      must also have a bigip launched and ready.
-
-# Referencing #1 above
-ve_12_0_image_path: <download location for ve 12.0 image>
-ve_11_6_image_path: <download location for ve 11.6 image>
-ve_11_5_4_image_path: <download location for ve 11.5.4 image>
-
+# F5 Plugins tests
 ubuntu_image: <image used to boot client/server instances>
 ubuntu_flavor: m1.small
-ssh_key: <public key to upload to instances>
-data1_net: <client network when booting a two-armed bigip>
-data2_net: <server network when booting a two-armed bigip>
-# Referencing #2 above
-bigip1_ip: <ip of bigip1 for cluster tests>
-bigip2_ip: <ip of bigip2 for cluster tests>
+bigip1_ip: <fip of bigip1 for cluster tests>
+bigip2_ip: <fip of bigip2 for cluster tests>
 bigip1_un: <username of bigip1>
 bigip1_pw: <password of bigip1>
 bigip2_un: <username of bigip2>
 bigip2_pw: <password of bigip2>
-# Referencing #4 above
-teardown_glance_images: <True|False>
-# Referencing #5 above
 vs_vip: <virtual_server_vip>
-bigip_fip: <bigip_floating_ip>
+bigip_fip: <standalone bigip (os_ready) fip>
+cluster_name: test_cluster
+
+# VE Tests
+bigip_admin_password: <bigip_admin_password>
+bigip_root_password: <bigip_root_password>
+license: <bigip_license>
+teardown_glance_images: <True|False>
+
+# Zipped glance image locations for onboarding
 ve_12_0_image_path: <download location for ve 12.0 image>
 ve_11_6_image_path: <download location for ve 11.6 image>
 ve_11_5_4_image_path: <download location for ve 11.5.4 image>
+ve_12_0_image: <Glance image name of 12.0 os_ready image>
+ve_11_6_image: <Glance image name of 11.6 os_ready image>
+cluster_ready_ve_11_6_image: <Glance image name of 11.6 cluster_ready image>
+
+# Networking infrastructure for all tests
+ssh_key: <public key to upload to instances>
+client_net: <name of client data network>
+server_net: <name of server data network>
+ha_net: <name of HA network for clustering>
+mgmt_net: <name of management network>
+data1_net: <can be same as client_net>
+data2_net: <can be same as server_net>
+data1_name: data1
+data2_name: data2
+secgroup: <security group for all networks>
+ve_flavor: <m1.small should work for LTM only 1 SLOT images>
+external_network: <name of external network>
