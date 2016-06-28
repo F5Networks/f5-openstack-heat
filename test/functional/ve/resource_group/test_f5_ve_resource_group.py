@@ -19,7 +19,6 @@ import pytest
 import time
 
 
-BIGIP_11_6_IMG = 'BIGIP-11.6.0.0.0.401'
 BIGIP_11_6_VERSION = '11.6.0'
 
 # At the very minimum, these should be created
@@ -76,7 +75,7 @@ def test_f5_two_ve_resource_group(
         os.path.join(CommonTemplateDir, 'f5_two_ve_resource_group.yaml'),
         'func_test_two_ve_resource_group',
         parameters={
-            've_image': BIGIP_11_6_IMG,
+            've_image': symbols.cluster_ready_ve_11_6_image,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
             'ha_network': symbols.ha_net,
