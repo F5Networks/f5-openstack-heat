@@ -20,11 +20,8 @@ import os
 import pytest
 
 
-BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
 BIGIP_11_5_4_VERSION = '11.5.4'
-BIGIP_11_6_IMG = 'BIGIP-11.6.0.0.0.401'
 BIGIP_11_6_VERSION = '11.6.0'
-BIGIP_12_0_IMG = 'BIGIP-12.0.0.0.0.606'
 BIGIP_12_0_VERSION = '12.0.0'
 
 # At the very minimum, these should be created
@@ -55,7 +52,7 @@ def check_net_components(bigip, ifc_num):
         bigip.tm.net.interfaces.get_collection()
     except F5SDKError as ex:
         if '11.5.4' in ex.value.message:
-            params = {'params': {'ver': ['11.5.0']}}
+            params = {'params': {'ver': ['11.5.4']}}
     ifcs = bigip.tm.net.interfaces.get_collection(requests_params=params)
     ifc_names = [ifc.name for ifc in ifcs]
     assert sorted(expected_ifc_names) == sorted(ifc_names)
@@ -78,14 +75,14 @@ def CommonTemplateDir(SupportedDir):
 
 # These tests require a patched VE instance in your stack
 
-def test_f5_base_instance_deploy_2_nic_11_5_4(
+def itest_f5_base_instance_deploy_2_nic_11_5_4(
         HeatStack, symbols, CommonTemplateDir, WaitForLicensedBigIP
 ):
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
         parameters={
-            've_image': BIGIP_11_5_4_IMG,
+            've_image': symbols.ve_11_5_4_image,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
             've_flavor': symbols.ve_flavor,
@@ -112,7 +109,7 @@ def test_f5_base_instance_deploy_2_nic_11_6(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
         parameters={
-            've_image': BIGIP_11_6_IMG,
+            've_image': symbols.ve_11_6_image,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
             've_flavor': symbols.ve_flavor,
@@ -139,7 +136,7 @@ def test_f5_base_instance_deploy_2_nic_12_0(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_2_nic.yaml'),
         'func_test_standalone_2_nic',
         parameters={
-            've_image': BIGIP_12_0_IMG,
+            've_image': symbols.ve_12_0_image,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
             've_flavor': symbols.ve_flavor,
@@ -159,14 +156,14 @@ def test_f5_base_instance_deploy_2_nic_12_0(
     check_net_components(bigip, 2)
 
 
-def test_f5_base_instance_deploy_3_nic_11_5_4(
+def itest_f5_base_instance_deploy_3_nic_11_5_4(
         HeatStack, symbols, CommonTemplateDir, WaitForLicensedBigIP
 ):
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
-            've_image': BIGIP_11_5_4_IMG,
+            've_image': symbols.ve_11_5_4_image,
             've_flavor': symbols.ve_flavor,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
@@ -194,7 +191,7 @@ def test_f5_base_instance_deploy_3_nic_11_6(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
-            've_image': BIGIP_11_6_IMG,
+            've_image': symbols.ve_11_6_image,
             've_flavor': symbols.ve_flavor,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
@@ -222,7 +219,7 @@ def test_f5_base_instance_deploy_3_nic_12_0(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
         'func_test_standalone_3_nic',
         parameters={
-            've_image': BIGIP_12_0_IMG,
+            've_image': symbols.ve_12_0_image,
             've_flavor': symbols.ve_flavor,
             'external_network': symbols.external_network,
             'mgmt_network': symbols.mgmt_net,
