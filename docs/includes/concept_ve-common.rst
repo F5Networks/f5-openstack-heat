@@ -13,7 +13,7 @@ The templates in this directory are often used by other templates to compose a c
 
     resources:
       bigip_data_security_group:
-        type: https://raw.githubusercontent.com/F5Networks/F5Networks/f5-openstack-heat/develop/unsupported/ve/common/bigip_data_security_group.yaml
+        type: https://raw.githubusercontent.com/F5Networks/F5Networks/f5-openstack-heat/master/unsupported/ve/common/bigip_data_security_group.yaml
 
 
 And once brought into the parent template in this manner, they can be referred to in the sub-template like so:
