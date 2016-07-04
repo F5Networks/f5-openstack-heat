@@ -1,4 +1,18 @@
 ---
+# To run these tests with TLC (for Boulder office)
+# 1. You can start a TLC sessions with 3 compute hosts and provision 6 floating IP addresses on your TLC file
+# 2. Once cmd ready has been run, 'scp -r dev-test/common/heat_templates/' up to your controller
+# 3. ssh into your controller and run the install_heat_plugins.sh script, giving it the repo@branch as an arugment
+#   so it can pip install the plugins from the correct repo and branch
+#       sudo ./install_heat_plugins https://github.com/F5Networks/f5-openstack-heat-plugins.git@experiment_branch
+# 4. Launch the heat stack in heat_templates on your controller like so:
+#   source keystone_testlab
+#   heat stack-create -f heat_template_test.yaml -e heat_template_test.params.yaml heat_template_test_infrastructure
+# 5. Plug-in the floating IPs from those BIG-IPs created from above into the values below, as well as the IP address
+#    on the client_data_network and the vs_vip address below. Then plug-in your OpenStack information as well.
+# 6. For all the Glance image stuff, the TLC installation should register many images in your Glance service. Find the
+#    os_ready and cluster_ready images there and plugin their names here where applicable.
+
 # OS Auth usernames and passwords
 os_username: <openstack username>
 os_password: <openstack password>
