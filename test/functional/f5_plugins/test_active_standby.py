@@ -42,11 +42,13 @@ def test_active_standby(HeatStack, symbols, F5PluginTemplateLoc):
             'cluster_name': symbols.cluster_name
         }
     )
-    a = ManagementRoot(symbols.bigip1_ip, symbols.bigip1_un, symbols.bigip1_pw)
-    b = ManagementRoot(symbols.bigip2_ip, symbols.bigip2_un, symbols.bigip2_pw)
+    bigip1 = \
+        ManagementRoot(symbols.bigip1_ip, symbols.bigip1_un, symbols.bigip1_pw)
+    bigip2 = \
+        ManagementRoot(symbols.bigip2_ip, symbols.bigip2_un, symbols.bigip2_pw)
 
     cm = ClusterManager(
-        devices=[a, b],
+        devices=[bigip1, bigip2],
         device_group_name=symbols.cluster_name,
         device_group_type='sync-failover',
         device_group_partition='Common'
@@ -59,13 +61,13 @@ def test_active_standby(HeatStack, symbols, F5PluginTemplateLoc):
     assert cm.cluster.device_group_partition == 'Common'
     assert cm.cluster.device_group_type == 'sync-failover'
     sync_status_entry = 'https://localhost/mgmt/tm/cm/sync-status/0'
-    sync_status_a = a.tm.cm.sync_status
-    sync_status_b = b.tm.cm.sync_status
-    sync_status_a.refresh()
-    sync_status_b.refresh()
-    current_status_a = (sync_status_a.entries[sync_status_entry]
+    sync_status_1 = bigip1.tm.cm.sync_status
+    sync_status_2 = bigip2.tm.cm.sync_status
+    sync_status_1.refresh()
+    sync_status_2.refresh()
+    current_status_1 = (sync_status_1.entries[sync_status_entry]
                         ['nestedStats']['entries']['status']['description'])
-    assert current_status_a == 'In Sync'
-    current_status_b = (sync_status_b.entries[sync_status_entry]
+    assert current_status_1 == 'In Sync'
+    current_status_2 = (sync_status_2.entries[sync_status_entry]
                         ['nestedStats']['entries']['status']['description'])
-    assert current_status_b == 'In Sync'
+    assert current_status_2 == 'In Sync'
