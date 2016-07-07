@@ -56,3 +56,20 @@ resources:
       device_group_type: sync-failover
       device_group_partition: Common
       device_group_name: { get_param: cluster_name }
+  save_config_bigip1:
+    type: F5::Sys::Save
+    depends_on: cluster
+    properties:
+      bigip_server: { get_resource: bigip1 }
+  save_config_bigip2:
+    type: F5::Sys::Save
+    depends_on: cluster
+    properties:
+      bigip_server: { get_resource: bigip2 }
+  sync:
+    type: F5::Cm::Sync
+    depends_on: cluster
+    properties:
+      bigip_server: { get_resource: bigip1 }
+      device_group: { get_param: cluster_name }
+      device_group_partition: Common
