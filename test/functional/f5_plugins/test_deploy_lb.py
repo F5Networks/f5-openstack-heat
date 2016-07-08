@@ -36,11 +36,12 @@ def test_deploy_lb(
         parameters={
             'client_server_image': symbols.ubuntu_image,
             'client_server_flavor': symbols.ubuntu_flavor,
+            'client_server_sec_group': symbols.secgroup,
             'key_name': symbols.ssh_key,
             'client_network': symbols.client_net,
             'server_network': symbols.server_net,
             'bigip_pw': symbols.bigip_admin_password,
-            'bigip_fip': symbols.bigip_fip,
+            'bigip_fip': symbols.bigip_ip,
             'vs_vip': symbols.vs_vip
         }
     )
