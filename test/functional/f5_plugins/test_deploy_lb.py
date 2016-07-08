@@ -41,7 +41,7 @@ def test_deploy_lb(
             'client_network': symbols.client_net,
             'server_network': symbols.server_net,
             'bigip_pw': symbols.bigip_admin_password,
-            'bigip_fip': symbols.bigip_fip,
+            'bigip_fip': symbols.bigip_ip,
             'vs_vip': symbols.vs_vip
         }
     )
