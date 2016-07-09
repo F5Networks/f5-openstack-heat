@@ -62,12 +62,12 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = "8.0.1"
+version = "9.0.1"
 # The full version, including alpha/beta/rc tags.
-release = "8.0.1"
+release = "9.0.1"
 
 # OpenStack release
-openstack_release = "Liberty"
+openstack_release = "Mitaka"
 
 rst_epilog = """
 .. |openstack| replace:: {0}
