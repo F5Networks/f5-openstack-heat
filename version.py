@@ -15,5 +15,5 @@
 # After release remove the pre-release strings
 # Maintenance release bumps patch version (last number)
 # New template bumps minor version
-VERSION = u'1.0.1.alpha.1'
-OPENSTACK_RELEASE = u'kilo'
+VERSION = u'8.0.1'
+OPENSTACK_RELEASE = u'liberty'
