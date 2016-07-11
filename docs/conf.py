@@ -67,7 +67,7 @@ version = "7.0.3"
 release = "7.0.3"
 
 # OpenStack release
-openstack_release = "Kilo"
+openstack_release = "kilo"
 
 rst_epilog = """
 .. |openstack| replace:: {0}
