@@ -67,7 +67,7 @@ version = "9.0.1"
 release = "9.0.1"
 
 # OpenStack release
-openstack_release = "Mitaka"
+openstack_release = "mitaka"
 
 rst_epilog = """
 .. |openstack| replace:: {0}
