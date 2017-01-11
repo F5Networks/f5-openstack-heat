@@ -1,10 +1,12 @@
-F5® BIG-IP® VE: Image Patch & Upload
-====================================
+.. _ve-image:
+
+F5 BIG-IP VE: Image Patch & Upload
+==================================
 
 Overview
 --------
 
-This template can be used to prepare a BIG-IP® VE image for use in OpenStack. It launches an Ubuntu server that downloads a zipped F5® BIG-IP® VE qcow image, extracts it, and patches it. The patched image is then uploaded to Glance so it can be used to launch BIG-IP® instances.
+This template can be used to prepare a BIG-IP VE image for use in OpenStack. It launches an Ubuntu server that downloads a zipped F5 BIG-IP VE qcow image, extracts it, and patches it. The patched image is then uploaded to Glance so it can be used to launch BIG-IP instances.
 
 
 Prerequisites
@@ -12,13 +14,13 @@ Prerequisites
 
 - An external network with access to the internet.
 
-- Basic understanding of `BIG-IP® system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html#conceptid>`_.
+- Basic understanding of `BIG-IP system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html>`_.
 
-- BIG-IP® LTM® Virtual Edition image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT). [#]_
+- BIG-IP LTM Virtual Edition image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT). [#]_
 
 - :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
 
-- :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP® VE instances launched by this template.
+- :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the BIG-IP VE instances launched by this template.
 
 - One (1) VLAN :ref:`configured in Neutron <docs:os-neutron-network-setup>`, to be used by the onboarding server to import the image.
 
@@ -26,9 +28,9 @@ Prerequisites
 Caveats
 -------
 
-- The BIG-IP® image must be hosted in a location accessible to the Heat engine via 'http'. This template does not currently support retrieval of files via 'https' or file uploads.
+- The BIG-IP image must be hosted in a location accessible to the Heat engine via 'http'. This template does not currently support retrieval of files via 'https' or file uploads.
 
-- VE images come in 3 different sizes: LTM, ALL, and LTM-1SLOT. Each has its own size requirements, which  determine what Nova flavor you should select. See the F5® OpenStack `BIG-IP® flavor matrix <http://f5-openstack-docs.readthedocs.org/en/latest/guides/openstack_big-ip_flavors.html>`_ for more information.
+- VE images come in 3 different sizes: LTM, ALL, and LTM-1SLOT. Each has its own size requirements, which  determine what Nova flavor you should select. See the F5 OpenStack `BIG-IP flavor matrix <http://f5-openstack-docs.readthedocs.org/en/latest/guides/openstack_big-ip_flavors.html>`_ for more information.
 
 - There is a `known issue <https://bugs.launchpad.net/glance/+bug/1476770>`_ with ``python-glanceclient`` that returns in an unspecified error after you click :guilabel:`Launch`. You may need to upgrade in order to resolve this issue.
 
@@ -36,8 +38,7 @@ Caveats
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -60,7 +61,7 @@ Deployment
       - Select a network to attach the onboarding server to
     * - Keystone Auth URL
       - string
-      - Keystone Authentication URL for your OpenStack cloud (example: http://<ip_address>:5000/v2.0)
+      - Keystone Authentication URL for your OpenStack cloud (example: \http://<ip_address>:5000/v2.0)
     * - Image Import Tenant
       - string
       - Name of tenant to which image should be imported (default: admin)
@@ -89,7 +90,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/ve/images/patch_upload_ve_image.yaml>`
+:download:`Download </../f5_supported/ve/images/patch_upload_ve_image.yaml>`
 
 
 .. [#] `How to Buy <https://f5.com/products/how-to-buy>`_

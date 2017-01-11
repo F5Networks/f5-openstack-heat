@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'F5 OpenStack Heat'
-copyright = u'2016, F5 Networks'
+copyright = u'2017 F5 Networks Inc.'
 author = u'F5 Networks'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -152,12 +152,12 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = [ "_static/" ]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-# html_extra_path = []
+#html_extra_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -301,7 +301,7 @@ texinfo_documents = [
 
 # intersphinx mapping to other F5 openstack docs
 intersphinx_mapping = {'docs': (
-    'http://f5-openstack-docs.readthedocs.io/en/1.0', None),
+    'http://f5-openstack-docs.readthedocs.io/en/mitaka', None),
     'heatplugins': (
-    'http://f5-openstack-heat-plugins.readthedocs.io/en/kilo', None),
+    'http://f5-openstack-heat-plugins.readthedocs.io/en/mitaka', None),
     }
