@@ -1,9 +1,7 @@
-:orphan: true
+How to Deploy In Horizon
+````````````````````````
 
-How to Deploy
-=============
-
-1. In Horizon, go to :guilabel:`Orchestration` --> :guilabel:`Stacks`.
+1. Go to :guilabel:`Orchestration` --> :guilabel:`Stacks`.
 
 2. Click :guilabel:`Launch Stack`.
 

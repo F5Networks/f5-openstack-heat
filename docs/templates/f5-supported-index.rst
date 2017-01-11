@@ -7,7 +7,7 @@ F5-Supported Heat Templates
     :start-line: 3
 
 
-The following templates are supported by F5®:
+The following templates are supported by F5:
 
 .. toctree::
     :titlesonly:
