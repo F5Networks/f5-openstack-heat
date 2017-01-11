@@ -1,25 +1,27 @@
+.. _deploy-lb:
+
 Deploy Basic Load Balancer
 ==========================
 
 Overview
 --------
 
-This template deploys a basic load balancing scenario on an F5® BIG-IP® device (hardware or virtual edition). The deployment includes the following resources: one (1) client vm; one (1) server vm; one (1) virtual server, one (1) pool, and one (1) pool member are created on the server vm.
+This template deploys a basic load balancing scenario on an F5 BIG-IP device (hardware or virtual edition). The deployment includes the following resources: one (1) client vm; one (1) server vm; one (1) virtual server, one (1) pool, and one (1) pool member are created on the server vm.
 
 Prerequisites
 -------------
 
-- Licensed, operational BIG-IP® hardware or VE.
+- Licensed, operational BIG-IP hardware or VE.
 
 - Glance image(s) [#]_ for the OS of your choice, to be used for the client and server.
 
-- :ref:`BIG-IP® Security Groups` configured in OpenStack.
+- :ref:`BIG-IP Security Groups` configured in OpenStack.
 
 - :ref:`SSH key(s) <add-ssh-key-horizon>` configured in OpenStack; to be used for authentication to the vm instances launched by this template.
 
 - :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
 
-- At least two (2) VLANs :ref:`configured in Neutron <docs:os-neutron-network-setup>` -- 'mgmt' and 'data' - to be used for BIG-IP® system management and client-server data traffic, respectively.
+- At least two (2) VLANs :ref:`configured in Neutron <docs:os-neutron-network-setup>` -- 'mgmt' and 'data' - to be used for BIG-IP system management and client-server data traffic, respectively.
 
 
 Caveats
@@ -31,8 +33,7 @@ None.
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -90,7 +91,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/f5_plugins/deploy_lb.yaml>`
+:download:`Download </../f5_supported/f5_plugins/deploy_lb.yaml>`
 
 
 .. rubric:: Footnotes:
