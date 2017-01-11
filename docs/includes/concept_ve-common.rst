@@ -2,7 +2,7 @@
 
 .. _ve-common:
 
-BIG-IP® VE Common Template Resources
+BIG-IP VE Common Template Resources
 ====================================
 
 Overview
