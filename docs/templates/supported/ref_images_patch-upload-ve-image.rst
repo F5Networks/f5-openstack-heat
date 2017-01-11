@@ -14,7 +14,7 @@ Prerequisites
 
 - An external network with access to the internet.
 
-- Basic understanding of `BIG-IP system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html#conceptid>`_.
+- Basic understanding of `BIG-IP system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html>`_.
 
 - BIG-IP LTM Virtual Edition image file in qcow.zip format; can be any size (ALL, LTM, or LTM_1SLOT). [#]_
 
@@ -38,8 +38,7 @@ Caveats
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -62,7 +61,7 @@ Deployment
       - Select a network to attach the onboarding server to
     * - Keystone Auth URL
       - string
-      - Keystone Authentication URL for your OpenStack cloud (example: http://<ip_address>:5000/v2.0)
+      - Keystone Authentication URL for your OpenStack cloud (example: \http://<ip_address>:5000/v2.0)
     * - Image Import Tenant
       - string
       - Name of tenant to which image should be imported (default: admin)
@@ -91,7 +90,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/ve/images/patch_upload_ve_image.yaml>`
+:download:`Download </../f5_supported/ve/images/patch_upload_ve_image.yaml>`
 
 
 .. [#] `How to Buy <https://f5.com/products/how-to-buy>`_
