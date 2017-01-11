@@ -2,13 +2,13 @@
 
 .. _ve_home:
 
-F5® BIG-IP® VE Templates
+F5 BIG-IP VE Templates
 ========================
 
 Overview
 --------
 
-The templates within the VE directory can be used to prepare BIG-IP® Virtual Edition (VE) images for use and to launch VE in OpenStack clouds.
+The templates within the VE directory can be used to prepare BIG-IP Virtual Edition (VE) images for use and to launch VE in OpenStack clouds.
 
 .. toctree::
     :titlesonly:

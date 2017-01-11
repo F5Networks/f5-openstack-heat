@@ -301,7 +301,7 @@ texinfo_documents = [
 
 # intersphinx mapping to other F5 openstack docs
 intersphinx_mapping = {'docs': (
-    'http://f5-openstack-docs.readthedocs.io/en/1.0', None),
+    'http://f5-openstack-docs.readthedocs.io/en/kilo', None),
     'heatplugins': (
     'http://f5-openstack-heat-plugins.readthedocs.io/en/kilo', None),
     }
