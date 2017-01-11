@@ -1,5 +1,3 @@
-
-
 .. _topic_release-info:
 
 Release Notes
