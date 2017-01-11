@@ -8,12 +8,12 @@ The current release of the F5® Heat templates, |release|, is compatible with Op
 Summary
 -------
 
-This release introduces support for the F5 Heat templates in OpenStack Mitaka. 
+This release introduces support for the F5 Heat templates in OpenStack |openstack|.
 
 Release Highlights
 ------------------
 
-This is the initial release for Mitaka.
+This is the initial release for |openstack|.
 
 Caveats
 -------

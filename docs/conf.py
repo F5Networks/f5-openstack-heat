@@ -301,7 +301,7 @@ texinfo_documents = [
 
 # intersphinx mapping to other F5 openstack docs
 intersphinx_mapping = {'docs': (
-    'http://f5-openstack-docs.readthedocs.io/en/liberty', None),
+    'http://f5-openstack-docs.readthedocs.io/en/mitaka', None),
     'heatplugins': (
-    'http://f5-openstack-heat-plugins.readthedocs.io/en/liberty', None),
+    'http://f5-openstack-heat-plugins.readthedocs.io/en/mitaka', None),
     }
