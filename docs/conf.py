@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'F5 OpenStack Heat'
-copyright = u'2016, F5 Networks'
+copyright = u'2017 F5 Networks Inc.'
 author = u'F5 Networks'
 
 # The version info for the project you're documenting, acts as replacement for
