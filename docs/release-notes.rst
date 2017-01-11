@@ -1,5 +1,3 @@
-
-
 .. _topic_release-info:
 
 Release Notes
@@ -14,6 +12,7 @@ Release Highlights
 ------------------
 
 This is the initial release for |openstack|.
+
 
 Caveats
 -------

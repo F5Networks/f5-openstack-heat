@@ -72,7 +72,7 @@ Each Heat template makes different assumptions about what is available in the Op
 
 Copyright
 ---------
-Copyright 2013-2016 F5 Networks Inc.
+Copyright 2013-2017 F5 Networks Inc.
 
 Support
 -------

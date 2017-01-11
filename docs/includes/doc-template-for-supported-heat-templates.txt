@@ -30,8 +30,7 @@ Caveats
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -40,6 +39,9 @@ Deployment
     * - Configuration Item
       - Type
       - Entry/Description
+    * - foo
+      - bar
+      - a foo-bar
 
 
 
