@@ -84,7 +84,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/f5_plugins/active-standby.yaml>`
+:download:`Download </../f5_supported/f5_plugins/active_standby.yaml>`
 
 
 

@@ -37,8 +37,7 @@ Caveats
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 
 .. list-table:: Configuration Items
@@ -118,5 +117,4 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/ve/resource_group/f5_two_ve_resource_group.yaml`
-
+:download:`Download </../f5_supported/ve/resource_group/f5_two_ve_resource_group.yaml>`

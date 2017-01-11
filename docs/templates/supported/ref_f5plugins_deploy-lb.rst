@@ -33,8 +33,7 @@ None.
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -92,7 +91,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/f5_plugins/deploy_lb.yaml>`
+:download:`Download </../f5_supported/f5_plugins/deploy_lb.yaml>`
 
 
 .. rubric:: Footnotes:

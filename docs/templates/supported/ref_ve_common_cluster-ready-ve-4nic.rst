@@ -116,7 +116,7 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/ve/common/cluster_ready_ve_4_nic.yaml>`
+:download:`Download </../f5_supported/ve/common/cluster_ready_ve_4_nic.yaml>`
 
 
 

@@ -13,7 +13,7 @@ Prerequisites
 
 - An external network with access to the internet.
 
-- Basic understanding of `BIG-IP system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html#conceptid>`_.
+- Basic understanding of `BIG-IP system configuration <https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-initial-configuration-12-0-0/2.html>`_.
 
 - :ref:`F5 OpenStack Heat Plugins <heatplugins:home>` installed on the Neutron controller.
 
@@ -36,8 +36,8 @@ Caveats
 Deployment
 ----------
 
-.. include:: ../../includes/topic_for-reuse_how-to-deploy.rst
-    :start-line: 3
+.. include:: /includes/topic_for-reuse_how-to-deploy.rst
+
 
 .. list-table:: Configuration Items
     :widths: 10, 10, 20
@@ -89,5 +89,5 @@ Download
 
 Click the download link below to save a copy of the template.
 
-:download:`Download <../../../f5_supported/ve/standalone/f5_ve_standalone_2_nic.yaml>`
+:download:`Download </../f5_supported/ve/standalone/f5_ve_standalone_2_nic.yaml>`
 
