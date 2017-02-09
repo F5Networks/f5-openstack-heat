@@ -5,7 +5,7 @@ OpenStack-Ready BIG-IP VE Images
 
 Overview
 --------
-The BIG-IP VE 'OpenStack-Ready' image template(s) can be used to prepare a BIG-IP VE image for use in OpenStack. The :file:`patch_upload_ve_image.yaml` template launches an Ubuntu server that downloads a zipped F5 BIG-IP VE qcow image, extracts it, and patches it.
+The BIG-IP VE 'OpenStack-Ready' image template(s) can be used to prepare, "patch", a BIG-IP VE image for use in OpenStack. Patching requires kernel modules manipulate the large image, therefore the :file:`patch_upload_ve_image.yaml` template launches an Ubuntu server that downloads a zipped F5 BIG-IP VE qcow image, extracts it, and patches it. The patched image is then uploaded to Glance so it can be used to launch BIG-IP instances.
 
 .. note::
 
