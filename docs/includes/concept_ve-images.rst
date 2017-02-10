@@ -8,7 +8,7 @@ Overview
 
 The BIG-IP VE 'OpenStack-Ready' image template(s) prepare, or "patch", a BIG-IP VE image for use in OpenStack.
 
-Patching requires kernel modules to manipulate the large VE image. The :file:patch_upload_ve_image.yaml template does the following:
+Patching requires kernel modules to manipulate the large VE image. The :file:`patch_upload_ve_image.yaml` template does the following:
 
 - launches an Ubuntu server;
 - downloads a zipped F5 BIG-IP VE qcow image;
