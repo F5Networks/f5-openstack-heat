@@ -37,7 +37,6 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.doctest',
-    'sphinx.ext.autosectionlabel'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -93,7 +92,12 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build',
+                    'Thumbs.db',
+                    '.DS_Store',
+                    'README.rst',
+                    'solution'
+                    ]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -135,7 +139,7 @@ html_theme_path = f5_sphinx_theme.get_html_theme_path()
 # documentation.
 html_theme_options = {
                         #'site_name': 'F5 OpenStack Docs Home',
-                        'next_prev_link': True
+                        'next_prev_link': False
                      }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -305,15 +309,26 @@ texinfo_documents = [
 
 
 # intersphinx mapping to other F5 openstack docs
-intersphinx_mapping = {'docs': (
-    'http://f5-openstack-docs.readthedocs.io/en/kilo', None),
-    'heatplugins': (
-    'http://f5-openstack-heat-plugins.readthedocs.io/en/'+openstack_release.lower(), None),
-    }
+#intersphinx_mapping = {'docs': (
+#    'http://f5-openstack-docs.readthedocs.io/en/kilo', None),
+#    'heatplugins': (
+#    'http://f5-openstack-heat-plugins.readthedocs.io/en/'+openstack_release.lower(), None),
+#    }
 
-rst_epilog = '''
-    .. |openstack| replace:: %(openstack_release)s
-''' % {
+rst_epilog = """
+.. |openstack| replace:: %(openstack_release)s
+.. _Nova compute flavor: https://docs.openstack.org/admin-guide/compute-flavors.html
+.. _F5 OpenStack Heat template deployment instructions: /cloud/openstack/heat/latest/deploy-heat-templates.html
+.. _F5 OpenStack Heat Plugins: /cloud/openstack/heat/latest/install-f5-heat-plugins.html
+.. _BIG-IP license base key: https://support.f5.com/csp/article/K7752
+.. _BIG-IP device service clustering: https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-device-service-clustering-administration-13-0-0
+.. _BIG-IP flavor matrix: /cloud/openstack/heat/bigip-flavors.html
+.. _BIG-IP VE images come in different sizes: https://support.f5.com/csp/article/K14946
+.. _BIG-IP security groups: /cloud/openstack/heat/latest/security-groups.html
+.. |release-notes| raw:: html
+
+    <a class="btn btn-success" href="https://github.com/F5Networks/f5-openstack-heat/releases/tag/v%(version)s/">Release Notes</a>
+""" % {
   'openstack_release': openstack_release,
   'openstack_release_l': openstack_release.lower(),
   'version': version
