@@ -67,6 +67,10 @@ parameters:
     description: SSH Key
     constraints:
       - custom_constraint: nova.keypair
+  os_distro:
+    type: string
+    label: OpenStack Distro
+    description: liberty, mitaka etc.
   apt_cache_proxy_url:
     type: string
     label: Apt-cache URL
@@ -87,6 +91,7 @@ parameter_groups:
   - f5_image_import_password
 - parameters:
   - image_prep_url
+  - os_distro
   - f5_ve_image_url
   - f5_ve_image_name
   - apt_cache_proxy_url
@@ -144,6 +149,7 @@ resources:
             __f5_ve_image_url__: { get_param: f5_ve_image_url }
             __f5_ve_image_name__: { get_param: f5_ve_image_name }
             __apt_cache_proxy_url__: { get_param: apt_cache_proxy_url }
+            __os_distro__: { get_param: os_distro }
             wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
           template: |
             #!/bin/bash -ex
@@ -163,10 +169,11 @@ resources:
                 echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy
             fi
             apt-get update
-            apt-get -y install unzip qemu-utils lvm2 python-keystoneclient python-glanceclient python-eventlet python-suds python-paramiko git
+            apt-get -y install python-dev=2.7.5-5ubuntu3 unzip=6.0-9ubuntu1.5 qemu-utils=2.0.0+dfsg-2ubuntu1.34 lvm2=2.02.98-6ubuntu2 python-pip git
 
             cd /home/imageprep
-            git clone __image_prep_url__
+            git clone -b __os_distro__ __image_prep_url__
+            pip install f5-openstack-image-prep/
 
             # sync images
             echo 'export HOME=/home/imageprep' > sync_source
