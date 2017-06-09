@@ -64,7 +64,7 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = "7.0.3"
+version = "8.0.1"
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -306,7 +306,7 @@ texinfo_documents = [
 
 # intersphinx mapping to other F5 openstack docs
 intersphinx_mapping = {'docs': (
-    'http://f5-openstack-docs.readthedocs.io/en/kilo', None),
+    'http://f5-openstack-docs.readthedocs.io/en/liberty', None),
     'heatplugins': (
     'http://f5-openstack-heat-plugins.readthedocs.io/en/'+openstack_release.lower(), None),
     }
