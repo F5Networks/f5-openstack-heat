@@ -35,19 +35,22 @@ bigip2_pw: <password of bigip2>
 vs_vip: <virtual_server_vip>
 bigip_fip: <standalone bigip (os_ready) fip>
 cluster_name: test_cluster
-
+bigip_ip:
 # VE Tests
 bigip_admin_password: <bigip_admin_password>
 bigip_root_password: <bigip_root_password>
 license: <bigip_license>
 teardown_glance_images: <True|False>
-
+os_distro: <openstack_distro>
 # Zipped glance image locations for onboarding
-ve_12_0_image_path: <download location for ve 12.0 image>
+ve_12_1_image_path: <download location for ve 12.1 image>
 ve_11_6_image_path: <download location for ve 11.6 image>
 ve_11_5_4_image_path: <download location for ve 11.5.4 image>
-ve_12_0_image: <Glance image name of 12.0 os_ready image>
+ve_13_0_image_path: <download location for ve 13.0 image>
+ve_12_1_image: <Glance image name of 12.1 os_ready image>
 ve_11_6_image: <Glance image name of 11.6 os_ready image>
+ve_11_5_4_image: <Glance image name of 11.5.4 os_ready image>
+ve_13_0_image: <Glance image name of 13.0 os_ready image>
 cluster_ready_ve_11_6_image: <Glance image name of 11.6 cluster_ready image>
 
 # Networking infrastructure for all tests
