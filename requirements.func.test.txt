@@ -5,5 +5,5 @@ markupsafe
 git+https://github.com/F5Networks/f5-openstack-test.git@stable/newton
 git+https://github.com/F5Networks/pytest-symbols.git
 hacking
-f5-openstack-heat-plugins==9.0.2
+f5-openstack-heat-plugins==10.0.0
 Sphinx==1.3.5

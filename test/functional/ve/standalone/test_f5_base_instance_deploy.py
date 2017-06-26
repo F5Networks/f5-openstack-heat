@@ -179,7 +179,7 @@ def itest_f5_base_instance_deploy_2_nic_13_0(
     floating_ip = get_floating_ip_output(updated_stack)
     bigip = WaitForLicensedBigIP(
         floating_ip, 'admin', symbols.bigip_admin_password,
-        BIGIP_12_1_VERSION, 2
+        BIGIP_13_0_VERSION, 2
     )
     check_net_components(bigip, 2)
 
