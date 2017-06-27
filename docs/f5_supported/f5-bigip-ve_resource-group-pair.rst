@@ -11,8 +11,8 @@ This template deploys two (2) BIG-IP Virtual Edition (VE) instances in OpenStack
 Prerequisites
 -------------
 
-- `F5 OpenStack Heat Plugins`_ installed on the Neutron controller.
-- `BIG-IP Security Groups`_ configured in OpenStack.
+- `F5 Plugins for OpenStack Heat`_ installed on the Neutron controller.
+- :ref:`BIG-IP security groups <big-ip security groups>` configured in OpenStack.
 - SSH key(s) configured in OpenStack.
 - :ref:`BIG-IP VE image uploaded to Glance <ve-image-patch-upload>`.
 - `BIG-IP license base key`_.
@@ -111,7 +111,7 @@ Default Gateway IP                          string          Enter the Gateway IP
 Deployment
 ----------
 
-See the `F5 OpenStack Heat template deployment instructions`_.
+See the `F5 HOT deployment instructions`_.
 
 Download
 --------

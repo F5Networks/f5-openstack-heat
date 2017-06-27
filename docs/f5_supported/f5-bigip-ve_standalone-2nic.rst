@@ -12,7 +12,7 @@ Prerequisites
 -------------
 
 - An external network with access to the internet.
-- `F5 OpenStack Heat Plugins`_ installed on the Neutron controller.
+- `F5 Plugins for OpenStack Heat`_ installed on the Neutron controller.
 - SSH key(s) configured in OpenStack.
 - :ref:`BIG-IP VE image <ve-image-patch-upload>` uploaded to Glance.
 - Two (2) VLANs configured in Neutron -- 'mgmt' and 'data' -- to use for system management and data traffic, respectively.
@@ -20,7 +20,7 @@ Prerequisites
 Caveats
 -------
 - This template requires internet access to fetch dependent Heat templates from GitHub.
-  (These add the necessary `BIG-IP Security Groups`_ to OpenStack).
+  (These add the necessary :ref:`BIG-IP security groups <big-ip security groups>` to OpenStack).
 - This template deploys an **unlicensed** BIG-IP VE.
   Add your `BIG-IP license base key`_ when you log in for the first time.
 - `BIG-IP VE images come in different sizes`_.
@@ -80,7 +80,7 @@ Default Gateway IP                          string          Enter the Gateway IP
 Deployment
 ----------
 
-See the `F5 OpenStack Heat template deployment instructions`_.
+See the `F5 HOT deployment instructions`_.
 
 Download
 --------

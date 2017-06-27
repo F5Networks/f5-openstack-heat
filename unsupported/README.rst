@@ -38,7 +38,7 @@ The ``ve`` templates prepare BIG-IP Virtual Edition (VE) images for use and laun
 Common
 ``````
 
-We primarily use these templates other templates to compose customized stacks.
+These templates are primarily used by other Heat templates to compose customized stacks.
 
 * :download:`bigip_control_security_group.yaml <../unsupported/ve/common/bigip_control_security_group.yaml>`
 * :download:`bigip_data_security_group.yaml <../unsupported/ve/common/bigip_data_security_group.yaml>`

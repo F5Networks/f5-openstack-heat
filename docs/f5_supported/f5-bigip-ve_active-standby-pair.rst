@@ -11,7 +11,7 @@ The active-standby cluster template configures two (2) BIG-IP devices as an "act
 Prerequisites
 -------------
 
-- `F5 OpenStack Heat Plugins`_ installed on the Neutron controller.
+- `F5 Plugins for OpenStack Heat`_ installed on the Neutron controller.
 - Three (3) VLANs configured in Neutron -- 'mgmt', 'control', and 'data' -- to use for system management, high availability, and data traffic, respectively.
 - Two (2) licensed, operational BIG-IP devices (hardware or Virtual Edition), connected to the 'control' VLAN.
 - Login credentials for user with permission to configure the BIG-IP devices.
@@ -64,7 +64,7 @@ Password for second device      string          Password for the second     N/A
 Deployment
 ----------
 
-See the `F5 OpenStack Heat template deployment instructions`_.
+See the `F5 HOT deployment instructions`_.
 
 
 Download

@@ -1,5 +1,9 @@
-F5 OpenStack Heat Orchestration Templates
-=========================================
+F5 Orchestration Templates for OpenStack Heat
+=============================================
+
+.. sidebar:: **OpenStack version:**
+
+   |openstack|
 
 .. raw:: html
 
@@ -10,12 +14,12 @@ version |release|
 
 |release-notes|
 
-F5's OpenStack Heat Orchestration Templates (HOT) library (f5-openstack-heat) contains templates that let you deploy and/or configure a BIG-IP device/cluster from your OpenStack cloud.
+F5's orchestration template library for OpenStack Heat (``f5-openstack-heat``) is a set of Heat Orchestration Templates (HOT) that let you deploy and/or configure a BIG-IP device/cluster from your OpenStack cloud.
 
 Guides
 ------
 
-See the `F5 OpenStack Heat user documentation`_.
+See the `F5 Integration for OpenStack Heat`_ user documentation.
 
 
 Heat Orchestration Template index
@@ -55,16 +59,25 @@ Configuration
 
 Each of the F5 Heat orchestration templates accepts a specific set of inputs, as described in the documentation for each template. [#fn1]_
 
-F5 OpenStack Heat Plugins
--------------------------
+.. _BIG-IP security groups:
 
-Many of the F5-supported Heat templates require the `F5 OpenStack Heat Plugins`_.
-See the product documentation for installation instructions.
+.. note:: the *unsupported* template library includes the following templates that set up the required BIG-IP security groups:
+
+   * :fonticon:`fa fa-download` :download:`BIG-IP control security group <../unsupported/ve/common/bigip_control_security_group.yaml>`
+   * :fonticon:`fa fa-download` :download:`BIG-IP data security group <../unsupported/ve/common/bigip_data_security_group.yaml>`
+   * :fonticon:`fa fa-download` :download:`BIG-IP mgmt security group <../unsupported/ve/common/bigip_mgmt_security_group.yaml>`
+
+
+F5 Plugins for OpenStack Heat
+-----------------------------
+
+Many of the F5-supported Heat templates require the `F5 Plugins for OpenStack Heat`_.
+See the F5 Heat plugins documentation for installation instructions.
 
 
 
 .. rubric:: Footnotes
 .. [#fn1] F5-supported Heat orchestration templates only; unsupported templates are not documented.
 
-.. _F5 OpenStack Heat user documentation: /cloud/openstack/latest/heat
+
 .. _F5 support policy for GitHub software: https://support.f5.com/csp/article/K80012344
