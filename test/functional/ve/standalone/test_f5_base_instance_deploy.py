@@ -157,7 +157,7 @@ def itest_f5_base_instance_deploy_2_nic_12_1(
     check_net_components(bigip, 2)
 
 
-def itest_f5_base_instance_deploy_2_nic_13_0(
+def test_f5_base_instance_deploy_2_nic_13_0(
         HeatStack, symbols, CommonTemplateDir, WaitForLicensedBigIP
 ):
     hc, stack = HeatStack(
@@ -268,7 +268,7 @@ def itest_f5_base_instance_deploy_3_nic_12_1(
     check_net_components(bigip, 3)
 
 
-def itest_f5_base_instance_deploy_3_nic_13_0(
+def test_f5_base_instance_deploy_3_nic_13_0(
         HeatStack, symbols, CommonTemplateDir, WaitForLicensedBigIP):
     hc, stack = HeatStack(
         os.path.join(CommonTemplateDir, 'f5_ve_standalone_3_nic.yaml'),
