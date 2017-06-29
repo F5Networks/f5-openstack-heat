@@ -17,8 +17,8 @@
 import os
 import pytest
 
-
-BIGIP_12_0_IMG = 'BIGIP-12.0.0.0.0.606'
+BIGIP_13_0_IMG = 'BIGIP-13.0.0.0.0.1645'
+BIGIP_12_1_IMG = 'BIGIP-12.1.0.0.0.1434'
 BIGIP_11_6_IMG = 'BIGIP-11.6.0.0.0.401'
 BIGIP_11_5_4_IMG = 'BIGIP-11.5.4.0.0.256'
 
@@ -48,7 +48,7 @@ def PatchTemplateLoc(SupportedDir):
     )
 
 
-def test_patched_image_upload_12_0(
+def test_patched_image_upload_13_0(
         HeatStack,
         GlanceImageCleanup,
         symbols,
@@ -63,16 +63,45 @@ def test_patched_image_upload_12_0(
             'image_prep_key': symbols.ssh_key,
             'private_network': symbols.mgmt_net,
             'f5_image_import_password': symbols.os_password,
-            'f5_ve_image_url': symbols.ve_12_0_image_path,
-            'f5_ve_image_name': BIGIP_12_0_IMG + '.qcow2',
+            'f5_ve_image_url': symbols.ve_13_0_image_path,
+            'f5_ve_image_name': BIGIP_13_0_IMG + '.qcow2',
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_image_import_auth_url':
-            'http://{}:5000/v2.0'.format(symbols.auth_netloc)
+            'http://{}:5000/v2.0'.format(symbols.auth_netloc),
+            'os_distro': symbols.os_distro
         }
     )
-    assert BIGIP_12_0_IMG in \
+    assert BIGIP_13_0_IMG in \
         [image.name for image in glanceclientmanager.images.list()]
-    GlanceImageCleanup(BIGIP_12_0_IMG)
+    GlanceImageCleanup(BIGIP_13_0_IMG)
+
+
+def test_patched_image_upload_12_1(
+        HeatStack,
+        GlanceImageCleanup,
+        symbols,
+        glanceclientmanager,
+        PatchTemplateLoc
+):
+    hc, stack = HeatStack(
+        PatchTemplateLoc,
+        'func_test_patch_ve_image',
+        parameters={
+            'onboard_image': symbols.ubuntu_image,
+            'image_prep_key': symbols.ssh_key,
+            'private_network': symbols.mgmt_net,
+            'f5_image_import_password': symbols.os_password,
+            'f5_ve_image_url': symbols.ve_12_1_image_path,
+            'f5_ve_image_name': BIGIP_12_1_IMG + '.qcow2',
+            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'f5_image_import_auth_url':
+            'http://{}:5000/v2.0'.format(symbols.auth_netloc),
+            'os_distro': symbols.os_distro
+        }
+    )
+    assert BIGIP_12_1_IMG in \
+        [image.name for image in glanceclientmanager.images.list()]
+    GlanceImageCleanup(BIGIP_12_1_IMG)
 
 
 def test_patched_image_upload_11_6(
@@ -94,7 +123,8 @@ def test_patched_image_upload_11_6(
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_ve_image_name': BIGIP_11_6_IMG + '.qcow2',
             'f5_image_import_auth_url':
-            'http://{}:5000/v2.0'.format(symbols.auth_netloc)
+            'http://{}:5000/v2.0'.format(symbols.auth_netloc),
+            'os_distro': symbols.os_distro
         }
     )
     assert BIGIP_11_6_IMG in \
@@ -121,7 +151,8 @@ def test_patched_image_upload_11_5(
             'f5_ve_image_name': BIGIP_11_5_4_IMG + '.qcow2',
             'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
             'f5_image_import_auth_url':
-            'http://{}:5000/v2.0'.format(symbols.auth_netloc)
+            'http://{}:5000/v2.0'.format(symbols.auth_netloc),
+            'os_distro': symbols.os_distro
 
         }
     )
