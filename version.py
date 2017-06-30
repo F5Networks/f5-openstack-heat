@@ -15,5 +15,5 @@
 # After release remove the pre-release strings
 # Maintenance release bumps patch version (last number)
 # New template bumps minor version
-VERSION = u'9.0.1'
-OPENSTACK_RELEASE = u'mitaka'
+VERSION = u'10.0.0'
+OPENSTACK_RELEASE = u'newton'
