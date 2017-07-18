@@ -63,8 +63,8 @@ F5 Onboard Server Management Network        string          Network you want to 
 ------------------------------------------- --------------- --------------------------- ---------------
 Keystone Auth URL                           string          Keystone Authentication URL N/A
 ------------------------------------------- --------------- --------------------------- ---------------
-Image Import Tenant                         string          `OpenStack project`_ you    admin
-                                                            want to import the image to
+Image Import Tenant                         string          OpenStack project you want  admin
+                                                            to import the image to
 ------------------------------------------- --------------- --------------------------- ---------------
 Image Import User                           string          User account you want to    admin
                                                             import the image to
@@ -109,4 +109,4 @@ Click the link below to download the template.
 .. [#fn4] Used by the F5 OpenStack development team for testing.
 
 .. _Glance: https://docs.openstack.org/developer/glance/
-.. _OpenStack project: https://docs.openstack.org/ops-guide/ops-projects-users.html
+
