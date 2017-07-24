@@ -21,7 +21,7 @@ deploy:
   skip_cleanup: true
   on:
     repo: F5Networks/f5-openstack-heat
-    all_branches: true
+    branch: kilo
     condition: $TRAVIS_TAG = ""
   script:
   - ./docs/doc_scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat $TRAVIS_BRANCH
