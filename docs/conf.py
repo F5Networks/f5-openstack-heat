@@ -69,7 +69,7 @@ version = "10.0.0"
 release = "10.0.0"
 
 # OpenStack release
-openstack_release = "mitaka"
+openstack_release = "newton"
 
 #rst_prolog = '''
 #'''
