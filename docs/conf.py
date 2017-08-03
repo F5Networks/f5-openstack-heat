@@ -324,7 +324,7 @@ rst_epilog = """
 .. |openstack| replace:: %(openstack_release)s
 .. _Nova compute flavor: /cloud/openstack/latest/support/openstack_big-ip_flavors.html
 .. _F5 HOT deployment instructions: /cloud/openstack/latest/heat/deploy-heat-templates.html
-.. _F5 Plugins for OpenStack Heat: /products/openstack/latest/heat-plugins/install-f5-heat-plugins.html
+.. _F5 Plugins for OpenStack Heat: /products/openstack/heat-plugins/%(openstack_release)s/install-f5-heat-plugins.html
 .. _BIG-IP license base key: https://support.f5.com/csp/article/K7752
 .. _BIG-IP device service clustering: https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-device-service-clustering-administration-13-0-0
 .. _BIG-IP flavor matrix: /cloud/openstack/support/openstack-bigip-flavors.html
