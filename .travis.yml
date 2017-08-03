@@ -5,6 +5,7 @@ language: python
 python:
 - '2.7'
 install: true
+script:
 - ./docs/scripts/docker-docs.sh make -C docs/ html
 deploy:
 - provider: script
@@ -13,4 +14,4 @@ deploy:
     branch: v7.0
     repo: F5Networks/f5-openstack-heat
   script:
-  - ./docs/scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat/kilo v7.0
+  - ./docs/scripts/deploy-docs.sh publish-product-docs-to-prod /templates/openstack-heat/kilo v7.0
