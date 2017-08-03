@@ -3,5 +3,5 @@
 .. _how-to_launch-standalone-bigip-3nic:
 
 
-.. include:: ../templates/supported/ref_common_f5-ve-standalone-3nic.rst
+.. include:: ../heat_templates/supported/ref_common_f5-ve-standalone-3nic.rst
 

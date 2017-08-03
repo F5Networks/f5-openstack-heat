@@ -52,4 +52,4 @@ Contents
 
     User Guide <map_heat-user-guide>
     Release Notes <release-notes>
-    templates/templates_index
+    heat_templates/templates_index

@@ -2,5 +2,5 @@
 
 .. _how-to_deploy-lb:
 
-.. include:: ../templates/supported/ref_f5plugins_deploy-lb.rst
+.. include:: ../heat_templates/supported/ref_f5plugins_deploy-lb.rst
 

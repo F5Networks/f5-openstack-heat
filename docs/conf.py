@@ -300,7 +300,7 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 rst_epilog = '''
-    .. |openstack| replace:: %(openstack_release)s
+.. |openstack| replace:: %(openstack_release)s
 ''' % {
   'openstack_release': openstack_release,
   'openstack_release_l': openstack_release.lower(),
