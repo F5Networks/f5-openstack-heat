@@ -11,7 +11,7 @@ deploy:
 - provider: script
   skip_cleanup: true
   on:
-    branch: v8.0
+    branch: v9.0
     repo: F5Networks/f5-openstack-heat
   script:
-  - ./docs/scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat/liberty v8.0
+  - ./docs/scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat/mitaka v9.0
