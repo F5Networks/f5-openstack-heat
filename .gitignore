@@ -64,7 +64,7 @@ target/
 [Bb]in
 [Ii]nclude
 [Ll]ib
-[Ss]cripts
+#[Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
 
