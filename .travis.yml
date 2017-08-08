@@ -1,17 +1,40 @@
-sudo: false
+sudo: required
 language: python
 python:
 - '2.7'
+services:
+- docker
 before_install:
 - git config --global user.email "OpenStack_TravisCI@f5.com"
 - git config --global user.name "Travis F5 Openstack"
+- docker pull f5devcentral/containthedocs
 install:
-    - pip install -r requirements.unit.test.txt
-    - pip install -r requirements.docs.txt
+  - pip install -r requirements.unit.test.txt
 script:
 - flake8 --exclude=docs .
 - py.test test/test_templates_parsable_as_yaml.py
-- cd docs; make html
+- ./docs/doc_scripts/docker-docs.sh ./docs/doc_scripts/test-docs.sh
+deploy:
+# deploy to s3
+# if this is not a tagged release, the docs will deploy to /templates/openstack-heat/$TRAVIS_BRANCH
+- provider: script
+  skip_cleanup: true
+  on:
+    repo: F5Networks/f5-openstack-heat
+    branch: master
+    condition: $TRAVIS_TAG = ""
+  script:
+  - ./docs/doc_scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat $TRAVIS_BRANCH
+# if this is a tagged release, the docs go to /templates/openstack-heat/$TRAVIS_BRANCH/vX.Y
+- provider: script
+  skip_cleanup: true
+  env:
+  - RELEASE_TAG="$(echo $TRAVIS_TAG |cut -c1-4)"
+  on:
+    tags: true
+    repo: F5Networks/f5-openstack-heat
+  script:
+  - ./scripts/deploy-docs.sh publish-product-docs-to-prod templates/openstack-heat/$TRAVIS_BRANCH $RELEASE_TAG
 notifications:
   slack:
     secure: oDm67Pkxd+8GGvOIVQ723DUwxSfKcmOyrMcM5UFKC4KNCl3gl2X2U9h0xlUyaouDxdGLcnq1vLRI8CTwq1XN6FiEE09waBe7SbG5BZkr14wQJPuDBDuKYxuVZ1xFdNm2mmAXTWrMzcZEo8vliMdsSmFLS2OVFdvv30607OusaVOJWMuhmx35IKLt2UYvgBmPLth/LDFS1uc6Maz6teuXqRN+FlLSzGyVpqFcklM/jGjm3U4IvjkwqQI3cwpQH4NF1ISKo5z0I/u4wAifx/v9m+kFd0D87TvgfygC8uKiOICsyushPxJMRnLfxDfBp9o+Pjg6dXHRaZIKhT/FhOv02j4CSfX2za3DTMc0lnwCoW/ZYB456prWhS96J55jFGXzldWIeyk3GN955ASrrGI6rz0ToG6DsfgDnNycmq7VXGYRAe6T/a+w307sGLT+xd5/tQV3Kh7SdzFLt+kD+hbps5JtJbXqU7vgF2FX+1fp4i+PA8ArXSvIU/H2C5YRVbbFPGE40O8radOS1PP7CJCZGqQ4GuxKKnNmfB3czBuoa8lJHBBFvkp3hKua4PemFEZ41FgXV1NTIpVKCjmEJkuVyylixcRAllP04NWxnncTVfOF9wNs2zeFpg6EaKBylwlepDLvG4SlFsfzpIbkjrVOQgfY/v7tDQx9MI1Nsoh7vNg=
