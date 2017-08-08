@@ -79,7 +79,7 @@ rst_prolog = '''
     var home = "clouddocs.f5.com";
     var rtd = "f5-openstack-heat.readthedocs.io";
 
-    if (window.location.hostname === rtd) {window.location.assign("http://" + home + "/products/templates/openstack-heat/newton");}
+    if (window.location.hostname === rtd) {window.location.assign("http://" + home + "/products/templates/openstack-heat/latest");}
    </script>
 '''
 
