@@ -65,12 +65,12 @@ author = u'F5 Networks'
 # built documents.
 #
 # The short X.Y version.
-version = "9.0.1"
+version = "10.0"
 # The full version, including alpha/beta/rc tags.
-release = "9.0.1"
+release = "10.0.0"
 
 # OpenStack release
-openstack_release = "mitaka"
+openstack_release = "newton"
 
 rst_prolog = '''
 .. raw:: html
@@ -79,7 +79,7 @@ rst_prolog = '''
     var home = "clouddocs.f5.com";
     var rtd = "f5-openstack-heat.readthedocs.io";
 
-    if (window.location.hostname === rtd) {window.location.assign("http://" + home + "/products/templates/openstack-heat/mitaka");}
+    if (window.location.hostname === rtd) {window.location.assign("http://" + home + "/products/templates/openstack-heat/newton");}
    </script>
 '''
 
