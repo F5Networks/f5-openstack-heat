@@ -20,7 +20,6 @@ Prerequisites
 - An external network with access to the internet.
 - BIG-IP Virtual Edition image file in qcow.zip format.
 - BIG-IP license provisioned appropriately for your environment. [#fn1]_
-- `F5 Plugins for OpenStack Heat`_ installed on the Neutron controller.
 - Ubuntu image imported to Glance. [#fn2]_
 - SSH key configured in OpenStack.
 - One (1) VLAN configured in Neutron; must have access to the external network.
