@@ -29,7 +29,7 @@ deploy:
 - provider: script
   skip_cleanup: true
   env:
-  - RELEASE_TAG="$(echo $TRAVIS_TAG |cut -c1-4)"
+  - RELEASE_TAG=$(echo $TRAVIS_TAG | cut -d . -f 1,2)
   on:
     tags: true
     repo: F5Networks/f5-openstack-heat
