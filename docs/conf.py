@@ -322,19 +322,20 @@ texinfo_documents = [
 
 rst_epilog = """
 .. |openstack| replace:: %(openstack_release)s
-.. _Nova compute flavor: /cloud/openstack/latest/support/openstack_big-ip_flavors.html
-.. _F5 HOT deployment instructions: /cloud/openstack/latest/heat/deploy-heat-templates.html
-.. _F5 Plugins for OpenStack Heat: /products/openstack/heat-plugins/%(openstack_release)s/install-f5-heat-plugins.html
+.. _Nova compute flavor: https://docs.openstack.org/horizon/latest/admin/manage-flavors.html
+.. _F5 HOT deployment instructions: %(base_url)s/cloud/openstack/v1/heat/how-to-deploy-heat-stack.html
+.. _F5 Plugins for OpenStack Heat: %(base_url)s/products/openstack/heat-plugins/%(openstack_release)s/#installation
 .. _BIG-IP license base key: https://support.f5.com/csp/article/K7752
 .. _BIG-IP device service clustering: https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-device-service-clustering-administration-13-0-0
-.. _BIG-IP flavor matrix: /cloud/openstack/support/openstack-bigip-flavors.html
+.. _BIG-IP flavor matrix: %(base_url)s/cloud/openstack/latest/support/openstack_big-ip_flavors.html
 .. _BIG-IP VE images come in different sizes: https://support.f5.com/csp/article/K14946
 .. |release-notes| raw:: html
 
     <a class="btn btn-success" href="https://github.com/F5Networks/f5-openstack-heat/releases/tag/v%(version)s/">Release Notes</a>
-.. _F5 Integration for OpenStack Heat: /cloud/openstack/latest/heat
+.. _F5 Integration for OpenStack Heat: %(base_url)s/cloud/openstack/latest/heat
 """ % {
   'openstack_release': openstack_release,
   'openstack_release_l': openstack_release.lower(),
-  'version': version
+  'version': version,
+  'base_url': 'http://clouddocs.f5.com'
 }
