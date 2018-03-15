@@ -65,7 +65,7 @@ def test_patched_image_upload_13_0(
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_13_0_image_path,
             'f5_ve_image_name': BIGIP_13_0_IMG + '.qcow2',
-            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'apt_cache_proxy_url': 'http://apt-cache.f5.com:3142',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(symbols.auth_netloc),
             'os_distro': symbols.os_distro
@@ -93,7 +93,7 @@ def test_patched_image_upload_12_1(
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_12_1_image_path,
             'f5_ve_image_name': BIGIP_12_1_IMG + '.qcow2',
-            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'apt_cache_proxy_url': 'http://apt-cache.f5.com:3142',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(symbols.auth_netloc),
             'os_distro': symbols.os_distro
@@ -120,7 +120,7 @@ def test_patched_image_upload_11_6(
             'private_network': symbols.mgmt_net,
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_11_6_image_path,
-            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'apt_cache_proxy_url': 'http://apt-cache.f5.com:3142',
             'f5_ve_image_name': BIGIP_11_6_IMG + '.qcow2',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(symbols.auth_netloc),
@@ -149,7 +149,7 @@ def test_patched_image_upload_11_5(
             'f5_image_import_password': symbols.os_password,
             'f5_ve_image_url': symbols.ve_11_5_4_image_path,
             'f5_ve_image_name': BIGIP_11_5_4_IMG + '.qcow2',
-            'apt_cache_proxy_url': 'http://apt-cache.pdbld.f5net.com:3142',
+            'apt_cache_proxy_url': 'http://apt-cache.f5.com:3142',
             'f5_image_import_auth_url':
             'http://{}:5000/v2.0'.format(symbols.auth_netloc),
             'os_distro': symbols.os_distro
