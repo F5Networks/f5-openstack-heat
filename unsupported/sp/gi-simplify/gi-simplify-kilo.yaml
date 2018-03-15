@@ -101,7 +101,7 @@ parameters:
     cl1_name:
         type: string
         description: The hostname of the first subscriber device
-        default: cl1.os.hype.f5net.com
+        default: cl1.os.hype.f5.com
     cl1_image:
         type: string
         description: Image used by the first subscriber device
@@ -118,7 +118,7 @@ parameters:
     cl2_name:
         type: string
         description: The hostname of the second subscriber device
-        default: cl2.os.hype.f5net.com
+        default: cl2.os.hype.f5.com
     cl2_image:
         type: string
         description: Image used by the second subscriber device
@@ -135,7 +135,7 @@ parameters:
     cl3_name:
         type: string
         description: The hostname of the third subscriber device
-        default: cl3.os.hype.f5net.com
+        default: cl3.os.hype.f5.com
     cl3_image:
         type: string
         description: Image used by the third subscriber device
@@ -152,7 +152,7 @@ parameters:
     cl4_name:
         type: string
         description: The hostname of the fourth subscriber device
-        default: cl4.os.hype.f5net.com
+        default: cl4.os.hype.f5.com
     cl4_image:
         type: string
         description: Image used by the fourth subscriber device
@@ -169,7 +169,7 @@ parameters:
     cpe_name:
         type: string
         description: The hostname of the CPE device
-        default: cpe.os.hype.f5net.com
+        default: cpe.os.hype.f5.com
     cpe_image:
         type: string
         description: Image used by the CPE device
@@ -194,7 +194,7 @@ parameters:
     vas1_name:
         type: string
         description: The hostname of the first VAS device
-        default: vas1.os.hype.f5net.com
+        default: vas1.os.hype.f5.com
     vas1_image:
         type: string
         description: Image used by the first VAS device
@@ -219,7 +219,7 @@ parameters:
     vas2_name:
         type: string
         description: The hostname of the second VAS device
-        default: vas2.os.hype.f5net.com
+        default: vas2.os.hype.f5.com
     vas2_image:
         type: string
         description: Image used by the second VAS device
@@ -244,7 +244,7 @@ parameters:
     vas3_name:
         type: string
         description: The hostname of the third VAS device
-        default: vas3.os.hype.f5net.com
+        default: vas3.os.hype.f5.com
     vas3_image:
         type: string
         description: Image used by the third VAS device
@@ -269,7 +269,7 @@ parameters:
     pe_name:
         type: string
         description: The hostname of the PE device
-        default: pe.os.hype.f5net.com
+        default: pe.os.hype.f5.com
     pe_image:
         type: string
         description: Image used by the PE device
@@ -294,7 +294,7 @@ parameters:
     server_name:
         type: string
         description: The hostname of the server device
-        default: server.os.hype.f5net.com
+        default: server.os.hype.f5.com
     server_image:
         type: string
         description: Image used by the server device
@@ -315,7 +315,7 @@ parameters:
     log_name:
         type: string
         description: The hostname of the logging device
-        default: log.os.hype.f5net.com
+        default: log.os.hype.f5.com
     log_image:
         type: string
         description: Image used by the logging device
@@ -332,7 +332,7 @@ parameters:
     bigip_name:
         type: string
         description: The hostname of the BIG-IP® device
-        default: pem.os.hype.f5net.com
+        default: pem.os.hype.f5.com
     bigip_image:
         type: string
         description: BIG-IP® image used
